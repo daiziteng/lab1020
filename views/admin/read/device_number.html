@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/packages/echarts.js"></script>
+    <title>实验室设备预约信息查询</title>
+    <style>
+    </style>
+</head>
+
+<body style='height:100%'>
+    <div class="layui-col-md6">
+        <div class="layui-card" style='height:480px'>
+            <div class="layui-card-header">
+                统计数据
+            </div>
+            <div class="layui-card-body layuiadmin-card-list">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">日期范围</label>
+                        <div class="layui-input-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="time" placeholder=" - " autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-btn layuiadmin-btn-list" data-type="reload" id="search">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                        </div>
+                    </div>
+
+                </div>
+                <table id="roomView" lay-filter="test"></table>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md6">
+        <div class="layui-card" style='height:480px'>
+            <div class="layui-card-header">
+                统计图形
+            </div>
+            <div class="layui-card-body layuiadmin-card-list">
+                <div id="main" style="width:100%;height:400px;"></div>
+            </div>
+
+        </div>
+    </div>
+    <!-- 给表格添加序号栏 -->
+    <script type="text/html" id="zizeng">
+            {{d.LAY_INDEX}}
+        </script>
+    <script>
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            //日期范围
+            laydate.render({
+                elem: '#time'
+                , range: true
+            });
+        })
+        layui.use('table', function () {
+            var table = layui.table;
+            table.render({
+                //默认为get请求
+                elem: '#roomView'
+                , url: '/expirement/number'
+                , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , page: true
+                , id: 'testReload'
+                , limits: [7, 10, 15, 20]
+                , limit: 7
+                , cols: [[
+                    { title: '序号', type: 'number', sort: true, toolbar: '#zizeng', maxwidth: 120 }
+                    , { field: 'Start_time', title: '预约时间' }
+                    , { field: 'yes_num', title: '填写人次', width: 100 }
+                    , { field: 'no_num', title: '未填写人次', width: 100 }
+                    , { field: 'total_num', title: '总人次', width: 100 }
+                ]]
+                , done: function () {
+                    let data = table.cache.testReload;//当前页面的表格数据
+                    loadDrugs(data)
+                }
+            });
+
+            // <!--查询功能-->
+            var active = {
+                reload: function () {
+                    var index = layer.msg('查询中，请稍候...', { icon: 16, time: false, shade: 0 });
+                    let timeValue = $('#time').val()
+                    let beginTime = timeValue.substring(0, 10)
+                    let endTime = timeValue.substring(13, 23)
+                    setTimeout(function () {
+                        table.reload('testReload', {
+                            page: {
+                                curr: 1
+                            }
+                            , where: {
+                                beginTime: beginTime,
+                                endTime: endTime,
+                            }
+                        }, 'data');
+                        layer.close(index);
+                    }, 800)
+                }
+            };
+            $('#search').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            })
+            var myChart1 = echarts.init(document.getElementById('main'));
+            var colors = ['#5793f3', '#d14a61', '#675bba'];
+
+            function loadDrugs(data) {
+                myChart1.clear();
+                var list = [];
+                var y_data = [];
+                var n_data = [];
+                var title = [];
+                for (var i = 0; i < data.length; i++) {
+                    y_data.push(data[i].yes_num);
+                    n_data.push(data[i].no_num);
+                    title.push(data[i].Start_time)
+                }
+                let math_y = Math.max(...y_data);
+                let math_n = Math.max(...n_data);
+
+                let math_data = Math.max(math_y, math_n)
+
+
+
+
+
+
+                var option = {
+                    color: colors,
+
+                    tooltip: {
+                        trigger: 'axis',
+                        formatter: '{b0}<br/>{a0}:{c0}' + '人次/天', //格式后面加单位
+                        axisPointer: {
+                            type: 'cross'
+                        }
+                    },
+                    grid: {
+                        right: '30%'
+                    },
+                    toolbox: {
+                        feature: {
+                            dataView: { show: true, readOnly: false },
+                            restore: { show: true },
+                            saveAsImage: { show: true }
+                        }
+                    },
+                    legend: {
+                        data: ['未填写', '已填写']
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            axisTick: {
+                                alignWithLabel: true
+                            },
+                            // data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+                            data: title,
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 40
+                            }    //解决x轴文字过多导致显示不全
+
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            name: '已填写',
+                            min: 0,
+                            max: 1.5 * math_data,//这里可以动态赋值，判断当前数组的最大值
+                            position: 'right',
+                            axisLine: {
+                                lineStyle: {
+                                    color: colors[0]
+                                }
+                            },
+                            axisLabel: {
+                                formatter: '{value} 人次'
+                            }
+                        },
+                        {
+                            type: 'value',
+                            name: '未填写',
+                            min: 0,
+                            max: 1.5 * math_data,
+                            position: 'right',
+                            offset: 80,
+                            axisLine: {
+                                lineStyle: {
+                                    color: colors[1]
+                                }
+                            },
+                            axisLabel: {
+                                formatter: '{value} 人次'
+                            }
+                        },
+                    ],
+                    series: [
+                        {
+                            name: '已填写',
+                            type: 'bar',
+                            // data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
+                            data: y_data
+                        },
+                        {
+                            name: '未填写',
+                            type: 'bar',
+                            yAxisIndex: 1,
+                            // data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+                            data: n_data
+                        },
+                    ]
+                }
+                myChart1.setOption(option);
+            }
+        });
+    </script>
+</body>
+
+</html>

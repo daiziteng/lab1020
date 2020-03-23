@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>前台主页</title>
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/packages/echarts.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: burlywood;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: burlywood;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+
+        .layadmin-note {
+            cursor: pointer;
+        }
+
+        .layadmin-shortcut li .layui-icon {
+            height: 120px;
+            line-height: 130px;
+        }
+
+        /*日历的高度设置*/
+        .layui-laydate,
+        .layui-laydate-hint {
+            line-height: 8px;
+            font-size: 6px;
+        }
+
+        .new_class img {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="/images/touxiang.jpg" class="layui-nav-img">
+                            <span id="user_name"></span>
+                            <span id="user_id" style="display: none"></span>
+                        </a>
+
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item">
+                            <a class="layui-this" href="javascript:;" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>个人主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a href="javascript:;" name="实验室预约" id="">
+                                <i class="layui-icon layui-icon-edit"></i>
+                                <cite>实验室预约</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="lab_order">实验室分布</a></dd>
+                                <dd class="layui-nav-itemed"><a href="#">实验室详情</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="lab_info">信息预知</a></dd>
+                                        <dd><a href="lab_danger_element">危险预知</a></dd>
+                                        <dd><a href="lab_urgent_schema">应急预案</a></dd>
+                                        <dd><a href="lab_exam">安全准入</a></dd>
+                                        <dd><a href="room_order">房间预约</a></dd>
+                                        <dd><a href="lab_submit">实验记录</a></dd>
+                                    </dl>
+                                </dd>
+                            </dl>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            </div>
+            <!--页面主体-->
+            <div class="layui-body" >
+                <div class="layui-fluid">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <h3 style="font-size: 30px;text-align: center;color: #ee4411">
+                                        <a style="float: left;margin-top: 5px;" class="layui-btn layui-btn-normal"
+                                            id="back_first" lay-event="edit">返回上一级</a>
+                                        <span> 我的成绩</span>
+                                    </h3>
+                                </div>
+                                <div class="layui-card-body">
+                                    <table id="scoreView" lay-filter="test"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- 给表格添加序号栏 -->
+    <script type="text/html" id="zizeng">
+            {{d.LAY_INDEX}}
+        </script>
+    <script type="text/javascript">
+        // 返回上级按钮
+        $('#back_first').on('click', function () {
+            window.history.back(-1);
+        })
+        setInterval(function () {
+            $.ajax({
+                type: 'post',
+                url: '/consolidate',
+                success: function (data) {
+                    if (data.ret_code === undefined) {
+                        window.location.href = "/login";
+                    }
+                    console.log(data.ret_code)
+                }
+            })
+        }, 31 * 60 * 1000)
+
+        /*设置session*/
+        $(function () {
+            $.ajax({
+                type: 'post',
+                url: '/session',
+                success: function (data) {
+                    $('#user_name').html(data.username);//用户名
+                    $('#user_id').html(data.user_id);//用户名
+                }
+            });
+        });
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+        layui.use('table', function () {
+            let user_id=$('#user_id').html()
+            var table = layui.table;
+            tableIns = table.render({
+                //默认为get请求
+                elem: '#scoreView'
+                , url: 'user/score'
+                , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , id: 'testReload'
+                , limits: [5, 10, 15]
+                , limit: 5 //每页默认显示的数量
+                , page: true
+                , cols: [[
+                    // { field: 'FID', title: '序号', sort: true, minwidth: 80 }
+                    { title: '序号', type: 'number', sort: true, toolbar: '#zizeng', minwidth: 160 }
+                    , { field: 'user_id', title: '用户编号', minwidth: 150 }
+                    , { field: 'user_name', title: '用户名', minwidth: 150 }
+                    , { field: 'score', title: '得分情况', minwidth: 150 }
+                    , { field: 'time', title: '用时', minwidth: 150, sort: true, }
+                ]],
+                where: {
+                    applicant: user_id,
+                },
+            });
+
+        })
+    </script>
+
+</body>
+
+</html>

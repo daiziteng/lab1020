@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>实验室新增</title>
+</head>
+
+<body>
+    <div style="margin-left: 5%;margin-top: 1%">
+        <!--<table id="deviceView" lay-filter="test"></table>-->
+        <table id="test1" lay-filter="test"></table>
+        <!--<button type="button" class="layui-btn" id="get_info" lay-demotransferactive="getData">获取右侧数据</button>-->
+    </div>
+    <script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit" id="agree">预约</a>
+</script>
+    <!--数据模板//显示处理状态-->
+    <script type="text/html" id="titleTpl">
+    {{#  if(d.State_id == 1){ }}
+    <button class="layui-btn layui-btn-danger layui-btn-xs">占用</button>
+    {{#  } else if(d.State_id == 0){ }}
+    <button class="layui-btn layui-btn-xs">可用</button>
+    {{#  } else { }}
+    <button class="layui-btn layui-btn-normal layui-btn-xs">已批准</button>
+    {{#  } }}
+</script>
+
+    <script>
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+
+
+        //getRoomId要为全局函数
+        //room_id 选择的房间号
+        //start_time 起始时间
+        //end_time 结束时间
+
+        function getRoomId(room_id, start_time, end_time, user_type, user_name, supervisor) {
+
+            layui.use('transfer', function () {
+                var transfer = layui.transfer;
+                // let lab_number = 5111;
+                // 穿梭框渲染
+                function rendTransfer(datas) {
+                    transfer.render({
+                        elem: '#test1'  //绑定元素
+                        , title: ['所有设备', '已选设备']
+                        , showSearch: true
+                        , height: 340
+                        , width: 340
+                        , data: datas
+                        , id: 'demo1' //定义索引
+                    });
+                    /*子页面向父页面传值*/
+                    window.getChoseId = function () {
+                        var value = [];
+                        var getData = transfer.getData('demo1'); //获取右侧数据
+                        value.push(JSON.stringify(getData));
+                        return value
+                    };
+                }
+
+                // console.log(supervisor,user_type,user_name)
+
+                $.ajax({
+                    dataType: 'json',
+                    type: 'get',
+                    url: '/device_read',
+                    data: {
+                        lab_number: room_id,
+                        supervisor: supervisor,
+                        user_name: user_name,
+                        user_type: user_type,
+                    },
+                    success: function (json) {
+                        // console.log(json[].device_purpose )
+                        var datas = [];
+                        for (var i = 0; i < json.length; i++) {
+                            if (user_type == '老师') {
+                                let data = {
+                                    value: json[i].device_ID,
+                                    title: json[i].device_name,
+                                    disabled: '',
+                                }
+                                datas.push(data)
+                            } else {
+                                // 解决公有设备的可见性问题
+                                if (json[i].device_purpose == '公有设备') {
+                                    let data = {
+                                        value: json[i].device_ID,
+                                        title: json[i].device_name,
+                                        disabled: 'false',
+                                    };
+                                    datas.push(data)
+                                } else {
+                                    let data = {
+                                        value: json[i].device_ID,
+                                        title: json[i].device_name,
+                                        disabled: '',
+                                    }
+                                    datas.push(data)
+                                }
+
+                            }
+
+
+                        }
+                        rendTransfer(datas)
+
+
+
+
+
+
+
+
+                        // 关于设备的时间冲突问题
+                        // $.ajax({
+                        //     dataType: 'json',
+                        //     type: 'get',
+                        //     url: '/device/order',
+                        //     data: {
+                        //         lab_number: room_id,
+                        //         start_time:start_time,
+                        //         end_time:end_time,
+                        //     },
+                        //     success:function (res) {
+                        //         var datas = [];
+                        //         // let key = [4, 6];
+                        //         // var key = res;
+                        //         for (var i = 0; i < json.length; i++) {
+                        //             //判断数组是否包含某个元素
+                        //             if (res.includes(json[i].device_ID)) {
+                        //                 let data = {
+                        //                     value: json[i].device_ID,
+                        //                     title: json[i].device_name,
+                        //                     disabled: 'false',
+                        //                 };
+                        //                 datas.push(data)
+                        //             } else {
+                        //                 let data = {
+                        //                     value: json[i].device_ID,
+                        //                     title: json[i].device_name,
+                        //                     disabled: '',
+                        //                 };
+                        //                 datas.push(data)
+                        //             }
+                        //         }
+                        //         rendTransfer(datas)
+                        //     }
+                        // });
+
+
+
+
+
+                    },
+                });
+            });
+
+
+        }
+
+
+
+    //     layui.use('table', function () {
+    //         var table = layui.table;
+    //         table.render({
+    // //默认为get请求
+    //             elem: '#deviceView'
+    //             , url: '/device_manage'
+    //             , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+    //             , limits: [5, 10, 15]
+    //             , limit: 5 //每页默认显示的数量
+    //             , page: true
+    // // , toolbar: '#toolbarDemo'
+    //             , cols: [[
+    //                 {field: 'FID', title: '设备所处实验室', sort: true, minwidth: 80, align: 'center'}
+    //                 , {field: 'device_name', title: '设备名称', sort: true, minwidth: 150}
+    //                 , {field: 'device_number', title: '数量', minwidth: 150}
+    //                 , {field: 'State_id', title: '状态', sort: true, templet: '#titleTpl', align: 'center', minwidth: 150}
+    //                 , {fixed: 'right', title: '操作', toolbar: '#barDemo', minwidth: 150, align: 'center'}
+    //             ]]
+    //         });
+    //         table.on('tool(test)', function (obj) {
+    // //读取cookie.js获取当前用户名
+    // // console.log(username);
+    //             switch (obj.event) {
+    //                 case 'edit':
+    //                     if (obj.data.State_id == 0) {
+    //                         console.log(obj);
+    //                         layer.confirm('预约此设备', {
+    //                             btnAlign: 'c'
+    //                             , btn: ['预约', '取消'] //可以无限个按钮
+    //                             , btn1: function (index, layero) {
+    //                                 $.ajax({
+    //                                     type: 'get',
+    //                                     url: '/lab_device_add',
+    //                                     data: {
+    //                                         id: obj.data.device_ID,
+    //                                         State_id: 1,
+    //                                         applicant: username,
+    //                                     },
+    //                                     success: function (res) {
+    //                                         layer.msg('预约成功');
+    //                                         table.reload('deviceView', {});//表格重载
+    //                                     }
+    //                                 });
+    //                                 layer.close(index, {time: 1000});
+    //                             }
+    //                             , btn2: function (index, layero) {
+    //                                 layer.msg('已取消');
+    //                                 layer.close(index)
+    //                             }
+    //                         })
+    //                     } else {
+    //                         layer.msg('设备占用中，无法预约')
+    //                     }
+    //                     break;
+    //             }
+    //         })
+    //     });
+    </script>
+</body>
+
+</html>

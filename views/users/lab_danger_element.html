@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>危险预知</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: burlywood;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: burlywood;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="LAY_app">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <!--导航栏左侧区域-->
+            <ul class="layui-nav layui-layout-left">
+                <li class="layui-nav-item layadmin-flexible">
+                    <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                        <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                    </a>
+                </li>
+
+            </ul>
+            <!--导航栏右侧区域-->
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                        <span id="user_name"></span>
+                    </a>
+                </li>
+                <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+            </ul>
+        </div>
+
+        <div class="layui-side layui-side-menu">
+            <div class="layui-side-scroll">
+                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                <div class="layui-logo" lay-href="">
+                    <span>实验室安全信息管理系统</span>
+                </div>
+
+                <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                lay-filter="layadmin-system-side-menu">
+                <li class="layui-nav-item">
+                    <a  href="user_index" name="主页" id="homepage">
+                        <i class="layui-icon layui-icon-home"></i>
+                        <cite>个人主页</cite>
+                        <span class="layui-bav-more"></span>
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;" name="安全准入" id="homepage">
+                        <i class="layui-icon layui-icon-form"></i>
+                        <cite>安全准入</cite>
+                        <span class="layui-bav-more"></span>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="lab_info">信息预知</a></dd>
+                        <dd><a href="lab_danger_element" class="layui-this">危险预知</a></dd>
+                        <dd><a href="lab_urgent_schema">应急预案</a></dd>
+                        <dd><a href="lab_exam">准入考试</a></dd>
+                    </dl>
+
+
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="lab_order" name="实验室分布" id="homepage">
+                        <i class="layui-icon layui-icon-location"></i>
+                        <cite>实验室分布</cite>
+                        <span class="layui-bav-more"></span>
+                    </a>
+                </li>
+
+                <li class="layui-nav-item ">
+                    <a href="javascript:;" name="实验室详情" id="">
+                        <i class="layui-icon layui-icon-tabs"></i>
+                        <cite>实验室详情</cite>
+                        <span class="layui-bav-more"></span>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="room_order">房间预约</a></dd>
+                        <dd><a href="lab_submit">实验记录</a></dd>
+                    </dl>
+                </li>
+            </ul>
+            </div>
+        </div>
+        <!--页面标签-->
+        <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            <!--<div class="layui-tab">-->
+                <!--<ul class="layui-tab-title" id="LAY_app_tabsheader">-->
+                    <!--<li>-->
+                        <!--<i class="layui-icon layui-icon-home"></i>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</div>-->
+        </div>
+        <!--页面主体-->
+        <div  class="layui-body">
+            <div class="layui-fluid">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-sm12">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <h3 style="font-size: 24px;text-align: center">实验室危险预知</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm12">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <span style="color: red;font-size: 20px;">实验室危险因素</span>
+                            </div>
+                            <div class="layui-card-body">
+                                <ul class="layadmin-note">
+                                    <li>
+                                        <a style="font-size: 18px;font-weight: bold;">1、实验室通风效果不好</a>
+                                    </br>
+                                        <span style="padding:15px 25px;">如制氢气、乙烯、乙炔等时，如果实验室空气不流通，有毒、易燃气体逸散到空气中越积越多，达到一定浓度，会引起人员中毒或其他意外事故。因此实验室应安置通风橱、换气扇等通风设施，同时佩戴防毒面罩等呼吸防护用品，做到实验室空气流通。</span>
+                                    </li>
+                                    <hr class="layui-bg-blue">
+                                    <li>
+                                        <a style="font-size: 18px;font-weight: bold;">2、违反实验操作规定</a>
+                                        </br>
+                                        <span style="padding:15px 25px;">
+　　在做实验前，一定要给学生讲清楚实验操作规定，否则就可能发生危险。如：配置稀硫酸时，应该把浓硫酸慢慢倒入水中，并且用玻璃棒不断搅拌，因为浓硫酸的稀释过程要放出大量的热。如果颠倒顺序，就会有硫酸溅出伤人，发生事故。加热制取气体并用排水法收集，实验完毕时，应先把导管从水里撤出，再撤酒精灯。上面的操作正好颠倒了，先撤去了酒精灯，还没来得及取导管，水就会沿导管流入反应器，引起仪器炸裂，溅出硫酸，发生危险。</span>
+                                    </li>
+                                    <hr class="layui-bg-blue">
+                                    <li>
+                                        <a style="font-size: 18px;font-weight: bold;">3、药品不纯 </a>
+                                        </br>
+                                        <span style="padding:15px 25px;">实验过程中要注意反应物的纯度和反应过程中生成物的纯度，如果粗心大意，可能造成危险。例如：做甲烷的实验时，没有把空气排净就点燃甲烷气体，产生爆炸事故。在用氯酸钾和二氧化锰的混合物加热制取氧气时，如果把木炭粉当作二氧化锰加入试管与氯酸钾混合，加热就会发生爆炸事故。</span>
+                                    </li>
+                                    <hr class="layui-bg-blue">
+                                    <li>
+                                        <a style="font-size: 18px;font-weight: bold;">4、使用失落标签未经鉴定的试剂 </a>
+                                        </br>
+                                        <span style="padding:15px 25px;">凡失落标签的试剂一定要检验确定后再使用，凭主观认为，没有经过检验确定就使用，可能造成伤害事故的发生。例如：配制溶液时错把浓硫酸当盐酸使用，造成液体沸腾溅出伤人。在用氯酸钾和二氧化锰的混合物加热制取氧气时，如果把木炭粉当作二氧化锰加入试管与氯酸钾混合，加热就会发生爆炸事故。</span>
+                                    </li>
+                                    <hr class="layui-bg-blue">
+                                    <li>
+                                        <a style="font-size: 18px;font-weight: bold;">5、实验用药过量 </a>
+                                        </br>
+                                        <span style="padding:15px 25px;">有些实验虽然很剧烈，但用量少时并无危险，用药量稍大便会发生危险。例如：用小苏打和浓硫酸反应做二氧化碳的灭火实验。如果小苏打和浓硫酸用量大，产生气压过大，会冲开胶塞，喷出酸液。从而发生烧坏衣服，腐蚀实验者手甚至面部的事故。所以 在保证实验效果的前提下用药量宁少勿多。</span>
+                                    </li>
+                                    <hr class="layui-bg-blue">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    /*设置session*/
+    $(function () {
+        $.ajax({
+            type: 'post',
+            url: '/session',
+            success: function (data) {
+                // $('#user_name').html(data.username);
+                if (data.username != null) {
+                        $('#user_name').html(data.username)
+                    } else {
+                        window.location.href = "/login";
+                    }
+            }
+        });
+    });
+
+
+
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+</script>
+</body>
+</html>

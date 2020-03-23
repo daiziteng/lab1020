@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>实验室风险等级评估</title>
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/packages/echarts.js"></script>
+    <script type="text/javascript" src="/packages/chart.meter.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: #009688;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: #009688;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+
+        html {
+            /*height: 60%;*/
+            font-size: 10px;
+        }
+
+
+        .radar {
+            background: -webkit-radial-gradient(center, rgba(32, 255, 77, 0.3) 0%, rgba(32, 255, 77, 0) 75%), -webkit-repeating-radial-gradient(rgba(32, 255, 77, 0) 5.8%, rgba(32, 255, 77, 0) 18%, #20ff4d 18.6%, rgba(32, 255, 77, 0) 18.9%), -webkit-linear-gradient(90deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%), -webkit-linear-gradient(0deg, rgba(32, 255, 77, 0) 49.5%, #20ff4d 50%, #20ff4d 50%, rgba(32, 255, 77, 0) 50.2%);
+            position: relative;
+            left: 50%;
+            top: 25%;
+            /*top:125px;*/
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 0.2rem solid #20ff4d;
+            overflow: hidden;
+        }
+
+        .radar:before {
+            content: ' ';
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            animation: blips 5s infinite;
+            animation-timing-function: linear;
+            animation-delay: 1.4s;
+        }
+
+        @keyframes radar-beam {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .radar_body {
+            height: 500px;
+            background-color: #111;
+            background-image: linear-gradient(0deg, transparent 24%, rgba(32, 255, 77, 0.15) 25%, rgba(32, 255, 77, 0.15) 26%, transparent 27%, transparent 74%, rgba(32, 255, 77, 0.15) 75%, rgba(32, 255, 77, 0.15) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(32, 255, 77, 0.15) 25%, rgba(32, 255, 77, 0.15) 26%, transparent 27%, transparent 74%, rgba(32, 255, 77, 0.15) 75%, rgba(32, 255, 77, 0.15) 76%, transparent 77%, transparent);
+            background-size: 7rem 7rem;
+            background-position: -5.2rem -5.2rem;
+            width: 50%;
+            position: relative;
+            padding: 0;
+            margin: 0;
+        }
+
+        .box {
+            margin-left: 10%;
+            margin-top: 10%;
+        }
+
+    </style>
+</head>
+<body>
+<div id="LAY_app">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <!--导航栏左侧区域-->
+            <ul class="layui-nav layui-layout-left">
+                <li class="layui-nav-item layadmin-flexible">
+                    <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                        <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                    </a>
+                </li>
+
+            </ul>
+            <!--导航栏右侧区域-->
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                         <span id='username'></span>
+                    </a>
+                </li>
+                <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+            </ul>
+        </div>
+
+        <div class="layui-side layui-side-menu">
+            <div class="layui-side-scroll">
+                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                <div class="layui-logo" lay-href="">
+                    <span>实验室安全信息管理系统</span>
+                </div>
+
+                <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                    lay-filter="layadmin-system-side-menu">
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a class="" href="javascript:;" name="主页" id="homepage">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <cite>主页</cite>
+                            <span class="layui-bav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;" class="layui-this">后台主页</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item"><a href="#" name="云链接" id="link_others">
+                        <i class="layui-icon layui-icon-headset"></i>
+                        <cite>实验室程序管理</cite>
+                    </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="admin_lab_info">一般信息</a></dd>
+                            <dd><a href="admin_lab_danger" class="layui-nav-itemed">风险信息</a>
+                            </dd>
+                            <dd><a href="admin_lab_urgent">应急管理</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item"><a href="#" name="云链接" id="background_manage">
+                        <i class="layui-icon layui-icon-camera"></i>
+                        <cite>实验室后台管理</cite>
+                    </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;" class="layui-nav-itemed">仪器设备管理</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="admin_device_manage">设备管理</a></dd>
+                                    <dd><a href="admin_cylinder_manage">气瓶管理</a></dd>
+                                    <dd><a href="/admin_reagent_manage">试剂管理</a></dd>
+                                </dl>
+                            </dd>
+                            <dd><a href="javascript:;" class="layui-nav-itemed">预约管理</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="/admin_room_order#">实验室预约</a></dd>
+                                    <!-- <dd><a href="javascript:;">设备预约</a></dd>
+                                    <dd><a href="/admin_reagent_order">试剂预约</a></dd> -->
+                                </dl>
+                            </dd>
+                            <dd><a href="/admin_user_manage" name="用户管理" id="user_manage">用户管理</a></dd>
+                            <dd><a href="/admin_info_manage" name="实验室录入清单管理">实验室录入清单管理</a></dd>
+                            <dd><a href="/admin_lab_risk" name="实验室安全等级评估" id="risk_judge">实验室安全等级评估</a></dd>
+                            <dd><a href="javascript:;" class="layui-nav-itemed">检查表</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="admin_security_check">日常安全检查</a></dd>
+                                    <dd><a href="admin_security_check2"> 高校实验室安全检查</a></dd>
+                                    <dd><a href="admin_security_check3"> 安全自查情况登记表</a></dd>
+                                    <!-- <dd><a href="#">特殊安全检查</a></dd> -->
+                                </dl>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a class="" href="admin_journal" name="主页" id="daily">
+                            <i class="layui-icon layui-icon-slider"></i>
+                            <cite>实验室管理日志</cite>
+                            <span class="layui-bav-more"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--页面标签-->
+        <div class="layadmin-pagetabs" id="LAY_app_tabs">
+
+        </div>
+        <!--页面主体-->
+
+        <div class="layui-body">
+            <div class="layui-fluid">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-sm12">
+                        <div class="layui-card">
+                            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                                <div class="layui-form-item">
+                                    <h3 style="font-size: 30px;text-align: center">实验室安全等级评估</h3>
+                                </div>
+                            </div>
+                            <div class="layui-card-body">
+                                <div class="layui-from-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">选择实验室</label>
+                                        <div class="layui-input-block">
+                                            <div id="check_box" class="layui-unselect layui-form-select">
+                                                <div class="layui-select-title"><input type="text" placeholder="请选择"
+                                                                                       value="5111(分级实验室)"
+                                                                                       readonly=""
+                                                                                       class="layui-input layui-unselect"
+                                                                                       id="role_name"><i
+                                                        class="layui-edge"></i></div>
+                                                <dl class="layui-anim layui-anim-upbit">
+                                                    <dd lay-value="0" class="layui-this">5111(分级实验室)</dd>
+                                                    <dd lay-value="1" class="">5112(电磁实验室)</dd>
+                                                    <dd lay-value="2" class="">5113(萃取实验室)</dd>
+                                                    <dd lay-value="3" class="">5114(样品制备实验室)</dd>
+                                                    <dd lay-value="4" class="">5115(三轴力学实验室 )</dd>
+                                                    <dd lay-value="5" class="">5116(粉碎实验室)</dd>
+                                                </dl>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <button class="layui-btn layuiadmin-btn-useradmin" onclick="judge()">
+                                            开始评估
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-col-sm12">
+                        <div class="layui-card">
+                            <div class="layui-card-header">评估结果展示
+                            </div>
+                            <div class="layui-card-body" style="height: 500px">
+                                <div class="layui-row">
+                                    <div class="layui-col-sm8 radar_body">
+                                        <div id="round" class="radar"
+                                             style="width: 450px;height: 450px;margin-top: 20%"></div>
+                                    </div>
+
+                                    <div class="layui-col-sm4 box">
+                                        <canvas id="meter" width="360" height="220"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+<script>
+    $('#username').html(username);
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+
+    $(function () {
+        // input框加载弹出下拉框
+        $('#role_name').on({
+            click: function () {
+                let Value = $('#check_box').hasClass('layui-form-selected');
+                if (Value == true) {
+                    $('#check_box').removeClass('layui-form-selected');
+                } else {
+                    $('#check_box').addClass('layui-form-selected');
+
+                    $('.layui-anim-upbit').on('click', 'dd', function () {
+                        $('.layui-anim-upbit dd').removeClass('layui-this');
+                        $(this).addClass('layui-this');
+                        let a = $(this).text()
+                        $('#role_name').val(a);
+                        $('#check_box').removeClass('layui-form-selected')
+                    });
+                }
+            },
+        });
+        //点击页面空白处，input下拉框消失
+        $(document).click(function () {
+            $('#check_box').removeClass('layui-form-selected');
+        });
+        $('#role_name').click(function (e) {
+            e.stopPropagation()//阻止事件冒泡
+        })
+    });
+
+    //评估函数
+    function judge() {
+        var str = `
+    .radar:after {
+            content: ' ';
+            display: block;
+            background-image: linear-gradient(44deg, rgba(0, 255, 51, 0) 50%, #00ff33 100%);
+            width: 50%;
+            height: 50%;
+            position: absolute;
+            animation: radar-beam 5s infinite;
+            animation-timing-function: linear;
+            transform-origin: bottom right;
+            border-radius: 100% 0 0 0;
+	}
+	        @keyframes blips {
+            14% {
+                background: radial-gradient(2vmin circle at 75% 70%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%);
+            }
+            14.0002% {
+                background: radial-gradient(2vmin circle at 75% 70%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%);
+            }
+            25% {
+                background: radial-gradient(2vmin circle at 75% 70%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 56% 86%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%);
+            }
+            26% {
+                background: radial-gradient(2vmin circle at 75% 70%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 56% 86%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%);
+                opacity: 1;
+            }
+            100% {
+                background: radial-gradient(2vmin circle at 75% 70%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 63% 72%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%), radial-gradient(2vmin circle at 56% 86%, #ffffff 10%, #20ff4d 30%, rgba(255, 255, 255, 0) 100%);
+                opacity: 0;
+            }
+        }
+`;
+        var radar = document.createElement("style");
+        radar.innerHTML = str;
+        document.getElementsByTagName("head")[0].appendChild(radar);
+
+        let t = 210;
+        let time = '2019.06.04';
+        Meter.setOptions({
+            element: 'meter',
+            centerPoint: {
+                x: 180,
+                y: 180
+            },
+            radius: 180,
+            data: {
+                value: t,
+                title: '实验室风险等级{t}',
+                subTitle: '评估时间:' + time,
+                area: [{
+                    min: 0, max: 550, text: '较弱'
+                }, {
+                    min: 550, max: 600, text: '一般'
+                }, {
+                    min: 600, max: 650, text: '很强'
+                }, {
+                    min: 650, max: 700, text: '超强'
+                }, {
+                    min: 700, max: 950, text: '极强'
+                }]
+            }
+        }).init();
+
+    }
+
+
+
+</script>
+
+
+</body>
+</html>

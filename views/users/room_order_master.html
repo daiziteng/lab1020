@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/packages/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/packages/moment.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>我的预约</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: burlywood;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: burlywood;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+
+        body .demo-class .layui-layer-btn .layui-layer-btn0 {
+            border-color: red;
+            background-color: red;
+        }
+
+        #progressBar {
+            width: 80%;
+            height: 50px;
+            position: relative;
+            margin: 50px 0 0 100px;
+        }
+
+        #progressBar div {
+            width: 100%;
+            height: 10px;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            margin-top: -20px;
+            border: 1px solid #ddd;
+            background: #ccc;
+        }
+
+        #progressBar div span {
+            position: absolute;
+            display: inline-block;
+            background: green;
+            height: 10px;
+            width: 25%;
+        }
+
+        #progressBar>span {
+            position: absolute;
+            top: 0;
+            margin-top: -10px;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            background: green;
+            margin-left: -20px;
+            color: #fff;
+        }
+
+        #progressBar>span:nth-child(1) {
+            left: 0%;
+        }
+
+        #progressBar>span:nth-child(2) {
+            left: 25%;
+            background: green;
+        }
+
+        #progressBar>span:nth-child(3) {
+            left: 50%;
+            background: #ccc;
+        }
+
+        #progressBar>span:nth-child(4) {
+            left: 75%;
+            background: #ccc;
+        }
+
+        #progressBar>span:nth-child(5) {
+            left: 100%;
+            background: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="/images/touxiang.jpg" class="layui-nav-img">
+                            <span id="user_name"></span>
+                            <span id="user_type" style="display: none"></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item">
+                            <a href="user_index" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>个人主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item ">
+                            <a class="" href="javascript:;" name="安全准入" id="homepage">
+                                <i class="layui-icon layui-icon-form"></i>
+                                <cite>安全准入</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="lab_info">信息预知</a></dd>
+                                <dd><a href="lab_danger_element">危险预知</a></dd>
+                                <dd><a href="lab_urgent_schema">应急预案</a></dd>
+                                <dd><a href="lab_exam">准入考试</a></dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item">
+                            <a href="lab_order" name="实验室分布" id="homepage">
+                                <i class="layui-icon layui-icon-location"></i>
+                                <cite>实验室分布</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed ">
+                            <a href="javascript:;" name="实验室详情" id="">
+                                <i class="layui-icon layui-icon-tabs"></i>
+                                <cite>实验室详情</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="room_order" class="layui-this">房间预约</a></dd>
+                                <dd><a href="lab_submit">实验记录</a></dd>
+                            </dl>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            </div>
+            <!--页面主体-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-card">
+                        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                            <div class="layui-form-item">
+
+                                <h3 style="font-size: 30px;text-align: center;color: #ee4411">
+                                    <a style="float: left" class="layui-btn layui-btn-normal" id="back_first"
+                                        lay-event="edit">返回上一级</a>
+                                    <a style="float: left" class="layui-btn" id="history_record"
+                                        lay-event="history_record">已处理预约</a>
+                                    <span> 实验室预约处理</span>
+                                </h3>
+
+                            </div>
+                        </div>
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-body">
+                                    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                                        <div class="layui-form-item">
+                                            <div class="layui-inline">
+                                                <label class="layui-form-label">房间编号</label>
+                                                <div class="layui-input-inline">
+                                                    <input type="text" id="FID" name="id" placeholder="请输入"
+                                                        autocomplete="off" class="layui-input">
+                                                </div>
+                                            </div>
+                                            <div class="layui-inline">
+                                                <label class="layui-form-label">教室名称</label>
+                                                <div class="layui-input-inline">
+                                                    <input type="text" id="Rname" name="lab" placeholder="请输入"
+                                                        autocomplete="off" class="layui-input">
+                                                </div>
+                                            </div>
+                                            <div class="layui-inline">
+                                                <label class="layui-form-label">选择时间</label>
+                                                <div class="layui-input-inline">
+                                                    <input type="text" id="date" name="date" placeholder="请输入"
+                                                        autocomplete="off" class="layui-input">
+                                                </div>
+                                            </div>
+                                            <div class="layui-inline" style="width: 200px;" id='student'>
+                                                <label class="layui-form-label">申请人</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" id="Applicant" name="danger" placeholder="请输入"
+                                                        autocomplete="off" class="layui-input">
+                                                </div>
+                                            </div>
+                                            <div class="layui-inline" style="width: 250px;">
+                                                <label class="layui-form-label">排序方式</label>
+                                                <div class="layui-input-block">
+                                                    <select id="order_type">
+                                                        <option value='down'>按时间降序</option>
+                                                        <option value='up'>按时间升序</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="layui-inline">
+                                                <div class="layui-btn layuiadmin-btn-list" data-type="reload"
+                                                    id="search">
+                                                    <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-card-body">
+                                        <table id="roomView" lay-filter="test"></table>
+
+
+                            
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="batch_agree" >批量同意</button>
+            <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="batch_refuse" >批量拒绝</button>
+        </div>
+    </script>
+    <script type="text/html" id="teacherDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="agree" id="agree">同意</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">拒绝</a>
+    </script>
+    <script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" id="confirm" lay-event="edit">查看</a>
+</script>
+
+    <script type="text/html" id="barDemo1">
+    <a class="layui-btn layui-btn-xs" id="" lay-event="device_order_look">查看详情</a>
+
+</script>
+
+    <!--数据模板//显示处理状态-->
+
+    <script type="text/html" id="teacher_status">
+        <button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="master_write_info">待处理</button>
+    </script>
+
+    <!-- 负责人界面历史处理 -->
+    <script type="text/html" id="master_status">
+        {{#  if(d.write_status == -2){ }}
+        <button class="layui-btn layui-btn-danger layui-btn-xs" >已拒绝</button>
+        {{#  } else { }}
+        <button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="write_info_view">已批准</button>
+        {{#  } }}
+    </script>
+    <script type="text/html" id="titleTpl">
+    {{#  if(d.Status_id == -1){ }}
+    <button class="layui-btn layui-btn-danger layui-btn-xs">已拒绝</button>
+    {{#  } else if(d.Status_id == 0){ }}
+    <button class="layui-btn layui-btn-xs">待处理</button>
+    {{#  } else { }}
+    <button class="layui-btn layui-btn-normal layui-btn-xs">已批准</button>
+    {{#  } }}
+</script>
+
+    <script type="text/html" id="fill">
+    {{#  if(d.write_status == 0){ }}
+    <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="write_info" >未填写</button>
+    {{#  } else { }}
+    <button class="layui-btn layui-btn-normal layui-btn-xs">已填写</button>
+    {{#  } }}
+</script>
+    <SCRIPT>
+        // 返回上级按钮
+        $('#back_first').on('click', function () {
+            window.history.back(-1);
+        })
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            //渲染
+            laydate.render({
+                elem: '#date'
+            });
+        });
+        /*设置session*/
+        $(function () {
+            $.ajax({
+                type: 'post',
+                url: '/session',
+                success: function (data) {
+                    if (data.username != null) {
+                        $('#user_name').html(data.username);
+                        $('#user_type').html(data.type);
+                        let user_name = $('#user_name').html();
+                        let user_type = $('#user_type').html();
+                        layui.use('table', function () {
+                            // $("#teacher_btn a:eq(0)").on('click', myself);
+                            $("#teacher_btn a:eq(1)").on('click', student);
+                            $('#history_record').on('click', history);
+                            function history() {
+                                $('#student').show()
+
+                                table.render({
+                                    //默认为get请求
+                                    elem: '#roomView'
+                                    , url: '/Order_room'
+                                    , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                                    , id: 'studentReload'
+                                    , limits: [5, 10, 15]
+                                    , limit: 5 //每页默认显示的数量
+                                    , page: true
+                                    , cols: [[
+                                        { type: 'checkbox' }
+                                        , { field: 'FID', title: '房间编号', sort: true, minwidth: 80 }
+                                        , { field: 'Rname', title: '教室名称', minwidth: 150 }
+                                        , { field: 'Start_time', title: '开始时间', minwidth: 150, }
+                                        , { field: 'End_time', title: '结束时间', minwidth: 80, }
+                                        , { field: 'Purpose', title: '用途', minwidth: 80 }
+                                        , { field: 'Applicant', title: '申请人', }
+                                        , { title: '设备预约情况', toolbar: '#barDemo1', width: 150, align: 'center' }
+                                        , { field: 'teacher_status', title: '申请表审核状态', sort: true, templet: '#master_status', align: 'center' }
+                                        // , { field: 'Status_id', title: '审核状态', sort: true, templet: '#titleTpl', align: 'center' }
+                                        // , { fixed: 'right', title: '操作', toolbar: '#teacherDemo', width: 150, align: 'center' }
+                                    ]],
+                                    where: {
+                                        supervisor: user_name,
+                                        user_type: '学生',
+                                        Type: 'history',
+                                        master_status: '2',
+                                    },
+                                });
+                            }
+                            function student() {
+                                $('#student').show()
+                                table.render({
+                                    //默认为get请求
+                                    elem: '#roomView'
+                                    , url: '/Order_room'
+                                    , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                                    , id: 'studentReload'
+                                    , limits: [5, 10, 15]
+                                    , limit: 5 //每页默认显示的数量
+                                    , page: true
+                                    , toolbar: '#toolbarDemo'
+                                    , cols: [[
+                                        { type: 'checkbox' }
+                                        , { field: 'FID', title: '房间编号', sort: true, minwidth: 80 }
+                                        , { field: 'Rname', title: '教室名称', minwidth: 150 }
+                                        , { field: 'Start_time', title: '开始时间', minwidth: 150, }
+                                        , { field: 'End_time', title: '结束时间', minwidth: 80, }
+                                        , { field: 'Purpose', title: '用途', minwidth: 80 }
+                                        , { field: 'Applicant', title: '申请人', }
+                                        , { title: '设备预约情况', toolbar: '#barDemo1', width: 150, align: 'center' }
+                                        , { field: 'teacher_status', title: '申请表审核状态', sort: true, templet: '#teacher_status', align: 'center' }
+                                        // , { field: 'Status_id', title: '审核状态', sort: true, templet: '#titleTpl', align: 'center' }
+                                        // , { fixed: 'right', title: '操作', toolbar: '#teacherDemo', width: 150, align: 'center' }
+                                    ]],
+                                    where: {
+                                        supervisor: user_name,
+                                        user_type: '学生',
+                                        Type: 'history',
+                                        write_status: '1'
+                                    },
+                                });
+
+                                // <!--查询功能-->
+                                var active = {
+                                    reload: function () {
+                                        var index = layer.msg('查询中，请稍候...', { icon: 16, time: false, shade: 0 });
+                                        setTimeout(function () {
+                                            table.reload('studentReload', {
+                                                page: {
+                                                    curr: 1
+                                                }
+                                                , where: {
+                                                    FID: $('#FID').val(),
+                                                    Rname: $('#Rname').val(),
+                                                    date: $('#date').val(),
+                                                    Applicant: $('#Applicant').val(),
+                                                    order_type: $('#order_type').val(),
+                                                }
+                                            }, 'data');
+                                            layer.close(index);
+                                        }, 800)
+                                    }
+                                };
+                                $('#search').on('click', function () {
+                                    var type = $(this).data('type');
+                                    active[type] ? active[type].call(this) : '';
+                                })
+                            }
+                            var table = layui.table;
+                            if (user_type === '学生') {
+                                // myself()
+
+                            } else {
+                                $('#teacher_btn').css('display', 'block')
+                                student()
+                            }
+                            function getStudentInfo(Order_number, layero, index) {
+                                $.ajax({
+                                    type: 'get',
+                                    url: '/get/room_order',
+                                    data: {
+                                        Order_number: Order_number,
+                                    },
+                                    success: function (res) {
+                                        // console.log(res)
+                                        let body = layer.getChildFrame('body', index);
+                                        var inputList = body.find("input")
+                                        let start_time = moment(res[0].Start_time).format('YYYY-MM-DD H:mm:ss');//日期时间格式化处理
+                                        let end_stime = moment(res[0].End_time).format('YYYY-MM-DD H:mm:ss');//日期时间格式化处理
+                                        for (var i = 0; i < inputList.length; i++) {
+                                            $(inputList[0]).val(res[0].Purpose);
+                                            $(inputList[1]).val(res[0].Applicant);
+                                            $(inputList[2]).val(res[0].FID);
+                                            $(inputList[4]).val(start_time + '至' + end_stime);
+                                        }
+                                    }
+                                })
+                                $.ajax({
+                                    type: 'get',
+                                    url: '/get/device_order',
+                                    data: {
+                                        Order_number: Order_number,
+                                    },
+                                    success: function (res) {
+                                        // console.log(res)
+                                        let body = layer.getChildFrame('body', index);
+                                        if (res.length == '0') {
+                                            body.find('#plan_device').val('无');
+                                        } else {
+                                            let device_name = ''
+                                            for (i = 0; i < res.length; i++) {
+                                                if (i == res.length - 1) {
+                                                    device_name += res[i].device_name
+                                                } else {
+                                                    device_name += res[i].device_name + "、";
+                                                }
+                                            }
+                                            body.find('#plan_device').val(device_name);
+                                        }
+                                    }
+
+                                })
+                            }
+                            function getTeacherInfo(Order_number, layero, index) {
+                                $.ajax({
+                                    type: 'get',
+                                    url: '/get/appliacant_form',
+                                    data: {
+                                        Order_number: Order_number,
+                                    },
+                                    success: function (res) {
+                                        let body = layer.getChildFrame('body', index);
+                                        body.find('#teacher_time').val(res[0].teacher_time);
+                                        body.find('#teacher_idea').val(res[0].teacher_idea);
+
+                                    }
+
+                                })
+                            }
+                            function getMasterInfo(Order_number, layero, index) {
+                                $.ajax({
+                                    type: 'get',
+                                    url: '/get/appliacant_form',
+                                    data: {
+                                        Order_number: Order_number,
+                                    },
+                                    success: function (res) {
+                                        let body = layer.getChildFrame('body', index);
+                                        body.find('#master_time').val(res[0].master_time);
+                                        body.find('#master_idea').val(res[0].master_idea);
+                                        body.find('#lab_time').val(res[0].lab_time);
+                                        body.find('#lab_idea').val(res[0].lab_idea);
+                                    }
+
+                                })
+                            }
+
+
+
+                            function writeCurrentDate() {
+                                var now = new Date();
+                                var year = now.getFullYear(); //得到年份
+                                var month = now.getMonth();//得到月份
+                                var date = now.getDate();//得到日期
+                                var day = now.getDay();//得到周几
+                                var hour = now.getHours();//得到小时
+                                var minu = now.getMinutes();//得到分钟
+                                var sec = now.getSeconds();//得到秒
+                                var week;
+                                month = month + 1;
+                                if (month < 10) month = "0" + month;
+                                if (date < 10) date = "0" + date;
+                                if (hour < 10) hour = "0" + hour;
+                                if (minu < 10) minu = "0" + minu;
+                                if (sec < 10) sec = "0" + sec;
+                                var time = "";
+                                time = year + "年" + month + "月" + date + "日" + " " + hour + ":" + minu + ":" + sec + " ";
+                                return time
+                            }
+
+
+                            table.on('tool(test)', function (obj) {
+                                let Order_number = obj.data.Order_number
+                                switch (obj.event) {
+                                    case 'write_info':
+                                        layer.open({
+                                            content: '/applicantion_form',
+                                            type: 2,
+                                            shade: 0.5,
+                                            title: '实验室申请表',
+                                            area: ['1016px', '606px'],
+                                            btn: ['提交', '取消'],    // 自定义设置多个按钮
+                                            success: function (layero, index) {
+                                                var iframe = window['layui-layer-iframe' + index];
+                                            },
+                                            btn1: function (index, elem) {
+                                                let body = layer.getChildFrame('body', index);
+                                                let Order_number = obj.data.Order_number
+                                                var expirement_content = body.find('#expirement_content').val();
+                                                var expirement_people = body.find('#expirement_people').val();
+                                                var expirement_place = body.find('#expirement_place').val();
+                                                var plan_device = body.find('#plan_device').val();
+                                                var plan_time = body.find('#plan_time').val();
+                                                $.ajax({
+                                                    type: 'get',
+                                                    url: '/appliacant_form/student',
+                                                    data: {
+                                                        Order_number: Order_number,
+                                                        expirement_content: expirement_content,
+                                                        expirement_people: expirement_people,
+                                                        expirement_place: expirement_place,
+                                                        plan_device: plan_device,
+                                                        plan_time: plan_time,
+                                                    },
+                                                    success: function (result) {
+                                                        if (result.code == '200') {
+                                                            layer.msg(result.msg, { icon: 1, time: 1000 }, function () {
+                                                            });
+                                                            layer.close(index);
+                                                        } else if (result.code == '400') {
+                                                            layer.close(index);
+                                                            layer.alert(result.msg, { icon: 2 }, function () {
+                                                                layer.close(index);
+                                                                window.location.reload()
+                                                            })
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        });
+                                        break;
+                                    case 'write_info_view':
+                                       
+                                        layer.open({
+                                            content: '/applicantion_form',
+                                            type: 2,
+                                            shade: 0.5,
+                                            title: '实验室申请表',
+                                            area: ['1016px', '706px'],
+                                            btn: ['退出'],    // 自定义设置多个按钮
+                                            success: function (layero, index) {
+                                                let body = layer.getChildFrame('body', index);
+                                                var iframe = window['layui-layer-iframe' + index];
+                                                var user_type = '查看'
+                                                var inputList = body.find("input")
+                                                getStudentInfo(Order_number, layero, index)
+                                                getTeacherInfo(Order_number, layero, index)
+                                                getMasterInfo(Order_number, layero, index)
+                                                iframe.getOrderId(Order_number, user_type);
+                                            },
+                                        });
+                                        break;
+                                    case 'master_write_info':
+                                        let user_type = '负责人'
+                                        var nowTime = writeCurrentDate()
+                                        layer.open({
+                                            content: '/applicantion_form',
+                                            type: 2,
+                                            shade: 0.5,
+                                            title: '实验室申请表',
+                                            area: ['1016px', '706px'],
+                                            btn: ['同意', '拒绝', '退出'],    // 自定义设置多个按钮
+                                            success: function (layero, index) {
+                                                let body = layer.getChildFrame('body', index);
+                                                var iframe = window['layui-layer-iframe' + index];
+                                                let Order_number = obj.data.Order_number
+                                                var inputList = body.find("input")
+                                                getStudentInfo(Order_number, layero, index)
+                                                getTeacherInfo(Order_number, layero, index)
+                                                iframe.getOrderId(Order_number, user_type);
+                                                body.find('#master_time').val(nowTime);
+                                                body.find('#lab_time').val(nowTime);
+                                            },
+                                            btn1: function (index, elem) {
+                                                let body = layer.getChildFrame('body', index);
+                                                let Order_number = obj.data.Order_number
+                                                var master_idea = body.find('#master_idea').val();
+                                                // var master_sign = body.find('#master_sign').val();
+                                                var lab_idea = body.find('#lab_idea').val();
+                                                // var lab_sign = body.find('#lab_sign').val();
+                                                layer.confirm('同意此人的申请请求？', {
+                                                    btnAlign: 'c'
+                                                    , btn: ['同意', '取消'] //可以无限个按钮
+                                                    , btn1: function (index, layero) {
+                                                        $.ajax({
+                                                            type: 'get',
+                                                            url: '/appliacant_form/master',
+                                                            data: {
+                                                                Order_number: Order_number,
+                                                                master_idea: master_idea,
+                                                                master_sign: '/images/sign.jpg',
+                                                                master_time: nowTime,
+                                                                lab_time: nowTime,
+                                                                lab_idea: lab_idea,
+                                                                lab_sign: '/images/sign.jpg',
+                                                            },
+                                                            success: function (result) {
+                                                                $.ajax({
+                                                                    type: 'get',
+                                                                    url: '/room_order/update',
+                                                                    data: {
+                                                                        Order_number: Order_number,
+                                                                        Status_id: '1',
+                                                                        write_status: '2',
+                                                                    },
+                                                                    success: function () {
+                                                                        layer.close(index, { time: 1000 });
+                                                                        layer.msg('已同意', { time: 1500 });
+                                                                        setTimeout(function () {
+                                                                            table.reload('studentReload', {
+                                                                                page: {
+                                                                                    curr: 1
+                                                                                }
+                                                                            }, 'data');
+                                                                            layer.closeAll('iframe')
+                                                                        }, 1000)
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                    , btn2: function (index, layero) {
+                                                        layer.msg('已取消');
+                                                        layer.close(index)
+                                                    }
+                                                })
+
+                                            }
+                                        });
+                                        break;
+                                    // 预约设备情况查看
+                                    case 'device_order_look':
+                                        console.log(obj.data)
+                                        layer.open({
+                                            content: '/device_order_info',
+                                            // content: '/room_order_verify',
+                                            type: 2,
+                                            shade: 0.5,
+                                            title: '设备预约信息',
+                                            area: ['1016px', '606px'],
+                                            btn: ['确定'],    // 自定义设置多个按钮
+                                            success: function (layero, index) {
+                                                let body = layer.getChildFrame('body', index);
+                                                var iframe = window['layui-layer-iframe' + index];
+                                                let Order_number = obj.data.Order_number
+                                                iframe.getOrderId(Order_number);
+                                            },
+                                        });
+                                        break;
+                                    case 'edit':
+                                        if (obj.data.Status_id === 1) {
+                                            layer.open({
+                                                content: '/labroom_state',
+                                                // content: '/room_order_verify',
+                                                type: 2,
+                                                shade: 0.5,
+                                                title: '预约确认单',
+                                                area: ['1016px', '606px'],
+                                                btn: ['确定'],    // 自定义设置多个按钮
+                                                success: function (layero, index) {
+                                                    let body = layer.getChildFrame('body', index);
+                                                    var iframe = window['layui-layer-iframe' + index];
+                                                    body.find("#state_id").text(obj.data.Status_id);  //密码
+                                                    let Applicant = obj.data.Applicant;
+                                                    let Rname = obj.data.Rname;
+                                                    let Start_time = obj.data.Start_time;
+                                                    let End_time = obj.data.End_time;
+                                                    let FID = obj.data.FID;
+                                                    let Purpose = obj.data.Purpose;
+                                                    let Order_number = obj.data.Order_number
+                                                    iframe.getOrderId(Purpose, Applicant, Rname, Start_time, End_time, FID, Order_number);
+                                                },
+                                            });
+                                        } else {
+                                            layer.confirm('只有通过审核的预约才能填写确认单')
+                                        }
+                                        break;
+                                    case 'agree':
+                                        if (obj.data.Status_id == 0) {
+                                            layer.confirm('同意此人的申请请求？', {
+                                                btnAlign: 'c'
+                                                // ,anim: 2
+                                                , btn: ['同意', '取消'] //可以无限个按钮
+                                                , btn1: function (index, layero) {
+                                                    $.ajax({
+                                                        type: 'post',
+                                                        url: '/room_update',
+                                                        data: {
+                                                            id: obj.data.id,
+                                                            FID: obj.data.FID,
+                                                            Rname: obj.data.Rname,
+                                                            Purpose: obj.data.Purpose,
+                                                            Start_time: obj.data.Start_time,
+                                                            End_time: obj.data.End_time,
+                                                            Applicant: obj.data.Applicant,
+                                                            Status_id: '1',
+                                                        },
+                                                        success: function () {
+                                                            layer.close(index, { time: 1000 });
+                                                            layer.msg('已同意', { time: 1500 });
+                                                            setTimeout(function () {
+                                                                table.reload('studentReload', {
+                                                                    page: {
+                                                                        curr: 1
+                                                                    }
+                                                                }, 'data');
+                                                                layer.close(index);
+                                                            }, 1000)
+
+
+                                                        }
+                                                    });
+                                                }
+                                                , btn2: function (index, layero) {
+                                                    layer.msg('已取消');
+                                                    layer.close(index)
+                                                }
+                                            })
+                                        } else {
+                                            layer.msg('您已经处理过该预约')
+                                        }
+                                        break;
+                                    case 'del':
+                                        if (obj.data.Status_id == 0) {
+                                            layer.confirm('拒绝此人的申请请求？', {
+                                                btnAlign: 'c'
+                                                , btn: ['拒绝', '取消'] //可以无限个按钮
+                                                , btn1: function (index, layero) {
+                                                    $.ajax({
+                                                        type: 'post',
+                                                        url: '/room_update',
+                                                        data: {
+                                                            id: obj.data.id,
+                                                            FID: obj.data.FID,
+                                                            Rname: obj.data.Rname,
+                                                            Purpose: obj.data.Purpose,
+                                                            Start_time: obj.data.Start_time,
+                                                            End_time: obj.data.End_time,
+                                                            Applicant: obj.data.Applicant,
+                                                            Status_id: '-1',
+                                                        },
+                                                        success: function () {
+                                                            layer.close(index, { time: 1000 });
+                                                            layer.msg('已拒绝', { time: 1500 });
+                                                            setTimeout(function () {
+                                                                table.reload('studentReload', {
+                                                                    page: {
+                                                                        curr: 1
+                                                                    }
+                                                                }, 'data');
+                                                                layer.close(index);
+                                                            }, 1000)
+                                                        }
+                                                    });
+                                                }
+                                                , btn2: function (index, layero) {
+                                                    layer.msg('已取消');
+                                                    layer.close(index)
+                                                }
+                                            })
+                                        } else {
+                                            layer.msg('您已经处理过该预约')
+                                        }
+                                }
+                            })
+                            table.on('toolbar(test)', function (obj) {
+                                switch (obj.event) {
+                                    case 'batch_agree':
+                                        var checkStatus = table.checkStatus(obj.config.id);
+                                        var data = checkStatus.data;
+                                        var Lists = [];
+                                        data.forEach(function (n, i) {
+                                            Lists.push(n.id)
+                                        });
+                                        if (Lists.length > 0) {
+                                            //for循环实现批量更新数据
+                                            layer.confirm('确定同意所选全部预约吗？', function (index) {
+                                                for (var i = 0; i < Lists.length; i++) {
+                                                    __agree_router(Lists[i]);
+                                                }
+                                                function __agree_router(List) {
+                                                    $.ajax({
+                                                        type: 'post',
+                                                        url: '/room_order/agree',
+                                                        data: 'id=' + List,
+                                                        success: function (data) {
+                                                            if (data.code == '200') {
+                                                                layer.msg(data.msg, { icon: 1, time: 1000 }, function () {
+                                                                    layer.close(index);
+                                                                });
+                                                                setTimeout(function () {
+                                                                    table.reload('studentReload', 'data');//表格重载
+                                                                }, 1500)
+                                                            } else if (data.code == '400') {
+                                                                layer.msg(data.msg, { icon: 2, time: 1500 })
+                                                            }
+                                                        }
+                                                    })
+                                                }
+                                            })
+                                        } else {
+                                            layer.msg('请先选择要同意的预约！', { icon: 2 });
+                                        }
+                                        break;
+                                    case 'batch_refuse':
+                                        var checkStatus = table.checkStatus(obj.config.id);
+                                        var data = checkStatus.data;
+                                        var Lists = [];
+                                        data.forEach(function (n, i) {
+                                            Lists.push(n.id)
+                                        });
+                                        if (Lists.length > 0) {
+                                            //for循环实现批量更新数据
+                                            layer.confirm('确定拒绝所选全部预约吗？', function (index) {
+                                                for (var i = 0; i < Lists.length; i++) {
+                                                    __agree_router(Lists[i]);
+                                                }
+                                                function __agree_router(List) {
+                                                    $.ajax({
+                                                        type: 'post',
+                                                        url: '/room_order/refuse',
+                                                        data: 'id=' + List,
+                                                        success: function (data) {
+                                                            if (data.code == '200') {
+                                                                layer.msg(data.msg, { icon: 1, time: 1000 }, function () {
+                                                                    layer.close(index);
+                                                                });
+                                                                setTimeout(function () {
+                                                                    table.reload('studentReload', 'data');//表格重载
+                                                                }, 1500)
+                                                            } else if (data.code == '400') {
+                                                                layer.msg(data.msg, { icon: 2, time: 1500 })
+                                                            }
+                                                        }
+                                                    })
+                                                }
+                                            })
+                                        } else {
+                                            layer.msg('请先选择要拒绝的预约！', { icon: 2 });
+                                        }
+                                        break;
+                                }
+                            })
+                            //监听事件
+                        });
+                    } else {
+                        window.location.href = "/login";
+                    }
+                }
+            });
+        });
+
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+
+    </SCRIPT>
+</body>
+
+</html>

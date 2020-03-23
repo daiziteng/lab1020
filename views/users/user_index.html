@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>前台主页</title>
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/packages/fullcalendar/dist/fullcalendar.min.css">
+    <link rel="stylesheet" type="text/css" href="/packages/fullcalendar/dist/scheduler.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/packages/echarts.js"></script>
+    <script type="text/javascript" src="/js/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+
+    <script type="text/javascript" src="/packages/fullcalendar/dist/fullcalendar.min.js"></script> -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/packages/fullcalendar/dist/fullcalendar.min.css">
+    <link rel="stylesheet" type="text/css" href="/packages/fullcalendar/dist/scheduler.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/packages/moment.js"></script>
+    <script type="text/javascript" src="/packages/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/js/jquery.jqprint-0.3.js"></script>
+    <script type="text/javascript" src="/js/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <script type="text/javascript" src="/packages/fullcalendar/dist/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="/packages/fullcalendar/dist/scheduler.js"></script>
+    <script type="text/javascript" src="/packages/fullcalendar/dist/locale/zh-cn.js"></script>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: burlywood;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: burlywood;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+
+        .layadmin-note {
+            cursor: pointer;
+        }
+
+        .layadmin-shortcut li .layui-icon {
+            height: 120px;
+            line-height: 130px;
+        }
+
+        /* .user_img {
+            width: 100px;
+            height: 150px;
+            margin: 8%;
+        } */
+
+        /*日历的高度设置*/
+        .layui-laydate,
+        .layui-laydate-hint {
+            line-height: 8px;
+            font-size: 6px;
+        }
+
+        .new_class img {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+
+                    </li>
+
+                    <li class="layui-nav-item" style='display:none' id='goto_behind'>
+                        <a href="/admin_index">后台主页
+                        </a>
+                    </li>
+
+
+                    <!-- <li id="chromeDownload" style="display:none;">
+                        <a href="https://chrome.en.softonic.com/">chrome下载</a>
+                    </li> -->
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+
+                            <img src="/images/touxiang.jpg" class="layui-nav-img">
+                            <span id="user_name"></span>
+                        </a>
+
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item">
+                            <a class="layui-this" href="javascript:;" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>个人主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item">
+                            <a class="" href="javascript:;" name="安全准入" id="homepage">
+                                <i class="layui-icon layui-icon-form"></i>
+                                <cite>安全准入</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="lab_info">信息预知</a></dd>
+                                <dd><a href="lab_danger_element">危险预知</a></dd>
+                                <dd><a href="lab_urgent_schema">应急预案</a></dd>
+                                <dd><a href="lab_exam">准入考试</a></dd>
+                            </dl>
+
+
+                        </li>
+                        <li class="layui-nav-item">
+                            <a class="" href="lab_order" name="实验室分布" id="homepage">
+                                <i class="layui-icon layui-icon-location"></i>
+                                <cite>实验室分布</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a href="javascript:;" name="实验室详情" id="">
+                                <i class="layui-icon layui-icon-tabs"></i>
+                                <cite>实验室详情</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="room_order">房间预约</a></dd>
+                                <dd><a href="lab_submit">实验记录</a></dd>
+                            </dl>
+                        </li>
+                    </ul>
+
+                    
+                </div>
+            </div>
+
+            <!--页面标签-->
+            <!--       <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            <div class="layui-tab">
+                <ul class="layui-tab-title" id="LAY_app_tabsheader">
+                    &lt;!&ndash;<li>&ndash;&gt;
+                    &lt;!&ndash;<i class="layui-icon layui-icon-home"></i>&ndash;&gt;
+                    &lt;!&ndash;</li>&ndash;&gt;
+                    <li id="chromeDownload" style="margin-left: 950px;display:none;">
+                        <a href="https://chrome.en.softonic.com/">chrome下载</a>
+                    </li>
+                </ul>
+            </div>
+        </div>-->
+            <!--页面主体-->
+            <div class="layui-body" style="margin-top: -5%">
+                <div class="layui-fluid">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md8">
+                            <div class="layui-card">
+                                <div class="layui-card-header">与我相关
+                                    <a style="display:none;float: right;" id='chromeDownload'
+                                        href="https://chrome.en.softonic.com/">chrome下载</a>
+                                </div>
+                                <div class="layui-card-body" style="height: 150px">
+
+                                    <div class="layui-carousel layadmin-carousel layadmin-shortcut"
+                                        style="width: 100%; height: 110px!important;">
+                                        <div>
+                                            <ul class="layui-row layui-col-space10 layui-this">
+                                                <li class="layui-col-xs3">
+                                                    <a href="room_self_order"><i class="layui-icon layui-icon-file"></i>
+                                                        <cite>我的预约</cite>
+                                                    </a>
+                                                </li>
+
+                                                <li class="layui-col-xs3"><a href="my_score"><i
+                                                            class="layui-icon layui-icon-list"></i>
+                                                        <cite>我的成绩</cite>
+                                                    </a>
+                                                </li>
+
+                                                <li class="layui-col-xs3"><a href="lab_submit"><i
+                                                            class="layui-icon layui-icon-form"></i>
+                                                        <cite>实验记录</cite>
+                                                    </a>
+                                                </li>
+                                                <li class="layui-col-xs3"><a href="my_info"><i
+                                                            class="layui-icon layui-icon-user"></i>
+                                                        <cite>个人资料</cite>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4">
+                            <div class="layui-card">
+                                <div class="layui-card-header">个人信息</div>
+                                <div class="layui-card-body" style="height: 150px;">
+
+                                    <div class="layui-carousel layadmin-carousel layadmin-shortcut"
+                                        style="width: 100%;height: 110px!important; margin-top: -2.5%">
+                                        <div>
+                                            <ul>
+                                                <li class="layui-col-xs12 " style="float: right; ">
+                                                    <table class=" layui-table">
+                                                        <colgroup>
+                                                            <col width="100">
+                                                            <col>
+                                                        </colgroup>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>学号/工号</td>
+                                                                <td id="stu_number"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>姓名</td>
+                                                                <td id="stu_name"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>专业</td>
+                                                                <td id="grade"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>类型</td>
+                                                                <td id="teacher"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-card">
+                                <div class="layui-card-header">4203预约情况表</div>
+                                <div class="layui-card-body" style="height: 510px">
+                                    <div id="calendar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-md6">
+                            <div class="layui-card">
+                                <div class="layui-card-header">4210预约情况表</div>
+                                <div class="layui-card-body" style="height: 510px">
+                                    <div id="calendar2"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="layui-footer ">
+                    <div class="layui-main">
+                        <p>
+                            Copyright @2019 6745工作室 如有问题请发送信息至邮箱 <a href='https://mail.qq.com/'>916485463@qq.com</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        setInterval(function () {
+            $.ajax({
+                type: 'post',
+                url: '/consolidate',
+                success: function (data) {
+                    if (data.ret_code === undefined) {
+                        window.location.href = "/login";
+                    }
+                    console.log(data.ret_code)
+                }
+            })
+        }, 31 * 60 * 1000)
+
+
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            //嵌套在指定容器中
+            laydate.render({
+                elem: '#test2'
+                , type: 'datetime'
+                , min: '0'  //设置今天之前的日期不可选
+                , position: 'static'
+                , btns: ['now']
+            });
+        });
+
+
+        layui.use('carousel', function () {
+            var carousel = layui.carousel;
+            //建造实例
+            carousel.render({
+                elem: '#test1'
+                , width: '100%' //设置容器宽度
+                , height: '100%'
+                , arrow: 'always' //始终显示箭头
+                //,anim: 'updown' //切换动画方式
+            });
+        });
+        // $('#user_name').html(username);//用户名
+
+        /*设置session*/
+        $(function () {
+            $.ajax({
+                type: 'post',
+                url: '/session',
+                success: function (data) {
+                    if (data.username != null) {
+                        $('#stu_number').html(data.user_id)
+                        $('#stu_name').html(data.username)
+                        $('#grade').html(data.major_in)
+                        $('#teacher').html(data.type);
+                        $('#user_name').html(data.username)
+                    } else {
+                        window.location.href = "/login";
+                    }
+                    if (data.customer_type == '管理员') {
+                        $('#goto_behind').show()
+
+                    }
+                }
+            });
+        });
+
+
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+        // < !--layui弹层控制-->
+        layui.use('layer', function () {
+            var layer = layui.layer;
+
+            $('.layuiadmin-reply').on('click', function () {
+
+                layer.prompt({
+                    formType: 2,//把输入框变成文本域的形式
+                    title: '输入回复内容',
+                    value: '',
+                    area: ['300px', '220px']
+                },
+                    function (val, index) {
+                        layer.msg('已回复');
+                        layer.close(index);
+                    });
+            });
+            //判断浏览器类型，非chrome则链接到下载地址
+            var isChrome = window.navigator.userAgent.indexOf("Chrome");
+            if (isChrome !== -1) {
+            } else {
+                alert('为获得良好的用户体验，建议使用chrome浏览器打开此网站,下载地址在页面右上角')
+                $('#chromeDownload').show()
+            }
+        });
+
+        $(document).ready(function () {
+            getRoomId('calendar', 4203);
+            getRoomId('calendar2', 4210);
+
+        });
+
+        function getRoomId(name, value) {
+            $.ajax({
+                dataType: 'json',
+                type: 'post',
+                url: '/meeting_room/read',
+                data: {
+                    lab_number: value,
+                },
+                success: function (json) {
+                    // console.log(json)
+                    var Final_array = [];
+
+                    for (let i = 0; i < json.length; i++) {
+                        let simple_date = {
+                            Start_time: '',
+                            End_time: '',
+                            time_area: '',
+                            Applicant: '',
+                            Purpose: '',
+                        };
+
+                        simple_date.Start_time = json[i].Start_time;
+                        simple_date.End_time = json[i].End_time;
+                        simple_date.time_area = json[i].time_area;
+                        simple_date.Applicant = json[i].Applicant;
+                        simple_date.Purpose = json[i].Purpose;
+
+                        let S_data = simple_date.time_area.split('、')
+                        let S_data2 = simple_date.End_time.split('、')
+                        for (j = 0; j < S_data.length; j++) {
+                            var split_data = {
+                                Start_time: simple_date.Start_time,
+                                End_time: '',
+                                time_area: '',
+                                Applicant: simple_date.Applicant,
+                                Purpose: simple_date.Purpose,
+                            };
+                            split_data.time_area = S_data[j]
+                            split_data.End_time = S_data2[j]
+
+
+                            let Tow_data = split_data.Start_time.split('T')
+                            let Two_data2 = split_data.time_area.split('-')
+                            let Start_time = Tow_data[0] + 'T' + Two_data2[0]
+                            let End_time = Tow_data[0] + 'T' + Two_data2[1]
+
+                            let Title = split_data.End_time + '(' + split_data.Applicant + '-' + split_data.Purpose + ')'
+
+                            var final_data = {
+                                Start_time: Start_time,
+                                End_time: End_time,
+                                Title: Title,
+                            }
+                            Final_array.push(final_data)
+                        }
+                    }
+
+
+
+
+                    console.log(Final_array)
+
+
+
+                    var events = [];
+                    for (var i = 0; i < Final_array.length; i++) {
+                        var event = {
+                            title: Final_array[i].Title,
+                            start: new Date(Final_array[i].Start_time),
+                            end: new Date(Final_array[i].End_time),
+                            backgroundColor: '#00c0ef',
+                            borderColor: '#00c0ef'
+                        };
+                        events.push(event);
+                    }
+
+
+
+
+                    let defaultView = 'agendaWeek';
+                    let header = {
+                        left: 'prev,next today  myCustomButton',
+                        center: 'title',
+                        right: 'month,agendaWeek,listMonth,',
+                    };
+                    renderCalendar(name, events, defaultView, header)
+
+                }
+            });
+        }
+
+
+
+        function renderCalendar($el, event, defaultView, header, resources) {
+            $('#' + $el).fullCalendar('destroy');//重新加载前销毁日历
+            $('#' + $el).fullCalendar('removeEvents');//重新加载前移除事件
+            $('#' + $el).fullCalendar('changeView', defaultView);//切换视图
+            $('#' + $el).fullCalendar({
+                schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                defaultView: defaultView, // or 'agenda' or 'basic'
+                firstDay: 1,
+                // contentHeight: 685,//div的高度
+                contentHeight: 450,//div的高度
+                // timeFormat: 'H:mm',
+                // height: 825,
+                // height: 825,
+                eventLimit: true, // 事件太多时, 折叠展示
+                slotEventOverlap: true, //相同时间段的多个日程视觉上是否允许重叠，默认true允许
+                slotDuration: "00:30:00",      //一格时间槽代表多长时间，默认00:30:00（30分钟）
+                // eventLimitText: "更多",
+                timeFormat: 'H:mm',//改变时间为24时小时制
+                locale: 'zh-cn',
+                customButtons: {
+                    myCustomButton: {
+                        text: '打印',
+                        click: function () {
+                            $("#print").jqprint();
+                        }
+
+                    },
+                },
+
+                monthNames: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], //月份自定义命名
+                // monthNamesShort: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], //月份缩略命名（英语比较实用：全称January可设置缩略为Jan）
+                monthNamesShort: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], //月份缩略命名（英语比较实用：全称January可设置缩略为Jan）
+                // 标题格式化
+                header: header,
+                resources: resources,
+                allDaySlot: false,
+                minTime: "8:00",
+                maxTime: "22:00",
+                // displayEventEnd: true,
+                displayEventTime: false, //是否展示时间
+                // navLinks: true,
+                editable: false,
+                eventStartEditable: false,      //Event日程开始时间可以改变，默认true，如果是false其实就是指日程块不能随意拖动，只能上下拉伸改变他的endTime
+                eventAllow: false,
+                // selectAllow: false,
+                // events: eventsData,//日历上显示的事件
+                eventOverlap: true,//拖动和缩放时禁止重叠
+                selectable: true,
+                selectHelper: true,         //接selectable，周/日视图在选择时是否预先画出“日程区块”的样式出来
+
+                resourceRender: '',
+                dayClick: function (date, jsEvent, view) {//空白的日期区，单击时触发
+                },
+                select: function (start, end, jsEvent, view, resource) {
+
+                },
+                eventClick: function (event, jsEvent, view) {
+
+                },
+            });
+            $('#' + $el).fullCalendar('renderEvents', event, 'true');
+        }
+    </script>
+
+</body>
+
+</html>

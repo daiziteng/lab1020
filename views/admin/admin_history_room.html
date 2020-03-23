@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <!--<script type="text/javascript" src="/js/admin.js"></script>-->
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>实验室历史数据管理</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: #009688;
+        }
+        .layui-layout-admin .layui-logo {
+            background-color: #009688;
+        }
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="layui-layout-body">
+<div id="LAY_app">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <!--导航栏左侧区域-->
+            <ul class="layui-nav layui-layout-left">
+                <li class="layui-nav-item layadmin-flexible">
+                    <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                        <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                    </a>
+                </li>
+
+            </ul>
+            <!--导航栏右侧区域-->
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                        <span></span>
+                    </a>
+                </li>
+                <li class="layui-nav-item"><a href="">退出</a></li>
+            </ul>
+        </div>
+
+        <div class="layui-side layui-side-menu">
+            <div class="layui-side-scroll">
+                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                <div class="layui-logo" lay-href="">
+                    <span>实验室安全信息管理系统</span>
+                </div>
+                <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                    lay-filter="layadmin-system-side-menu">
+                    <li class="layui-nav-item">
+                        <a class="" href="javascript:;"  name="主页" id="homepage">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <cite>主页</cite>
+                            <span class="layui-bav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="/admin_index">后台主页</a></dd>
+                        </dl>
+                    </li>
+
+                    <li class="layui-nav-item "><a href="#" name="云链接" id="link_others">
+                        <i class="layui-icon layui-icon-headset"></i>
+                        <cite>实验室程序管理</cite>
+                    </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="admin_lab_info" >一般信息</a></dd>
+                            <dd><a href="admin_lab_danger">风险信息</a>
+                            </dd>
+                            <dd><a href="admin_lab_urgent">应急管理</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item layui-nav-itemed"><a href="#" name="云链接" id="background_manage">
+                        <i class="layui-icon layui-icon-headset"></i>
+                        <cite>实验室后台管理</cite>
+                    </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;" class="layui-nav-itemed">仪器设备管理</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="admin_device_manage">设备管理</a></dd>
+                                    <dd><a href="admin_cylinder_manage">气瓶管理</a></dd>
+                                    <dd><a href="/admin_reagent_manage">试剂管理</a></dd>
+                                </dl>
+                            </dd>
+                            <dd ><a href="javascript:;" class="layui-nav-itemed">预约管理</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="/admin_room_order"  >实验室预约</a></dd>
+                                    <!-- <dd><a href="javascript:;">设备预约</a></dd>
+                                    <dd><a href="/admin_reagent_order">试剂预约</a></dd> -->
+                                </dl>
+                            </dd>
+                            <dd><a href="/admin_user_manage" name="用户管理" id="user_manage">用户管理</a></dd>
+                            <dd class="layui-nav-itemed"><a href="/admin_info_manage" name="实验室录入清单管理"
+                              >实验室录入清单管理</a></dd>
+                            <dd><a href="javascript:;" class="layui-nav-itemed">检查表</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="admin_security_check">日常安全检查</a></dd>
+                                    <dd><a href="admin_security_check2"> 高校实验室安全检查</a></dd>
+                                    <dd><a href="admin_security_check3"> 安全自查情况登记表</a></dd>
+                                    <!-- <dd><a href="#">特殊安全检查</a></dd> -->
+                                </dl>
+                            </dd>
+                            <dd class="layui-nav-itemed"><a href="javascript:;" class="layui-nav-itemed">历史数据管理</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="#" class="layui-this">实验室</a></dd>
+                                    <dd><a href="#">仪器设备</a></dd>
+                                    <dd><a href="#">试剂</a></dd>
+                                    <dd><a href="#">用户</a></dd>
+                                </dl>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a class="" href="admin_journal" name="主页" id="daily">
+                            <i class="layui-icon layui-icon-slider"></i>
+                            <cite>实验室管理日志</cite>
+                            <span class="layui-bav-more"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--页面标签-->
+        <div class="layadmin-pagetabs" id="LAY_app_tabs">
+
+        </div>
+        <!--页面body部分-->
+        <div class="layui-body">
+            <div class="layui-fluid">
+                <div class="layui-card">
+                    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                        <div class="layui-form-item">
+                            <h3 style="font-size: 30px;text-align: center;color: #ee4411">实验室预约历史数据管理</h3>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm12">
+                        <div class="layui-card">
+                            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">实验室编号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="room_id" name="id" placeholder="请输入"
+                                                   autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">审核状态</label>
+                                        <div class="layui-input-block">
+                                            <select name="state" id="state_id" lay-verify="required">
+                                                <option value=""></option>
+                                                <option value="1">已批准</option>
+                                                <option value="-1">已拒绝</option>
+                                                <option value="0">待处理</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">预约时间</label>
+                                        <div class="layui-input-block">
+                                            <select name="time" id="time" lay-verify="required">
+                                                <option value=""></option>
+                                                <option value="1">今日</option>
+                                                <option value="7">过去7天</option>
+                                                <option value="30">过去一个月</option>
+                                                <option value="365">过去一年</option>
+                                                <option value="all">过去全部数据</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <div class="layui-btn layuiadmin-btn-list" data-type="reload" id="search">
+                                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-card-body">
+                                <div class="layui-card-body">
+                                    <table id="roomView" lay-filter="test"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+</script>
+<!--数据模板//显示处理状态-->
+<script type="text/html" id="titleTpl">
+    {{#  if(d.Status_id == -1){ }}
+    <button class="layui-btn layui-btn-danger layui-btn-xs">已拒绝</button>
+    {{#  } else if(d.Status_id == 0){ }}
+    <button class="layui-btn layui-btn-xs">待处理</button>
+    {{#  } else { }}
+    <button class="layui-btn layui-btn-normal layui-btn-xs">已批准</button>
+    {{#  } }}
+</script>
+
+<script>
+    $('#username').html(username);
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+    layui.use('table', function () {
+        var table = layui.table;
+        table.render({
+            //默认为get请求
+            elem: '#roomView'
+            , url: '/history/room'
+            , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , id: 'testReload'
+            // ,skin: 'row' //表格风格
+            , limits: [5, 10, 15,100]
+            , limit: 5 //每页默认显示的数量
+            , page: true
+            , toolbar: '#toolbarDemo'
+            , cols: [[
+                {type: 'checkbox'}
+                , {field: 'FID', title: '房间编号', sort: true, minwidth: 80}
+                , {field: 'Rname', title: '教室名称', minwidth: 150}
+                , {field: 'Start_time', title: '开始时间', minwidth: 150,sort: true,}
+                , {field: 'End_time', title: '结束时间', minwidth: 80,sort: true,}
+                , {field: 'Purpose', title: '用途', minwidth: 80}
+                , {field: 'Applicant', title: '申请人',}
+                , {field: 'Status_id', title: '审核状态', sort: true,templet: '#titleTpl', align: 'center'}
+                , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150, align: 'center'}
+            ]],
+        });
+        //侧边栏伸缩
+        $('#LAY_app_flexible').on('click', function () {
+            let a = $('#LAY_app').attr('class');
+            if (a == undefined || a == '') {
+                $('#LAY_app').addClass('layadmin-side-shrink').end(setTimeout(function () {
+                    table.reload('roomView',{});//表格重载
+                },200));
+                $('#LAY_app_flexible').addClass('layui-icon-spread-left')
+            } else {
+                $('#LAY_app').removeClass('layadmin-side-shrink').end(setTimeout(function () {
+
+                    window.location.reload()
+                },200));
+                $('#LAY_app_flexible').removeClass('layui-icon-spread-left')
+            }
+        })
+        //
+        table.on('tool(test)', function (obj) {
+            switch (obj.event) {
+                case'del':
+                    if(obj.data.Status_id != 2){
+                        layer.confirm('删除该条记录？', {
+                            btnAlign: 'c'
+                            // ,anim: 2
+                            , btn: ['确定', '取消'] //可以无限个按钮
+                            , btn1: function (index, layero) {
+                                $.ajax({
+                                    type:'post',
+                                    url:'/room_update',
+                                    data:{
+                                        id:obj.data.id,
+                                        FID:obj.data.FID,
+                                        Rname:obj.data.Rname,
+                                        Purpose:obj.data.Purpose,
+                                        Start_time:obj.data.Start_time,
+                                        End_time:obj.data.End_time,
+                                        Applicant:obj.data.Applicant,
+                                        Status_id:'-1',
+                                    },
+                                    success:function () {
+                                        layer.close(index,{time:500});
+                                        layer.msg('已删除',{time:800});
+                                        setTimeout(function () {
+                                            window.location.reload()
+                                        },800)
+                                    }
+                                });
+                            }
+                            , btn2: function (index, layero) {
+                                layer.msg('已取消');
+                                layer.close(index)
+                            }
+                        })
+                    }else{
+                        layer.msg('删除该条记录')
+                    }
+            }
+        })
+        //监听事件
+        table.on('toolbar(test)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            console.log(obj.event)
+            switch (obj.event) {
+                case 'add':
+                    // layer.msg('添加');
+                    layer.open({
+                        content: 'https://www.imooc.com/',
+                        type: 2,
+                        maxmin: true,
+                        title: '新增用户',
+                        area: ["500px", "460px"],
+                        btn: ['确定', '取消'],    // 自定义设置多个按钮
+                        btn1: function (index, elem) {
+                            layer.msg('新增成功');
+                            layer.close(index);
+                        },
+                        btn2: function (index, elem) {
+                            layer.msg('已取消');
+                            layer.close(index);
+                        },
+                        btnAlign: 'c',// 设置按钮位置
+                    });
+
+                    break;
+                case 'delete':
+                    layer.msg('删除');
+                    break;
+            }
+        });
+        // <!--查询功能-->
+        var active = {
+            reload: function () {
+                var index = layer.msg('查询中，请稍候...', {icon: 16, time: false, shade: 0});
+                setTimeout(function () {
+                    table.reload('testReload', {
+                        page: {
+                            curr: 1
+                        }
+                        , where: {
+                            room_id: $('#room_id').val(),
+                            state_id: $('#state_id').val(),
+                            time: $('#time').val(),
+                        }
+                    }, 'data');
+                    layer.close(index);
+                }, 800)
+            }
+        };
+        $('#search').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        })
+
+
+    });
+
+
+</script>
+</body>
+</html>

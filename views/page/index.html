@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link type="text/css" rel="stylesheet" href="/packages/bootstrap-table-develop/dist/bootstrap-table.css">
+    <link type="text/css" rel="stylesheet"
+          href="/packages/bootstrap-table-develop/docs/assets/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <link rel="stylesheet" href="/css/zTreeStyle.css">
+    <script type="text/javascript" src="/packages/jquery.ztree.core.js"></script>
+    <link rel="stylesheet" href="/css/ol.css">
+    <script type="text/javascript" src="/js/ol.js"></script>
+    <title>首页</title>
+    <style>
+        body, html {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+        .lineContent{
+            color: red;
+            font-size: 14px;
+        }
+
+        #Left {
+            position: fixed;
+            width: 24em;
+            background: rgba(0, 0, 0, 0.35);
+            top: 50px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        #Right {
+            position: fixed;
+            width: 25em;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            top: 50px;
+            right: 0px;
+        }
+
+        #Middle {
+            /*z-index:999;*/
+            /*background-color:red;*/
+            position: fixed;
+            overflow: hidden;
+            /*background: rgba(0,0,0,0.1);*/
+            top: 50px;
+            left: 24em;
+            right: 25em;
+            height: 100%;
+            cursor: move;
+
+        }
+
+        .leftBox {
+            position: relative;
+            padding: 10px;
+            width: 23em;
+        }
+
+        .rightBox .nav-tabs .active {
+            /*padding:10px;*/
+            top: 1px;
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 0px;
+            background-color: rgba(255, 255, 255, 0.99);
+            font-size: 13px;
+            font-weight: bolder;
+            color: black;
+        }
+
+        .tabBox {
+
+            padding: 5px;
+            margin-left: 10.5px;
+        }
+
+        .tabBox .row {
+            cursor: pointer;
+        }
+        .tabBox .lineRow_1{
+            margin-top: 50px;
+            display: none;
+        }
+
+        .lineText {
+            padding-left: 3px;
+            text-align: left;
+            float: left;
+            line-height: 30px;
+            height: 30px;
+            width: 6.25em;
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 1px 1px 4px #fff;
+            /*margin-bottom:5px;*/
+        }
+
+        #map {
+            /*width: 800px;*/
+            height: 85%;
+            /*background-color: rosybrown;*/
+        }
+
+        .ol-popup {
+            position: absolute;
+            background-color: white;
+            padding: 5px;
+            border-radius: 10px;
+            border: 1px solid #cccccc;
+            bottom: 12px;
+            left: -50px;
+            width: 100px;
+        }
+
+        #close {
+            float: right;
+        }
+
+        .ol-popup:after, .ol-popup:before {
+            top: 100%;
+            border: solid transparent;
+            content: " ";
+            height: 0px;
+            width: 0px;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .ol-popup:after {
+            border-top-color: white;
+            border-width: 10px;
+            left: 48px;
+            margin-left: -9px;
+        }
+
+        .ol-popup:hover {
+            cursor: pointer;
+        }
+
+
+        #popup-content {
+            font-size: 14px;
+            font-family: "微软雅黑";
+        }
+
+
+        #popup-content .markerInfo {
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #popup-content .markerInfo:hover {
+            color: red;
+        }
+    </style>
+
+</head>
+<body onload="cde()">
+
+<!--导航栏-->
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="login.html"><img src="/images/header.png" alt=""/></a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a class="nav-location" href="index">系统首页</a></li>
+                <li><a class="nav-location" href="center">中心概况</a></li>
+                <li><a class="nav-location" href="manage">综合管理</a></li>
+                <li><a class="nav-location" href="device">实验室仪器设备</a></li>
+                <li><a href="Smanage">实验管理</a></li>
+                <li><a class="nav-location" href="资产管理.html">资产管理</a></li>
+                <li><a class="nav-location" href="dailywork">日常办公</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!--左菜单样式-->
+<div id="Left">
+    <div class="leftBox">
+        <div class="searchBox form-inline">
+            <div class="input-group col-sm-8">
+                <input type="text" id="searchText" class="form-control from-control-sm" placeholder="请输入查询信息">
+            </div>
+            <button id="searchBtn" type="button" class="btn btn-primary btn-sm" style="">查询</button>
+            <button id="backBtn" type="button" class="btn btn-primary btn-sm" style="">返回</button>
+        </div>
+        <div class="content_wrap">
+            <div class="zTreeDemoBackground left">
+                <ul id="treeDemo" class="ztree" style="margin-top: 0; width: 210px;"></ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--中间栏-->
+<div id="Middle">
+    <div id="map">
+    </div>
+    <div id="popup" class="ol-popup">
+        <a id="close" href="#"
+           class="close">×</a>
+        <div id="popup-content"></div>
+    </div>
+</div>
+
+
+<!--右边栏-->
+<div id="Right">
+    <div class="rightBox">
+        <div id="tab">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active">资环楼</a>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-content tabBox">
+            <!--楼层信息-->
+            <div class="row lineRow">
+                    <div class="clo-6 lineText">
+                        <span class="lineTitle">楼层信息:</span>
+                    </div>
+                    <div class="clo-6 lineText">
+                        <span class="lineContent" id="floor_info"></span>
+                    </div>
+                    <div class="clo-6 lineText">
+                        <span class="lineTitle">办公室数目:</span>
+                    </div>
+                    <div class="clo-6 lineText">
+                        <span class="lineContent" id="meeting_room"></span>
+                    </div>
+                    <div class="clo-6 lineText">
+                        <span class="lineTitle">实验室数目:</span>
+                    </div>
+                    <div class="clo-6 lineText">
+                        <span class="lineContent" id="lab_room"></span>
+                    </div>
+                    <div class="clo-6 lineText">
+                        <span class="lineTitle">设备总数:</span>
+                    </div>
+                    <div class="clo-6 lineText">
+                        <span class="lineContent" id="device_number"></span>
+                    </div>
+                    <div class="clo-6 lineText">
+                        <span class="lineTitle">试剂总量:</span>
+                    </div>
+                    <div class="clo-6 lineText">
+                        <span class="lineContent" id="reagent_number"></span>
+                    </div>
+                    <div class="clo-6 lineText">
+                        <span class="lineTitle">气瓶总数:</span>
+                        <span class="lineContent"></span>
+                    </div>
+                    <div class="clo-6 lineText">
+                        <span class="lineContent" id="cylinder_number"></span>
+                    </div>
+                </div>
+            <!--房间信息-->
+            <div class="row lineRow_1">
+            <div class="clo-6 lineText">
+                <span class="lineTitle">房间名称:</span>
+            </div>
+            <div class="clo-6 lineText">
+                <span class="lineContent" id="room_name"></span>
+            </div>
+            <div class="clo-6 lineText">
+                <span class="lineTitle">房间编号:</span>
+            </div>
+            <div class="clo-6 lineText">
+                <span class="lineContent" id="room_id"></span>
+            </div>
+                <div class="clo-6 lineText">
+                <span class="lineTitle">设备数量:</span>
+            </div>
+                <div class="clo-6 lineText">
+                    <span class="lineContent" id="r_device_number"></span>
+                </div>
+                <div class="clo-6 lineText">
+                    <span class="lineTitle">试剂数量:</span>
+                </div>
+                <div class="clo-6 lineText">
+                    <span class="lineContent" id="r_reagent_number"></span>
+                </div>
+                <div class="clo-6 lineText">
+                    <span class="lineTitle">气瓶数量:</span>
+                </div>
+                <div class="clo-6 lineText">
+                    <span class="lineContent" id="r_cylinder_number"></span>
+                </div>
+                <div class="clo-6 lineText">
+                    <span class="lineTitle">负责人:</span>
+                </div>
+                <div class="clo-6 lineText">
+                    <span class="lineContent" id="room_master"></span>
+                </div>
+            </div>
+
+        </div>
+
+        </div>
+
+
+        </div>
+
+
+</body>
+<script type="text/javascript">
+    $('#class_name').html('分级实验室');
+    let setting = {
+        data: {
+            simpleData: {
+                enable: true
+            },
+        },
+
+    };
+    let zNodes = [
+        {
+            name: "武汉科技大学", open: true, icon: "./images/1_open.png",
+            children: [{
+                name: "资环学院教五楼", icon: "./images/8.png",
+                children: [
+                    {
+                        name: "教五楼一层", icon: "./images/1_close.png", click: 'cde()',
+                        children: [
+                            {name: "5111-分级实验室", icon: "./images/1_close.png", click: 'abc()'},
+                            {name: "5112-电磁实验室", icon: "./images/1_close.png",},
+                            {name: "5113-萃取实验室", icon: "./images/1_close.png",},
+                            {name: "5114-制样实验室", icon: "./images/1_close.png",},
+                            {name: "5115-蒸馏实验室", icon: "./images/1_close.png",},
+                            {name: "5116-矿加实验室", icon: "./images/1_close.png",}
+                        ]
+                    },
+                    {name: "教五楼二层", icon: "./images/1_close.png", click: 'floor_2()'},
+                    {name: "教五楼三层", icon: "./images/1_close.png",click: 'floor_3()'},
+                    {name: "教五楼四层", icon: "./images/1_close.png"},
+                    {name: "教五楼五层", icon: "./images/1_close.png"}]
+            }]
+        }
+    ];
+    $(document).ready(function () {
+        $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+    });
+
+
+    function abc() {
+        room_info();
+        $('#map').empty()
+        var bounds = [6639.623385839235, 2874.0475795955217,
+            16639.62334957785, 7874.899182656452];
+
+        var untiled = new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+                ratio: 1,
+                url: 'http://localhost:8080/geoserver/classroom/wms',
+                params: {
+                    'VERSION': '1.1.1',
+                    "STYLES": '',
+                    "LAYERS": 'classroom:5111_lab_room',
+                    "exceptions": 'application/vnd.ogc.se_inimage',
+                }
+            })
+        });
+        var tiled = new ol.layer.Tile({
+            visible: false,
+            source: new ol.source.TileWMS({
+                params: {
+                    tiled: true,
+                    "STYLES": '',
+                }
+            })
+        });
+        var projection = new ol.proj.Projection({
+            code: 'EPSG:4547',
+            units: 'm',
+            global: true
+        });
+        var map = new ol.Map({
+
+            target: 'map',
+            layers: [
+                untiled,
+                tiled
+            ],
+            view: new ol.View({
+                projection: projection
+            })
+        });
+        map.getView().fit(bounds, map.getSize());
+
+    }
+
+    function cde() {
+        floor_1();
+        $('#map').empty();
+        let beijing = [93520.1663741902, 56026.09513056703];
+
+        var bounds = [89520.1663741902, 54026.09513056703,
+            155146.4970533887, 67769.53973435296];
+
+        let kk = ['EPSG:4547', 'EPSG:2908']
+        var untiled = new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+                ratio: 1,
+                url: 'http://localhost:8080/geoserver/classroom/wms',
+                params: {
+                    'VERSION': '1.1.1',
+                    "LAYERS": 'classroom:J5_F01_LCM_Poly',
+                }
+            })
+        });
+        var projection = new ol.proj.Projection({
+            code: kk[0],
+            units: 'm',
+            axisOrientation: 'neu',
+            global: false
+        });
+        var map = new ol.Map({
+            target: 'map',
+
+            layers: [
+                untiled,
+            ],
+            view: new ol.View({
+                projection: projection,
+            })
+        });
+        map.getView().fit(bounds, map.getSize());
+
+
+        //要素信息--弹出框里面的内容
+        var featureInfo = {
+            //地理位置
+            geo: beijing,
+            //属性信息
+            att: {
+                //标题
+                title: "lab",
+                //超链接
+                titleURL: "javascript:void(0)",
+                // titleClick:'method()',
+                //文本内容
+                // text: "北京，简称“京”，中华人民共和国首都、直辖市、国家中心城市、超大城市，全国政治中心、文化中心、国际交往中心、科技创新中心，是中国共产党...",
+                text: "分级实验室，是资环学院最有名的实验室之一",
+                imgURL: "images/1_close.png"
+            },
+        };
+        //创建标签样式
+        var createLabelStyle = function (feature) {
+            //返回一个样式
+            return new ol.style.Style({
+                image: new ol.style.Icon({
+                    //标注图片和文字之间的距离
+                    anchor: [0.5, 30],
+                    //标注样式的起点位置
+                    anchorOrigin: 'top-right',
+                    //X方向单位
+                    anchorXUnits: 'fraction',
+                    //Y方向单位
+                    anchorYUnits: 'pixels',
+                    //偏移起点位置的方向
+                    offsetOrigin: 'top-right',
+                    //透明度
+                    opacity: 0.75,
+                    //图标的url
+                    src: 'images/1_open.png'
+                }),
+                //文本样式
+                text: new ol.style.Text({
+                    //对其方式
+                    textAlign: 'center',
+                    //基准线
+                    textBaseline: 'middle',
+                    //文字样式
+                    font: 'normal 14px 微软雅黑',
+                    //文本内容
+                    text: feature.get('name'),
+                    //文本填充样式
+                    fill: new ol.style.Fill({color: '#aa3300'}),
+                    //笔触
+                    stroke: new ol.style.Stroke({color: '#ffcc33', width: 2})
+                })
+            });
+        };
+        //实例化Vector要素，通过矢量图层添加到地图容器中
+        var iconFeature = new ol.Feature({
+            geometry: new ol.geom.Point(beijing),
+            name: '分级实验室',
+        });
+
+        //设置样式
+        iconFeature.setStyle(createLabelStyle(iconFeature));
+        //矢量标注的数据源
+        var vectorSource = new ol.source.Vector({
+            features: [iconFeature]
+        });
+        //矢量标注图层
+        var vectorLayer = new ol.layer.Vector({
+            source: vectorSource
+        });
+        //将矢量标注图层添加到map中
+        map.addLayer(vectorLayer);
+
+        var container = document.getElementById('popup');
+        //获取id为popup-content的div标签
+        var content = document.getElementById('popup-content');
+
+        //初始化一个覆盖层
+        var popup = new ol.Overlay({
+            //元素内容
+            element: container,
+
+            autoPan: true,
+
+
+            ////覆盖层如何与位置坐标匹配
+            positioning: 'bottom-center',
+            //事件传播到地图视点的时候是否应该停止
+            stopEvent: false,
+        });
+        //将覆盖层添加到map中
+        map.addOverlay(popup);
+
+        function addFeatureInfo(info) {
+            //创建一个a标签元素
+            var elementA = document.createElement('a');
+
+            //设置a标签的样式类
+            elementA.className = 'markerInfo';
+            //设置a标签的超链接地址
+            elementA.href = info.att.titleURL;
+            //给a标签赋予一个点击事件
+            $(elementA).click(function () {
+                abc();
+            });
+            console.log(elementA);
+
+            //设置a标签的文本内容
+            setInnerText(elementA, info.att.title);
+            //将a标签元素添加到内容div标签中
+            content.appendChild(elementA);
+
+            //创建一个div标签元素
+            var elementDiv = document.createElement('div');
+            //设置div标签的内容
+            setInnerText(elementDiv, info.att.text);
+            //将div标签加入到内容div标签中
+            content.appendChild(elementDiv);
+
+            //创建一个图像标签
+            var elementImg = document.createElement('img');
+            //指定图像标签的URL
+            elementImg.src = info.att.imgURL;
+            //将img标签加入到内容div标签中
+            content.appendChild(elementImg);
+
+
+        }
+
+        //设置文本函数
+        function setInnerText(element, text) {
+            if (typeof element.textContent == 'string') {
+                element.textContent = text;
+            } else {
+                element.innerText = text;
+            }
+        }
+
+        //为map注册一个单击事件的监听
+        map.on('click', function (evt) {
+            //获取坐标点
+            var coordinate = evt.coordinate;
+
+            var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+                //在视口中遍历所有具有像素颜色的图层，如果图层存在，则返回
+                return feature;
+            });
+            console.log(feature);
+
+            if (feature) {
+                //将内容div的内容清空
+                console.log(content);
+
+                content.innerHTML = '';
+                //添加要素信息
+                addFeatureInfo(featureInfo);
+                $('#popup').show();
+                //如果当前popup覆盖层没有坐标，则设置坐标
+                if (popup.getPosition() == undefined) {
+                    popup.setPosition(coordinate);
+                }
+            } else {
+                // $('#popup').hide();
+            }
+
+        });
+        //为地图注册一个鼠标悬浮效果
+        map.on('pointermove', function (e) {
+            //Returns the map pixel position for a browser event relative to the viewport.
+            //获取map的像素位置信息
+            var pixel = map.getEventPixel(e.originalEvent);
+
+            //hasFeatureAtPixel(pixel, opt_options)
+            //Detect if features intersect a pixel on the viewport.
+            //map视口中是否包含某个要素
+            var hit = map.hasFeatureAtPixel(pixel);
+            //设置符合当前条件的鼠标样式
+            map.getTargetElement().style.cursor = hit ? 'pointer' : '';
+            // console.log(featureInfo.att.title)
+
+        });
+        let close = $('#close');
+        close.click(function () {
+            $('#popup').hide();
+        });
+    }
+
+    function floor_1() {
+        $('#floor_info').html('教五楼一层');
+        $('#cylinder_number').html('55'+'瓶')
+        $('#meeting_room').html('5'+'个')
+        $('#lab_room').html('10'+'个')
+        $('#device_number').html('78'+'台')
+        $('#reagent_number').html('254'+'支')
+    }
+    function floor_2() {
+        $('#floor_info').html('教五楼二层');
+        $('#cylinder_number').html('50'+'瓶')
+        $('#meeting_room').html('4'+'个')
+        $('#lab_room').html('12'+'个')
+        $('#device_number').html('89'+'台')
+        $('#reagent_number').html('304'+'支')
+    }
+    function floor_3() {
+        $('#floor_info').html('教五楼三层');
+        $('#cylinder_number').html('60'+'瓶')
+        $('#meeting_room').html('6'+'个')
+        $('#lab_room').html('11'+'个')
+        $('#device_number').html('63'+'台')
+        $('#reagent_number').html('274'+'支')
+    }
+
+    function room_info() {
+        $('.lineRow_1').show()
+        $('#room_name').html('分级实验室');
+        $('#room_id').html('5111');
+        $("#r_device_number").html('4'+'台');
+        $("#r_reagent_number").html('15'+'支');
+        $("#r_cylinder_number").html('1'+'瓶');
+        $("#room_master").html('崔瑞');
+
+
+    }
+
+
+
+
+</script>
+
+</html>

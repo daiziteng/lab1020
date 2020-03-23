@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/packages/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>我的预约</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: burlywood;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: burlywood;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+
+        body .demo-class .layui-layer-btn .layui-layer-btn0 {
+            border-color: red;
+            background-color: red;
+        }
+
+        .hiprint-printPanel .hiprint-printPaper:last-child {
+            page-break-after: avoid;
+        }
+
+        .hiprint-printPaper.design {
+            border: 1px dashed rgba(174, 170, 170, .7);
+            margin-left: 20%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="/images/touxiang.jpg" class="layui-nav-img">
+                            <span id="user_name"></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item">
+                            <a href="user_index" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>个人主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item ">
+                            <a class="" href="javascript:;" name="安全准入" id="homepage">
+                                <i class="layui-icon layui-icon-form"></i>
+                                <cite>安全准入</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="lab_info">信息预知</a></dd>
+                                <dd><a href="lab_danger_element">危险预知</a></dd>
+                                <dd><a href="lab_urgent_schema">应急预案</a></dd>
+                                <dd><a href="lab_exam">准入考试</a></dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item">
+                            <a href="lab_order" name="实验室分布" id="homepage">
+                                <i class="layui-icon layui-icon-location"></i>
+                                <cite>实验室分布</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed ">
+                            <a href="javascript:;" name="实验室详情" id="">
+                                <i class="layui-icon layui-icon-tabs"></i>
+                                <cite>实验室详情</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="room_order" class="layui-this">房间预约</a></dd>
+                                <dd><a href="lab_submit">实验记录</a></dd>
+                            </dl>
+                        </li>
+                    </ul>
+                    
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            </div>
+            <!--页面主体-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-card">
+                        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                            <div class="layui-form-item">
+                                <h3 style="font-size: 30px;text-align: center;color: #ee4411">实验室预约确认</h3>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-body">
+                                    <div class="layui-card-body">
+                                        <div id="main">
+                                            <div id="div-0">
+                                                <span>Cloud018 said, </span>
+                                                <span>"Hello World!!!"</span>
+                                                <p style="margin-left: 5%">姓名:<span></span></p>
+                                                <p style="float: right;margin-right: 10%">姓名:<span></span></p>
+                                            </div>
+                                        </div>
+
+
+
+
+
+
+
+
+
+                                        <!--<form id='form'> &#45;&#45;定义form-->
+
+                                        <!--</form>-->
+                                        <!--<button onclick="add()">生成</button>-->
+
+
+                                        <!--行<input type="text" id="h">-->
+                                        <!--列<input type="text" id="l">-->
+                                        <!--<button onclick="add()">生成</button>-->
+                                        <!--<div id="div1"></div>-->
+                                        <!--<table id="roomView" lay-filter="test"></table>-->
+                                        <!--<div class="hiprint-printTemplate">-->
+                                        <!--<div class="hiprint-printPanel panel-index-0">-->
+                                        <!--<div class="hiprint-printPaper hidroppable design" original-height="297" style="width: 210mm; height: 296.6mm;">-->
+                                        <!--<div style="text-align: center">-->
+                                        <!--<p style="font-size: 24px;padding-top: 10px">预约确认单</p>-->
+                                        <!--</div>-->
+                                        <!--<div>-->
+                                        <!--<p style="margin-left: 5%">姓名:<span></span></p>-->
+                                        <!--<p style="float: right;margin-right: 10%">姓名:<span></span></p>-->
+                                        <!--</div>-->
+                                        <!--<div>-->
+                                        <!--<p>预约编号</p>-->
+                                        <!---->
+                                        <!--o-->
+                                        <!--</div>-->
+
+                                        <!--</div>-->
+                                        <!--</div>-->
+
+                                        <!--</div>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit" id="agree">查看</a>
+</script>
+    <!--数据模板//显示处理状态-->
+    <script type="text/html" id="titleTpl">
+    {{#  if(d.Status_id == -1){ }}
+    <button class="layui-btn layui-btn-danger layui-btn-xs">已拒绝</button>
+    {{#  } else if(d.Status_id == 0){ }}
+    <button class="layui-btn layui-btn-xs">待处理</button>
+    {{#  } else { }}
+    <button class="layui-btn layui-btn-normal layui-btn-xs">已批准</button>
+    {{#  } }}
+</script>
+    <SCRIPT>
+
+        // test.js
+        window.onload = function () {
+            var sourceNode = document.getElementById("div-0"); // 获得被克隆的节点对象
+            for (var i = 1; i < 2; i++) {
+                var clonedNode = sourceNode.cloneNode(true); // 克隆节点
+                clonedNode.setAttribute("id", "div-" + i); // 修改一下id 值，避免id 重复
+                sourceNode.parentNode.appendChild(clonedNode); // 在父节点插入克隆的节点
+            }
+        }
+
+        /*设置session*/
+        $(function () {
+            $.ajax({
+                type: 'post',
+                url: '/session',
+                success: function (data) {
+                    $('#user_name').html(data.username);
+                }
+            });
+        });
+
+        // let applicant=username;
+        // alert(applicant)
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+    // layui.use('table', function () {
+    //     var table = layui.table;
+    //     table.render({
+    //         //默认为get请求
+    //         elem: '#roomView'
+    //         , url: '/self/room'
+    //         , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+    //         , id: 'testReload'
+    //         // ,skin: 'row' //表格风格
+    //         , limits: [5, 10, 15]
+    //         , limit: 5 //每页默认显示的数量
+    //         , page: true
+    //         , toolbar: '#toolbarDemo'
+    //         , cols: [[
+    //             {type: 'checkbox'}
+    //             , {field: 'FID', title: '房间编号', sort: true, minwidth: 80}
+    //             , {field: 'Rname', title: '教室名称', minwidth: 150}
+    //             , {field: 'Start_time', title: '开始时间', minwidth: 150,sort: true,}
+    //             , {field: 'End_time', title: '结束时间', minwidth: 80,sort: true,}
+    //             , {field: 'Purpose', title: '用途', minwidth: 80}
+    //             , {field: 'Applicant', title: '申请人',}
+    //             // , {field: 'Status_id', title: '审核状态', sort: true,templet: '#titleTpl', align: 'center'}
+    //             , {fixed: 'right', title: '审核进度', toolbar: '#barDemo', width: 150, align: 'center'}
+    //         ]],
+    //         where:{
+    //             applicant:username,
+    //         },
+    //     });
+    //     //侧边栏伸缩
+    //     $('#LAY_app_flexible').on('click', function () {
+    //         let a = $('#LAY_app').attr('class');
+    //         if (a == undefined || a == '') {
+    //             $('#LAY_app').addClass('layadmin-side-shrink').end(setTimeout(function () {
+    //                 table.reload('roomView',{});//表格重载
+    //             },200));
+    //             $('#LAY_app_flexible').addClass('layui-icon-spread-left')
+    //         } else {
+    //             $('#LAY_app').removeClass('layadmin-side-shrink').end(setTimeout(function () {
+    //                 window.location.reload()
+    //             },200));
+    //             $('#LAY_app_flexible').removeClass('layui-icon-spread-left')
+    //         }
+    //     });
+    //     //
+    //     table.on('tool(test)', function (obj) {
+    //         switch (obj.event) {
+    //             case 'edit':
+    //                 // alert(obj.data.Status_id)
+    //                 layer.open({
+    //                     content: '/labroom_state',
+    //                     type: 2,
+    //                     shade: 0.5,
+    //                     title: '审核进度查询',
+    //                     area: ['1016px', '306px'],
+    //                     btn: ['确定'],    // 自定义设置多个按钮
+    //                     success: function (layero, index) {
+    //                         let body = layer.getChildFrame('body', index);
+    //                         body.find("#state_id").text(obj.data.Status_id);  //密码
+    //                     },
+    //                 });
+    //                 break;
+    //         }
+    //     })
+    //     //监听事件
+    //
+    //
+    // });
+
+    </SCRIPT>
+</body>
+
+</html>

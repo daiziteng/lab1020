@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>实验室新增</title>
+</head>
+
+<body>
+    <form class="layui-form" style='padding:10px;margin-left: 50px;'>
+        <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">预约用途</label>
+            <div class="layui-input-block">
+                <input type="text" name="" id='purpose' placeholder="请输入" autocomplete="off" class="layui-input"
+                    style="width: 160px">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">开始时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="start" id='start_time' placeholder="请输入" autocomplete="off" class="layui-input"
+                    readonly="readonly" style="width: 160px">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">结束时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="end" id='end_time' placeholder="请输入" autocomplete="off" class="layui-input"
+                    readonly="readonly" style="width: 160px">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">实验室编号</label>
+            <div class="layui-input-block">
+                <input type="text" name="" id='lab_number' placeholder="比如5111" autocomplete="off" class="layui-input"
+                    style="width: 160px">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">实验室名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="" id='lab_name' placeholder="比如分级实验室" autocomplete="off" class="layui-input"
+                    style="width: 160px">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">申请人</label>
+            <div class="layui-input-block">
+                <input type="text" name="" id='applicant' placeholder="填写申请人姓名" autocomplete="off" class="layui-input"
+                    style="width: 160px">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none">
+            <label class="layui-form-label">实验人数</label>
+            <div class="layui-input-block">
+                <input type="text" name="" id='applicant_number' placeholder="填写实验人数" autocomplete="off"
+                    class="layui-input" style="width: 160px">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">预约编号</label>
+            <div class="layui-input-block">
+                <input type="text" name="" id='tradeNo' placeholder="生成预约编号" autocomplete="off" class="layui-input"
+                    style="width: 160px">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="text" name="" value="0" id='status_id' placeholder="比如分级实验室" autocomplete="off"
+                    class="layui-input" style="width: 160px">
+            </div>
+        </div>
+        <div class="layui-form-item teacher">
+            <label class="layui-form-label">导师/指导教师</label>
+            <div class="layui-input-block">
+                <input type="text" name="" id='supervisor' placeholder="填写导师/指导教师姓名" class="layui-input"
+                    style="width: 160px">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none">
+                <label class="layui-form-label">用户类型</label>
+                <div class="layui-input-block">
+                    <input type="text" name="" id='user_type' class="layui-input"
+                        style="width: 160px">
+                </div>
+            </div>
+        <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+    </form>
+    <script>
+        $(function () {
+            $.ajax({
+                type: 'post',
+                url: '/session',
+                success: function (json) {
+                    if (json.type == '老师') {
+                        $('.teacher').css('display', 'none')
+                        $('#supervisor').val(json.username)
+                    }
+                }
+            });
+        });
+
+        layui.use('form', function () {
+            var form = layui.form;
+            //各种基于事件的操作，下面会有进一步介绍
+        });
+        layui.use(['laydate'], function () {
+            var $ = layui.$;
+            var laydate = layui.laydate;
+            var nowTime = new Date().valueOf();
+            var max = null;
+
+            var start = laydate.render({
+                elem: '#start_time',
+                type: 'datetime',
+                min: nowTime,
+                btns: ['clear', 'confirm'],
+                done: function (value, date) {
+                    // endMax = end.config.max;
+                    end.config.min = date;
+                    end.config.min.month = date.month - 1;
+                }
+            });
+            var end = laydate.render({
+                elem: '#end_time',
+                type: 'datetime',
+                trigger: 'click',//  触发方式
+                min: nowTime,
+                btns: ['clear', 'confirm'],
+                done: function (value, date) {
+                    if ($.trim(value) == '') {
+                        var curDate = new Date();
+                        date = { 'date': curDate.getDate(), 'month': curDate.getMonth() + 1, 'year': curDate.getFullYear() };
+                    }
+                    start.config.max = date;
+                    start.config.max.month = date.month - 1;
+                }
+            });
+        })
+
+    </script>
+</body>
+
+</html>

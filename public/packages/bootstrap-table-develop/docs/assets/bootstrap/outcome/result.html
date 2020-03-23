@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>DataTable</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="jquery.js"></script>
+    <link href="bootstrap-min.css" rel="stylesheet">
+    <script src="bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="bootstrap-table.css">
+    <script src="bootstrap-table.js"></script>
+</head>
+<style>
+
+
+    .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+        border-color: red;
+        background-color: yellow;
+    }
+
+    .table > caption + thead > tr:first-child > td, .table > caption + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > th, .table > thead:first-child > tr:first-child > td, .table > thead:first-child > tr:first-child > th {
+        border-top: 0;
+        border-color: red;
+    }
+    .fixed-table-container {
+        position: relative;
+        clear: both;
+        border-radius: 1px;
+        -webkit-border-radius: 1px;
+        -moz-border-radius: 1px;
+        border-color:red;
+        border-width:1px;
+    }
+
+
+
+
+</style>
+<body>
+
+<table id="table" data-url="data1.json">
+</table>
+
+<script>
+    var data1 = [['1', '32', '刘慈欣', '39.00', '重庆出版社', '982513213516']];
+    $(function () {
+        $('table').bootstrapTable({
+            data: data1,
+            //filed书写错误导致data数据前几个显示不出来
+            columns: [{
+                filed: 'id',
+                title: 'Item ID'
+            }, {
+                filed: 'name',
+                title: 'Item Name'
+            }, {
+                filed: 'price',
+                title: 'Item Price'
+            }, {
+                filed: 'size',
+                title: 'Item Size'
+            }, {
+                filed: 'color',
+                title: 'Item color'
+            }
+            ]
+        });
+
+
+    })
+
+</script>
+</body>
+</html>

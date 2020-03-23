@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <!--<link rel="stylesheet" type="text/css" href="/css/user/link.css">-->
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>实验信息录入清单</title>
+</head>
+
+<body style="overflow-y:hidden">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <form class="layui-form" action="" lay-filter="example">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">上午</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="08:00:00-09:00:00" title="第一课时" value='第一课时'>
+                        <input type="checkbox" name="09:00:00-10:00:00" title="第二课时" value='第二课时'>
+                        <input type="checkbox" name="10:00:00-11:00:00" title="第三课时" value='第三课时'>
+                        <input type="checkbox" name="11:00:00-12:00:00" title="第四课时" value='第四课时'>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">下午</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="14:00:00-15:00:00" title="第五课时" value='第五课时'>
+                        <input type="checkbox" name="15:00:00-16:00:00" title="第六课时" value='第六课时'>
+                        <input type="checkbox" name="16:00:00-17:00:00" title="第七课时" value='第七课时'>
+                        <input type="checkbox" name="17:00:00-18:00:00" title="第八课时" value='第八课时'>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">晚上</label>
+                    <input type="checkbox" name="19:00:00-20:00:00" title="第九课时" value='第九课时'>
+                    <input type="checkbox" name="20:00:00-21:00:00" title="第十课时" value='第十课时'>
+                    <input type="checkbox" name="21:00:00-22:00:00" title="第十一课时" value='第十一课时'>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">确认</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重选</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+
+        layui.use(['form', 'layedit', 'laydate'], function () {
+            var form = layui.form
+            layer = layui.layer
+
+            //监听提交
+            form.on('submit(demo1)', function (data) {
+                // layer.alert(JSON.stringify(data.field), {
+                //     title: '最终的提交信息'
+                // })
+                let json=JSON.stringify(data.field)
+                // $('#neirong').html(JSON.stringify(data.field))
+
+                parent.GetValue(json); //GetValue是父界面的Js 方法
+
+
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);//关闭当前页
+                return false;
+            });
+
+        });
+
+
+    </script>
+</body>
+
+</html>

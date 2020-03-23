@@ -1,0 +1,165 @@
+.layui-layout-admin .layui-header {
+    background-color: burlywood;
+}
+
+.layui-layout-admin .layui-logo {
+    background-color: burlywood;
+}
+
+.layadmin-shortcut ul li {
+    cursor: pointer;
+}
+
+.middle_box{
+    width: 100%;
+    height: 440px;
+}
+#map{
+    /*margin-top: 50px;*/
+    width: 100%;
+    height: 95%;
+    background-color: white;
+}
+.modelSimpleTip {
+    position: absolute;
+}
+
+.modelSimpleTip img {
+    width: 20px;
+    height: 20px;
+}
+
+.modelTip,
+.multModelTip {
+    max-width: 200px;
+    max-height: 400px;
+    background-color: #8edeee;
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 2px 1px #888888;
+    opacity: 0.9;
+    position: absolute;
+    z-index: 200;
+}
+.modelTip:before,
+.multModelTip:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border: 15px solid transparent;
+    border-bottom-width: 0px;
+    border-top-color: #8edeee;
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    margin-left: -15px;
+    z-index: 0;
+}
+.modelTip .close,
+.multModelTip .close {
+    float: right;
+    border: black solid 1px;
+    width: 15px;
+    height: 15px;
+    font-size: 10px;
+    text-align: center;
+    color: rgba(54, 49, 49, 0.74);
+    cursor: pointer;
+    padding: 2px
+}
+
+.modelTip .openToNext,
+.multModelTip .openToNext {
+    float: right;
+    cursor: pointer;
+    margin-top: -5px;
+    padding: 2px
+}
+
+.modelTip label,
+.multModelTip label {
+    max-width: 130px;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: 微软雅黑;
+    margin-top: 7px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.modelTip table {
+    width: 200px;
+    font-size: 13px;
+    color: #666;
+    margin-top: 3px;
+    table-layout: fixed;
+}
+
+.modelTip table tr {
+    font-weight: 400;
+}
+
+.modelTip table th {
+    width: 80px;
+}
+
+.modelTip table td {
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modelTip a {
+    font-size: 13px;
+    position: relative;
+    top: -10px;
+    margin: 2px;
+    cursor: pointer
+}
+.modelTip img {
+    width: 20px;
+    height: 20px;
+    margin-top: -25px;
+}
+
+.multModelTip table {
+    table-layout: fixed;
+    max-width: 200px;
+}
+
+.multModelTip th {
+    margin-top: 10px;
+    width: 20px;
+}
+th {
+    text-align: inherit;
+}
+
+.multModelTip td {
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.multModelTip img {
+    width: 20px;
+    height: 20px;
+}
+
+.longrow {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.infoPanel {
+    padding: 5px;
+    color: #ffffff;
+    background-color: rgb(24, 125, 159);
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+}

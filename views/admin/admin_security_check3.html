@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+
+    <title>用户管理</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: #009688;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: #009688;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                            <span id='username'></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item"><a href="">注销</a></li>
+                </ul>
+            </div>
+
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item">
+                            <a class="" href="javascript:;" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="/admin_index">后台主页</a></dd>
+                            </dl>
+                        </li>
+
+                        <li class="layui-nav-item "><a href="#" name="云链接" id="link_others">
+                                <i class="layui-icon layui-icon-headset"></i>
+                                <cite>实验室程序管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="admin_lab_info">一般信息</a></dd>
+                                <dd><a href="admin_lab_danger">风险信息</a>
+                                </dd>
+                                <dd><a href="admin_lab_urgent">应急管理</a></dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed"><a href="#" name="云链接" id="background_manage">
+                                <i class="layui-icon layui-icon-headset"></i>
+                                <cite>实验室后台管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="javascript:;" class="layui-nav-itemed">仪器设备管理</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="admin_device_manage">设备管理</a></dd>
+                                        <dd><a href="admin_cylinder_manage">气瓶管理</a></dd>
+                                        <dd><a href="/admin_reagent_manage">试剂管理</a></dd>
+                                    </dl>
+                                </dd>
+                                <dd><a href="javascript:;" class="layui-nav-itemed">预约管理</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="/admin_room_order#">实验室预约</a></dd>
+                                        <!-- <dd><a href="javascript:;">设备预约</a></dd>
+                                    <dd><a href="/admin_reagent_order">试剂预约</a></dd> -->
+                                    </dl>
+                                </dd>
+                                <dd><a href="/admin_user_manage" name="用户管理" id="user_manage">用户管理</a></dd>
+                                <dd><a href="/admin_info_manage" name="实验室录入清单管理">实验室录入清单管理</a></dd>
+
+                                <dd class="layui-nav-itemed"><a href="javascript:;" class="layui-nav-itemed">检查表</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="admin_security_check" >日常安全检查</a></dd>
+                                        <dd><a href="admin_security_check2" > 高校实验室安全检查</a></dd>
+                                        <dd><a href="#" class="layui-this"> 安全自查情况登记表</a></dd>
+                                        <!-- <dd><a href="#">特殊安全检查</a></dd> -->
+                                    </dl>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a class="" href="admin_journal" name="主页" id="daily">
+                                <i class="layui-icon layui-icon-slider"></i>
+                                <cite>实验室管理日志</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+
+            </div>
+            <!--页面body部分-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-card">
+                        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                            <div class="layui-form-item">
+                                <h3 style="font-size: 30px;text-align: center">安全自查情况登记管理</h3>
+                            </div>
+                        </div>
+                        <div class="layui-card-body">
+                            <table id="check" lay-filter="test"></table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="add">提交</button>
+    </div>
+</script>
+    <script type="text/html" id="barDemo">
+    <input type="checkbox" lay-skin="switch" name="检查结果" lay-text="是|否" value="{{d.Security_id}}" lay-filter="lockDemo">
+</script>
+    <script>
+        $('#username').html(username);
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#test1' //指定元素
+            });
+        });
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+
+        layui.use(['form', 'table'], function () {
+            let table = layui.table
+                , form = layui.form;
+            function merge(res) {
+                var data = res.data;
+                var mergeIndex = 0;//定位需要添加合并属性的行数
+                var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+                var columsName = ['Security_id', 'Security_project',];//需要合并的列名称
+                var columsIndex = [0, 1];//需要合并的列索引值
+
+                for (var k = 0; k < columsName.length; k++) { //这里循环所有要合并的列
+                    var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+                    for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+                        var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
+                        var tdPreArr = trArr.eq(mergeIndex).find("td").eq(columsIndex[k]);//获取相同列的第一列
+
+                        if (data[i][columsName[k]] === data[i - 1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
+                            mark += 1;
+                            tdPreArr.each(function () {//相同列的第一列增加rowspan属性
+                                $(this).attr("rowspan", mark);
+                            });
+                            tdCurArr.each(function () {//当前行隐藏
+                                $(this).css("display", "none");
+                            });
+                        } else {
+                            mergeIndex = i;
+                            mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+                        }
+                    }
+                    mergeIndex = 0;
+                    mark = 1;
+                }
+            }
+
+            table.render({
+                //默认为get请求
+                elem: '#check'
+                , url: '/Check_info/3'
+                , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , page: true
+                , id: 'testReload'
+                , limits: [5, 10, 15]
+                , limit: 400
+                , toolbar: '#toolbarDemo'
+                , cols: [
+                    [
+                        { align: 'center', title: '实验室安全检查表', colspan: 7, field: 'head' }
+                    ],
+                    [
+                        { align: 'center', title: '学院：资环学院', colspan: 4, field: 'head' },
+                        { align: 'center', title: '实验中心：教五楼', colspan: 3, field: 'head' }
+                    ],
+                    [
+                        { align: 'center', title: '检查人(签字)：' + "<span id='people'></span>", colspan: 4, field: 'head' }
+                        , { align: 'center', title: "填表日期:" + "<input id='test1' name='date'>", colspan: 3, toolbar: '#data', field: 'head' }
+                    ],
+                    [ //标题栏
+                        { align: 'center', field: 'Security_id', title: '序号', rowspan: 2,width:100 } //rowspan即纵向跨越的单元格数
+                        , { align: 'center', field: 'Security_project', title: '检查项目', rowspan: 2, width:180}
+                        , {  field: 'Security_content', title: '检查内容', rowspan: 2 }
+                        , { align: 'center', title: '检查结果', colspan: 2 } //colspan即横跨的单元格数，这种情况下不用设置field和width
+                        , { align: 'center', field: 'Summary', title: '存在问题及整改措施', rowspan: 2 }
+                        , { align: 'center', field: 'advice', title: '有何建议', rowspan: 2 }
+                    ], [
+                        {
+                            align: 'center',
+                            field: 'result',
+                            title: '是&nbsp&nbsp/&nbsp&nbsp否',
+                            width: 120,
+                            toolbar: '#barDemo',
+                        }
+                    ],
+                ]
+                , done: function (res, curr, count) {
+  
+                    merge(res);
+                }
+            });
+            //监听行工具事件
+            table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据（json格式的键值对）
+                    , layEvent = obj.event //获得 lay-event 对应的值（编辑、删除、添加）
+                    , editList = []; //存放获取到的那条json数据中的value值（不放key）
+                $.each(data, function (name, value) {
+                    editList.push(value);//将json数据中的value放入数组中
+                })
+                if (layEvent === 'detail') {
+                    layer.msg('查看操作');
+                } else if (layEvent === 'del') {
+                    layer.confirm('真的删除行么', function (index) {
+                        obj.del(); //删除对应行（tr）的DOM结构,仅仅是前端展示
+                        layer.close(index);
+                        //向服务端发送删除指令
+                    });
+                } else if (layEvent === 'edit') {
+                    // layer.msg('编辑操作');
+                    layer.open({
+                        content: '/user_edit',
+                        type: 2,
+                        shade: 0.5,
+                        maxmin: true,
+                        title: '修改用户信息',
+                        area: ['20%', '40%'],
+                        btn: ['确定', '取消'],    // 自定义设置多个按钮
+                        success: function (layero, index) {
+                            let body = layer.getChildFrame('body', index);
+                            var inputList = body.find("input");
+                            for (var i = 0; i < inputList.length; i++) {
+                                $(inputList[i]).val(editList[i]); //遍历子窗口的input标签，将之前数组中的值一次放入显示
+                            }
+                        },
+                        btn1: function (index, data) {
+                            layer.msg('修改成功');
+                            layer.close(index);
+
+                        },
+                        btn2: function (index, elem) {
+                            layer.msg('已取消')
+                            layer.close(index);
+                        },
+                        btnAlign: 'c',// 设置按钮位置
+                    });
+                }
+            });
+
+            // //    监听是否操作
+            var arr = [];
+            form.on('switch(lockDemo)', function (obj) {
+                // console.log(obj)
+                // layer.tips(this.value + '' + this.name + ':' + obj.elem.checked, obj.othis);
+                arr.push(this.value)
+            });
+            //监听头工具栏事件
+            table.on('toolbar(test)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                // console.log(obj.event)
+                switch (obj.event) {
+                    case 'add':
+                        layer.confirm('确认提交吗？', function (index) {
+                            layer.msg('信息已经提交');
+                            layer.close(index);
+                            //向服务端发送删除指令
+                        });
+                        break;
+                    case 'LAYTABLE_PRINT':
+
+                        alert('要打印吗')
+                }
+            });
+        });
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/packages/echarts.js"></script>
+    <title>实验室设备预约信息查询</title>
+    <style>
+    </style>
+</head>
+
+<body style='height:100%'>
+    <div class="layui-col-sm12">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">设备名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="device_name" name="id" placeholder="请输入" autocomplete="off"
+                                class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-btn layuiadmin-btn-list" data-type="reload" id="search">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-card-body">
+                    <table id="deviceView" lay-filter="test"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        function getFID(FID){
+
+            layui.use('table', function () {
+            var table = layui.table;
+            table.render({
+                //默认为get请求
+                elem: '#deviceView'
+                , url: '/device_manage'
+                , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , id: 'testReload'
+                , page: true
+                , limits: [5, 10, 15]
+                , limit: 5
+                , toolbar: '#toolbarDemo'
+                , cols: [[
+                    { type: 'checkbox' }
+                    , { field: 'device_ID', title: '设备编号', sort: true }
+                    , { field: 'device_name', title: '设备名称', sort: true }
+                    , { field: 'device_number', title: '数量' }
+                    , { field: 'device_price', title: '总价' }
+                    , { field: 'device_singlePrice', title: '单价' }
+                    , { field: 'education_name', title: '教育部分类名' }
+                    , { field: 'education_number', title: '教育部分类号' }
+                    , { field: 'purchase_date', title: '购置日期' }
+                    , { field: 'document_No', title: '单据号' }
+                    , { field: 'manufactor', title: '厂家' }
+                    , { field: 'user', title: '使用者' }
+                    , { field: 'userNo', title: '使用者编号' }
+                    , { field: 'device_specs', title: '规格' }
+                    , { field: 'device_model', title: '型号/品牌' }
+                    , { field: 'FID', title: '存放地' }
+                    , { field: 'Remarks', title: '备注' }
+                    , { field: 'batch_No', title: '批量编号' }
+                    // , { field: 'input_person', title: '输入人名称' }
+                    // , { field: 'input_personNo', title: '输入人编号' }
+                    , { field: 'device_type', title: '所属分类' }
+                    , { field: 'input_date', title: '录入日期' }
+                    , { field: 'use_unit', title: '使用单位' }
+                    , { field: 'use_unitNumber', title: '使用单位编号' }
+                    , {field: 'device_purpose', title: '设备属性'}
+                    // , {field: 'experiment_item', title: '实验项目'}
+                    // , {field: 'danger_type', title: '危险类型'}
+                    // , {field: 'danger_degree', title: '危险等级'}
+                    // , {field: 'experiment_object', title: '对象'}
+                    , { field: 'device_master', title: '负责人' }
+                    // , {field: 'product_date', title: '生产日期'}
+                    // , {field: 'warranty_duration', title: '保修期限'}
+                    // , {field: 'expiration_date', title: '到期时间'}
+                    // , { field: 'expiration_date', title: '状态', sort: true, templet: '#titleTpl', align: 'center' }
+                ]]
+                , where: {
+                        lab_number: FID
+                    }
+            });
+
+            // <!--查询功能-->
+            var active = {
+                reload: function () {
+                    var index = layer.msg('查询中，请稍候...', { icon: 16, time: false, shade: 0 });
+                    setTimeout(function () {
+                        table.reload('testReload', {
+                            page: {
+                                curr: 1
+                            }
+                            , where: {
+                                device_name: $('#device_name').val(),
+                                // danger_degree: $('#danger_degree').val(),
+                                // lab_number: $('#lab_number').val(),
+                                // device_state: $('#device_state').val(),
+
+                            }
+                        }, 'data');
+                        layer.close(index);
+                    }, 800)
+                }
+            };
+            $('#search').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            })
+
+        });
+
+        }
+
+        
+
+    </script>
+
+
+
+
+</body>
+
+</html>

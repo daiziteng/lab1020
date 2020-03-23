@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <!--<link rel="stylesheet" type="text/css" href="/css/user/link.css">-->
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/jspdf.debug.js"></script>
+    <script type="text/javascript" src="/js/html2canvas.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>实验信息录入清单</title>
+</head>
+<body>
+    <div class="layui-card" id='sonPage'>
+        <div class="layui-card-body">
+            <button class="print-btn" onclick="doPrint()">打印</button>
+            <button class="print-btn" onclick="export_pdf()">导出pdf</button>
+            <ccc>
+                <div id='print_area' class="right-aside" style='width:1000px;'>
+                    <fieldset class="layui-elem-field  right-aside" style="width: 85%;margin-left: 8%;">
+                        <legend>实验信息录入清单</legend>
+                        <div class="layui-field-box">
+                            <!--内容区域-->
+                            <div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+                                <p class="h4">预约人:<span id='Applicant' style="color: blue"></span></p>
+                            </div>
+                            <div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+                                <p class="h4">实验室编号:<span id='lab' style="color: blue"></span></p>
+                            </div>
+                            <div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+                                <p class="h4">实验室名称:<span id='Fname' style="color: blue"></span></p>
+                            </div>
+                            <div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+                                <p class="h4">实验名称:<span id='experiment_name' style="color: blue"></span></p>
+                            </div>
+                            <div class="layui-col-md12" style='margin-left: -65px;padding:30px'>
+                                <label class="layui-form-label">实验结果</label>
+                                <div class="layui-input-block">
+                                    <textarea name="experiment_result" placeholder="" readonly id='experiment_result'
+                                        class="layui-textarea"></textarea>
+                                </div>
+                            </div>
+                            <!-- </div> -->
+                            <hr class="layui-bg-black" style="margin-top: 6%">
+
+                            <div class="layui-col-md12">
+                                <p style="text-align: center;color: red">实验所需仪器设备</p>
+                                <table id="device_table" class="layui-table" style="width: 100%">
+                                    <colgroup>
+                                        <col width="150">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th>序号</th>
+                                            <th>设备名</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="layui-col-md12">
+                                <p style="text-align: center;color: red">实验所需试剂</p>
+                                <table id="reagent_table" class="layui-table" style="width: 100%">
+                                    <colgroup>
+                                        <col width="150">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <td class="tdClass">序号</td>
+                                            <td class="tdClass">试剂名</td>
+                                            <td class="tdClass">试剂量</td>
+                                            <td class="tdClass">试剂来源 </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="layui-col-md12">
+                                <p style="text-align: center;color: red">上传文件列表</p>
+                                <table id="fileView" lay-filter="test"></table>
+                            </div>
+
+                    </fieldset>
+
+                </div>
+
+            </ccc>
+        </div>
+    </div>
+    <script type="text/html" id="fileDemo">
+        <a class="layui-btn layui-btn-xs" id="add" lay-event="preview">预览</a>
+        <a class="layui-btn layui-btn-normal layui-btn-xs"  href='/downPDF?filename={{d.filename}}'  lay-event="edit">下载</a>
+    </script>
+    <script type="text/javascript">
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+        function getOrderNumber(Order_number, Type) {
+            $.ajax({
+                type: 'get',
+                url: '/get/expri_info',
+                data: {
+                    order_number: Order_number,
+                },
+                success: function (data) {
+                    $('#experiment_name').html(data[0].experiment_content)
+                    $('#experiment_result').html(data[0].experiment_result)
+                }
+            })
+            $.ajax({
+                type: 'get',
+                url: '/get/expri_info_1',
+                data: {
+                    order_number: Order_number,
+                },
+                success: function (data) {
+                    var reagent_table = $('#reagent_table');
+                    let group = data;
+                    for (var i = 1; i <= group.length; i++) {
+                        var item = group[i - 1]
+                        reagent_table.append('<tr> ' +
+                            '<td class="tdClass">' + i + '</td>' +
+                            '<td class="tdClass">' + item.reagent_name + '</td>' +
+                            '<td class="tdClass">' + item.reagent_dose + '</td>' +
+                            '<td class="tdClass">' + item.reagent_from + '</td>' +
+                            '</tr>')
+                    }
+                }
+            })
+            $.ajax({
+                type: 'get',
+                url: '/get/expri_info_2',
+                data: {
+                    order_number: Order_number,
+                },
+                success: function (data) {
+                    var device_table = $('#device_table')
+                    var device = data
+                    for (var i = 1; i <= device.length; i++) {
+                        var json = device[i - 1]
+                        device_table.append('<tr> ' +
+                            '<td class="tdClass">' + i + '</td>' +
+                            '<td class="tdClass">' + json.device_name + '</td>' +
+                            '</tr>')
+                    }
+
+                }
+            })
+            var tableIns;
+            layui.use('table', function () {
+                var table = layui.table;
+                tableIns = table.render({
+                    //默认为get请求
+                    elem: '#fileView'
+                    , url: '/get/expri_info_files'
+                    , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                    , limits: [5, 10, 15]
+                    , limit: 5 //每页默认显示的数量
+                    , page: true
+                    , cols: [[
+                        { field: 'id', title: '序号', sort: true, width: 100, align: 'center' }
+                        , { field: 'filename', title: '文件名', minwidth: 200, align: 'center' }
+                        , { field: 'size', title: '文件大小', width: 120, sort: true, align: 'center' }
+                        , { fixed: 'right', title: '操作', toolbar: '#fileDemo', width: 150, align: 'center' }
+                    ]],
+                    where: {
+                        applicant: Order_number
+                    },
+                    done: function () {
+                        if (Type == '导出') {
+                            setTimeout(export_pdf(), 800);
+                        }
+
+                    },
+                });
+
+                table.on('tool(test)', function (obj) {
+                    switch (obj.event) {
+                        case 'preview':
+                            let filename = obj.data.filename
+                            var index1 = filename.lastIndexOf(".");
+                            len = filename.length;
+                            pathf = filename.substring(index1 + 1, len)//文件后缀名,用来判断是否支持在线预览
+                            if (pathf == 'png' || pathf == 'jpg' || pathf == 'bmp') {
+                                let imgpath = obj.data.path
+
+                                var bigW = 550;
+                                var bigH = 400;
+                                layer.open({
+                                    type: 1,
+                                    title: '图片预览',
+                                    closeBtn: 1,
+                                    shadeClose: true,
+                                    // area: [bigW + 'px', bigH + 'px'], //宽高
+                                    area: ['60%', '70%'],
+                                    content: "<img width='" + bigW + "' height='" + bigH + "' src=" + imgpath + " />"
+                                    // content: "<img  src=" + imgpath + " />"
+                                });
+                            } else {
+                                layer.msg('当前格式文件无法在线预览,请下载后查看')
+                            }
+                            break;
+                    }
+                })
+            })
+        }
+
+
+        //打印功能测试（局部打印）
+        function doPrint() {
+            bdhtml = window.document.body.innerHTML;
+            sprnstr = "<ccc>";
+            eprnstr = "<ccc>";
+            prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 5);
+            prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr));
+            window.document.body.innerHTML = prnhtml;
+            window.print();
+            window.document.body.innerHTML = bdhtml;
+        }
+
+        // 导出PDF功能
+        function export_pdf() {
+            var element = $("#print_area");    // 这个dom元素是要导出pdf的div容器
+            var w = element.width();    // 获得该容器的宽
+            var h = element.height();    // 获得该容器的高
+            // console.log(h)
+            var offsetTop = element.offset().top;    // 获得该容器到文档顶部的距离
+            // var offsetLeft = element.offset().left;    // 获得该容器到文档最左的距离
+            var canvas = document.createElement("canvas");
+            canvas.width = w * 3;    // 将画布宽&&高放大3倍  ,改变该值可以解决pdf打印不完全的问题
+            canvas.height = h * 3 + offsetTop*3;
+            var context = canvas.getContext("2d");
+            var scale = 3;
+            context.scale(3, 3);
+            var opts = {
+                scale: scale,
+                canvas: canvas,
+                // width: w,
+                // height: h,
+                // useCORS: true,
+                background: '#FFF'
+            }
+            html2canvas(element, opts).then(function (canvas) {
+                var contentWidth = canvas.width;
+                var contentHeight = canvas.height;
+
+                //一页pdf显示html页面生成的canvas高度;
+                var pageHeight = contentWidth / 592.28 * 841.89;
+                //未生成pdf的html页面高度
+                var leftHeight = contentHeight;
+                //页面偏移
+                var position = 0;
+                //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+                var imgWidth = 595.28;
+                var imgHeight = 592.28 / contentWidth * contentHeight;
+                console.log(imgHeight)
+
+                var pageData = canvas.toDataURL('image/jpeg', 1.0);
+
+                var pdf = new jsPDF('', 'pt', 'a4');
+
+                //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+                //当内容未超过pdf一页显示的范围，无需分页
+                if (leftHeight < pageHeight) {
+                    pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
+                } else {
+                    while (leftHeight > 0) {
+                        pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+                        leftHeight -= pageHeight;
+                        position -= 841.89;
+                        //避免添加空白页
+                        if (leftHeight > 0) {
+                            pdf.addPage();
+                        }
+                    }
+                }
+                pdf.save('实验信息.pdf');
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);//关闭当前页
+            })
+        }
+
+
+    </script>
+</body>
+
+</html>

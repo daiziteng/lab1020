@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>试剂预约</title>
+</head>
+<body>
+<div style="margin-left: 5%;margin-top: 1%">
+    <table id="reagentView" lay-filter="test"></table>
+</div>
+
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+    </div>
+</script>
+<script type="text/html" id="barDemo">
+    <!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
+    <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+    <input type="text" name="price_min"  autocomplete="off" class="layui-input" style="height: 25px">
+</script>
+<!--数据模板//显示库存信息状态-->
+<script type="text/html" id="titleTpl">
+    {{#  if(d.reagent_stock < d.min_stock){ }}
+    <button class="layui-btn layui-btn-danger layui-btn-xs">不足</button>
+    {{#  } else if(d.reagent_stock >d.max_stock){ }}
+    <button class="layui-btn layui-btn-xs">超额</button>
+    {{#  } else { }}
+    <button class="layui-btn layui-btn-normal layui-btn-xs">正常</button>
+    {{#  } }}
+</script>
+
+
+<script>
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+    layui.use('table', function () {
+        var table = layui.table;
+        table.render({
+            //默认为get请求
+            elem: '#reagentView'
+            , url: '/manage_reagent'
+            , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,limits:[5,10,15]
+            ,limit:5
+            , id: 'testReload'
+            ,page:true
+            ,toolbar: '#toolbarDemo'
+            , cols: [[
+                {type: 'checkbox'}
+                , {field: 'reagent_name', title: '试剂名称', sort: true}
+                , {field: 'reagent_spec', title: '剂量'}
+                , {field: 'reagent_product', title: '产地'}
+                , {field: 'reagent_stock', title: '当前库存'}
+                , {field: 'max_stock', title: '库存上限'}
+                , {field: 'min_stock', title: '库存下限'}
+                , {field: 'reagent_stock', title: '库存状态', sort: true,templet: '#titleTpl', align: 'center'}
+                , {field: 'FID', title: '存放位置',event: 'setSign1',style:'cursor: pointer;'}
+                , {field: 'sign', title: '预约剂量',  event: 'setSign1',style:'cursor: pointer;'}
+                // , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+            ]],
+            done:function (data) {
+                // console.log(data)
+            }
+        });
+        // table.render();
+        //监听行工具事件
+        table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据（json格式的键值对）
+                , layEvent = obj.event //获得 lay-event 对应的值（编辑、删除、添加）
+                ,editList=[]; //存放获取到的那条json数据中的value值（不放key）
+            $.each(data,function (name,value) {
+                editList.push(value);//将json数据中的value放入数组中
+            });
+            if(obj.event === 'setSign1') {
+                layer.prompt({
+                    formType: 2
+                    // , title: '请输入预约试剂的数量[' + data.id + '] 的用户签名'
+                    , title: '请输入预约试剂[' + data.reagent_name + ']的数量'
+                    // , value: data.FID
+                    , value: ''
+                }, function (value, index) {
+                    layer.close(index);
+                    //这里一般是发送修改的Ajax请求
+                    //同步更新表格和缓存对应的值
+                    alert(value)
+                    obj.update({
+                        sign: value
+                    });
+                })
+            }
+            if (layEvent === 'detail') {
+                layer.msg('查看操作');
+            } else if (layEvent === 'del') {
+                layer.confirm('真的删除行么', function (index) {
+                    obj.del(); //删除对应行（tr）的DOM结构,仅仅是前端展示
+                    layer.close(index);
+                    //向服务端发送删除指令
+                });
+            } else if (layEvent === 'edit') {
+                // layer.msg('编辑操作');
+
+            }
+        });
+
+        //监听头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            console.log(obj.event)
+            switch (obj.event) {
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'add':
+                    // layer.msg('添加');
+                    layer.open({
+                        content:'',
+                        type: 2,
+                        title: '新增用户',
+                        area: ['20%', '40%'],
+                        btn: ['确定', '取消'],    // 自定义设置多个按钮
+                        btn1: function (index, elem) {
+                            layer.msg('新增成功');
+                            layer.close(index);
+                        },
+                        btn2: function (index, elem) {
+                            layer.msg('已取消')
+                            layer.close(index);
+                        },
+                        btnAlign: 'c',// 设置按钮位置
+                    });
+                    break;
+                case 'delete':
+                    layer.msg('删除');
+                    break;
+            }
+        });
+
+
+
+    });
+
+</script>
+</body>
+</html>

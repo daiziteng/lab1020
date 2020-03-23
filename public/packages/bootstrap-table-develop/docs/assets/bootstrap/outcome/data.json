@@ -1,0 +1,81 @@
+[{
+  "devicenumber": "001",
+  "devicename": "多功能x射线衍射仪",
+  "factor": "布鲁克",
+  "model": "400MHZ",
+  "price": "453610.00",
+  "state": "正常"
+},
+  {
+    "devicenumber": "002",
+    "devicename": "近红外-中红外光谱仪",
+    "factor": "德国布鲁克",
+    "model": "MAXIS",
+    "price": "456215.00",
+    "state": "维修"
+  },
+  {
+    "devicenumber": "003",
+    "devicename": "多功能离子减溥仪",
+    "factor": "日立",
+    "model": "F-7000",
+    "price": "474613.00",
+    "state": "正常"
+  },
+  {
+    "devicenumber": "004",
+    "devicename": "激光粒度仪",
+    "factor": "德国徕卡 ",
+    "model": "JEM-450",
+    "price": "7874.00",
+    "state": "正常"
+  },
+  {
+    "devicenumber": "005",
+    "devicename": "多功能离子减溥仪",
+    "factor": "日立",
+    "model": "F-7000",
+    "price": "474613.00",
+    "state": "正常"
+  },
+  {
+    "devicenumber": "006",
+    "devicename": "液质联用",
+    "factor": "日本电子公司",
+    "model": "F-7000",
+    "price": "474613.00",
+    "state": "正常"
+  },
+  {
+    "devicenumber": "007",
+    "devicename": "分度仪",
+    "factor": "日立",
+    "model": "F-7000",
+    "price": "474613.00",
+    "state": "正常"
+  },
+  {
+    "devicenumber": "008",
+    "devicename": "核磁",
+    "factor": "德国徕卡",
+    "model": "F-7000",
+    "price": "474613.00",
+    "state": "正常"
+  },
+  {
+    "devicenumber": "009",
+    "devicename": "流变仪",
+    "factor": "美国TA公司",
+    "model": "J-7000",
+    "price": "474613.00",
+    "state": "维修"
+  },
+  {
+    "devicenumber": "010",
+    "devicename": "气质联用仪",
+    "factor": "日立",
+    "model": "M-7700",
+    "price": "474613.00",
+    "state": "正常"
+  }
+]

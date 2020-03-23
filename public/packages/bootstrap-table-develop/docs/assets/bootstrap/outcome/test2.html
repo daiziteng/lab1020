@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>消息处理中心</title>
+    <link rel="stylesheet" href="bootstrap-min.css">
+    <link rel="stylesheet" href="bootstrap-table.css">
+
+    <script src="jquery.js"></script>
+    <script src="FileSaver.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script src="bootstrap-table.js"></script>
+    <script src="bootstrap-table-export.min.js"></script>
+</head>
+<body >
+<div>
+    <select id="sel_exportoption" class="form-control">
+        <option value="">导出当前页数据</option>
+        <option value="all">导出全部数据</option>
+        <option value="selected">导出选中数据</option>
+    </select>
+</div>
+
+
+
+
+<table id="datatable"></table>
+<script>
+    //查询
+    function refresh(){
+        $("#datatable").bootstrapTable('refresh',{url:'__MODULE__/Statistics/listData'});
+    }
+    //查询
+    function refresh(){
+        $("#datatable").bootstrapTable('refresh',{url:'__MODULE__/Statistics/listData'});
+    }
+    //查询条件
+    function queryParams(params){
+        params['project_id'] = $("select[name=project_id]").find("option:selected").val();
+        params['time_field'] = $("select[name=time_field]").find("option:selected").val();
+        params['start_time'] = $("input[name=start_time]").val();
+        params['end_time'] = $("input[name=end_time]").val();
+        params['user_name'] = $("input[name=user_name]").val();
+        params['telephone'] = $("input[name=telephone]").val();
+        params['room_confirm_number'] = $("input[name=room_confirm_number]").val();
+        params['lineson'] = $("select[name=lineson]").val();
+        params['invoice'] = $("select[name=invoice]").val();
+        return params;
+    }
+
+
+    function DoOnMsoNumberFormat(cell, row, col) {
+        var result = "";
+        if (row > 0 && col == 0)
+            result = "\\@";
+        return result;
+    }
+    var rowCount = 0;
+    $("#datatable").bootstrapTable({
+        height:"500",
+        url: '__MODULE__/Statistics/listData',  //表格数据请求地址
+        pagination:true,   //是否分页
+        search: false,    //是否显示查询框
+        sortName: "id",    //排序相关
+        sortOrder: "desc",
+        queryParams:'queryParams',
+        method:"post",
+        sortable:true,
+        dataType:'json',
+        toolbar: "#exampleTableEventsToolbar",
+        icons: {refresh: "glyphicon-repeat", toggle: "glyphicon-list-alt", columns: "glyphicon-list"},
+        pageList:[10, 25, 50, 100],
+        clickToSelect:true,
+        exportDataType:'all',
+
+        onLoadSuccess:function(data){   //表格数据加载成功事件
+            rowCount = data.length-1;
+            $("#datatable").bootstrapTable('hideRow', {index:rowCount});
+            $("#datatable td").attr("data-tableexport-msonumberformat","\@");
+            $("#datatable tr").attr("data-tableexport-display","always");
+        },
+        onPageChange:function(number,size){  //表格翻页事件
+            $("#datatable").bootstrapTable('hideRow', {index:rowCount});
+            $("#datatable td").attr("data-tableexport-msonumberformat","\@");
+            $("#datatable tr").attr("data-tableexport-display","always");
+
+        },
+        showExport: true,  //是否显示导出按钮
+        buttonsAlign:"right",  //按钮位置
+        exportTypes:['excel'],  //导出文件类型
+        Icons:'glyphicon-export',
+        exportOptions:{
+            ignoreColumn: [0,1],  //忽略某一列的索引
+            fileName: '总台帐报表',  //文件名称设置
+            worksheetName: 'sheet1',  //表格工作区名称
+            tableName: '总台帐报表',
+            excelstyles: ['background-color', 'color', 'font-size', 'font-weight'],
+            onMsoNumberFormat: DoOnMsoNumberFormat
+        },
+        columns: [
+            {
+                checkbox:true,
+                title: '选择'
+            },{
+                title: '序号',
+                formatter: function (value, row, index) {
+                    $(".group_sum").html(row['group_sum']);
+                    $(".group_money_sum").html(row['group_money_sum']+"元");
+                    $(".confirm_sum").html(row['confirm_sum']);
+                    $(".confirm_money_sum").html(row['confirm_money_sum']+"元");
+                    $(".refund_sum").html(row['refund_sum']);
+                    $(".refund_money_sum").html(row['group_back_sum']+"元");
+                    $(".residue_money_sum").html(row['residue_sum']+"元");
+                    var a = index+1; return a+"<span style='display:none;'>"+row.id+"</span>"
+                }
+            },{
+                field: 'project_name',
+                align:"center",
+                title: '项目'
+            }, {
+                field: 'user_name',
+                align:"center",
+                title: '姓名'
+            }, {
+                field: 'telephone',
+                align:"center",
+                title: '电话'
+            },{
+                field: 'id_card_number',
+                align:"center",
+                rowAttributes:"rowAttributes",
+                title: '身份证号'
+            },{
+                field: 'telephone',
+                align:"center",
+                title: '手机号'
+            },{
+                field: 'pos_r_n',
+                align:"center",
+                title: 'POS机参考号'
+            },{
+                field: 'pos_c_n',
+                align:"center",
+                title: 'POS机终端号'
+            },{
+                field: 'merchant_code',
+                align:"center",
+                title: '商户编码'
+            },{
+                field: 'bank_card_number',
+                align:"center",
+                title: '银行卡号'
+            },{
+                field: 'create_time',
+                align:"center",
+                title: '领取优惠时间'
+            },{
+                field: 'group_purchase_number',
+                align:"center",
+                title: '优惠编码'
+
+            },{
+                field: 'group_purchase_expenses',
+                align:"center",
+                title: '会员费用'
+            },{
+                field: 'back_pay_money',
+                align:"center",
+                title: '退款金额'
+            },{
+                field: 'refund_etime',
+                align:"center",
+                title: '退款时间'
+            },{
+                field: 'confirm_pay_money',
+                align:"center",
+                title: '认购金额'
+            },{
+                field: 'group_purchase_confirm_time',
+                align:"center",
+                title: '认购时间'
+            },{
+                field: 'room_confirm_number',
+                align:"center",
+                title: '认购房号'
+            },{
+                field: '',
+                align:"center",
+                title: '账户余额'
+            },{
+                field: 'invoice_status',
+                align:"center",
+                title: '发票状态',
+                formatter: 'invoice_status_formatter',
+                events:'confirmEvents'
+            },{
+                field: 'lineson',
+                align:"center",
+                title: '数据来源',
+                formatter: 'lineson_status_formatter',
+                events:'confirmEvents'
+            }
+        ]
+    });
+</script>
+
+</body>
+</html>

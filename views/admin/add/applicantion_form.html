@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <!--<link rel="stylesheet" type="text/css" href="/css/user/link.css">-->
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>实验信息录入清单</title>
+</head>
+<style>
+    .layui-form-pane .layui-form-label {
+        height: 60px;
+        width: 250px;
+        line-height: 40px;
+    }
+
+    .layui-form-pane .layui-input {
+        height: 60px;
+        width: 650px;
+    }
+
+    /* .sign {
+        background: #FFFFFF url('/images/sign.jpg')  no-repeat;
+    } */
+</style>
+
+<body>
+    <!--页面主体-->
+    <div class="layui-card" id='sonPage' style='padding:10px'>
+        <form class="layui-form layui-form-pane" action="" style="width:100%">
+            <div id='student'>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">申请理由及实验内容
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="expirement_content" class="layui-input" id='expirement_content'>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">实验室申请人员</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="expirement_people" class="layui-input" required lay-verify="required"
+                            id='expirement_people'>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">实验地点</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="expirement_place" class="layui-input" required lay-verify="required"
+                            id='expirement_place'>
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label">计划使用设备</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="plan_device" class="layui-input" id='plan_device'>
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label">计划使用时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="plan_time" class="layui-input" required lay-verify="required"
+                            id='plan_time'>
+                    </div>
+                </div>
+
+            </div>
+            <div id='teacher' style='display:none'>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label">指导老师意见</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="teacher_idea" class="layui-input" required lay-verify="required"
+                            id='teacher_idea'>
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label">签名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="teacher_sign" class="layui-input sign" required lay-verify="required"
+                            id='teacher_sign' style=" width:160px;" readonly>
+                    </div>
+                    <label class="layui-form-label">时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="teacher_time" class="layui-input" required lay-verify="required"
+                            id='teacher_time' style=" width:200px;" readonly>
+                    </div>
+                </div>
+
+            </div>
+            <div id='master' style='display:none'>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label">实验室安全负责人意见</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="master_idea" class="layui-input" required lay-verify="required"
+                            id='master_idea'>
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label">签名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="master_sign" class="layui-input sign" required lay-verify="required"
+                            id='master_sign' style=" width:160px;" readonly>
+                    </div>
+                    <label class="layui-form-label">时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="teacher_sign" class="layui-input" required lay-verify="required"
+                            id='master_time' style=" width:200px;" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label">实验室意见</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="lab_idea" class="layui-input" required lay-verify="required"
+                            id='lab_idea'>
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label">签名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="lab_sign" class="layui-input sign" required lay-verify="required"
+                            id='lab_sign' style=" width:160px;" readonly>
+                    </div>
+                    <label class="layui-form-label">时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="lab_time" class="layui-input" required lay-verify="required"
+                            id='lab_time' style=" width:200px;" readonly>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- <div class="layui-form-item" style='padding:10px'>
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">确认提交</button>
+                </div>
+            </div> -->
+
+        </form>
+    </div>
+    <script type="text/javascript">
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+
+        let img = '/images/sign.jpg'
+        $('.sign').css("background-image", `url('${img}')`);
+
+        function getOrderId(Order_number, user_type) {
+            layui.use(['form', 'laydate'], function () {
+                var form = layui.form
+                layer = layui.layer
+                //监听提交
+                form.on('submit(demo1)', function (data) {
+                    // layer.alert(JSON.stringify(data.field), {
+                    //     title: '最终的提交信息'
+                    // })
+                    let json = JSON.stringify(data.field)
+                    var object = JSON.parse(json)
+
+                    object.Order_number = '222';
+                    return false;
+                });
+
+
+                // console.log(user_type)
+                if (user_type == '老师') {
+                    teacher_add()
+                    student_setReadonly()
+                    // master_add()
+                } else if (user_type == '负责人') {
+                    teacher_add()
+                    master_add()
+                    student_setReadonly()
+                    teacher_setReadonly()
+                } else if (user_type == '查看') {
+                    teacher_add()
+                    master_add()
+                    student_setReadonly()
+                    teacher_setReadonly()
+                    master_setReadonly()
+                }
+
+                function teacher_add() {
+                    $('#teacher').css('display', 'block')
+                }
+
+                function master_add() {
+                    $('#master').css('display', 'block')
+                }
+
+
+                function student_setReadonly() {
+                    $('#student').find('input').attr("readonly", "readonly");
+                }
+                function teacher_setReadonly() {
+                    $('#teacher').find('input').attr("readonly", "readonly");
+                }
+                function master_setReadonly() {
+                    $('#master').find('input').attr("readonly", "readonly");
+                }
+
+
+
+
+
+                // student_setReadonly()
+
+
+
+            });
+
+
+        }
+
+
+
+    </script>
+</body>
+
+</html>

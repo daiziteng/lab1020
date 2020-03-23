@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/css/ol.css">
+    <link rel="stylesheet" type="text/css" href="/css/user/lab_order.css">
+    <script type="text/javascript" src="/js/ol.js"></script>
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <script type="text/javascript" src="/js/users/lab_order.js"></script>
+    <script type="text/javascript" src="/packages/FileSaver.min.js"></script>
+    <!--三维加载JS文件-->
+    <script src="/packages/three.js-master/build/three.js"></script>
+    <script src="/packages/three.js-master/examples/js/libs/dat.gui.min.js"></script>
+    <script src="/packages/three.js-master/examples/js/controls/TrackballControls.js"></script>
+    <script src="/packages/three.js-master/examples/js/loaders/MTLLoader.js"></script>
+    <script src="/packages/three.js-master/examples/js/loaders/LoaderSupport.js"></script>
+    <script src="/packages/three.js-master/examples/js/loaders/OBJLoader2.js"></script>
+    <title>实验室预约</title>
+    <style>
+        .map_control li {
+            float: left;
+            list-style: none;
+            margin-left: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                            <span id="user_name"></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                    lay-filter="layadmin-system-side-menu">
+                    <li class="layui-nav-item">
+                        <a href="user_index" name="主页" id="homepage">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <cite>个人主页</cite>
+                            <span class="layui-bav-more"></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item ">
+                        <a class="" href="javascript:;" name="安全准入" id="homepage">
+                            <i class="layui-icon layui-icon-form"></i>
+                            <cite>安全准入</cite>
+                            <span class="layui-bav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="lab_info" >信息预知</a></dd>
+                            <dd><a href="lab_danger_element" >危险预知</a></dd>
+                            <dd><a href="lab_urgent_schema">应急预案</a></dd>
+                            <dd><a href="lab_exam" >准入考试</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a class="layui-this" href="lab_order" name="实验室分布" id="homepage">
+                            <i class="layui-icon layui-icon-location"></i>
+                            <cite>实验室分布</cite>
+                            <span class="layui-bav-more"></span>
+                        </a>
+                    </li>
+
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a href="javascript:;" name="实验室详情" id="">
+                            <i class="layui-icon layui-icon-tabs"></i>
+                            <cite>实验室详情</cite>
+                            <span class="layui-bav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="room_order">房间预约</a></dd>
+                            <dd><a href="lab_submit">实验记录</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            </div>
+            <!--页面主体-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm8">
+                            <div class="layui-card">
+                                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                                    <div class="layui-form-item">
+                                        <h3 style="font-size: 30px;text-align: center">实验室平面分布图</h3>
+
+                                    </div>
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="layui-from-item">
+                                        <form class="layui-form" action="" name="form1">
+                                            <div class="layui-inline">
+                                                <label class="layui-form-label">建筑</label>
+                                                <div class="layui-input-block" style="width: 120px">
+                                                    <select name="building" lay-filter="building_select">
+                                                        <option value="0">请选择建筑</option>
+                                                        <option value="1001">教五楼</option>
+                                                        <option value="1002">教四楼</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="layui-inline" style="margin-left: -1%">
+                                                <label class="layui-form-label">楼层</label>
+                                                <div class="layui-input-block" style="width: 120px">
+                                                    <select id="select_floor" name="floor" lay-filter="floor_select">
+                                                        <option value="0">请选择楼层</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="layui-inline">
+                                                <label class="layui-form-label">实验室名称</label>
+                                                <div class="layui-input-block">
+                                                    <select id="select_lab" name="lab" lay-filter="room_select">
+                                                        <option value="0">请选择房间</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!--<div class="layui-inline">-->
+                                            <!--<a class="layui-btn" id="model_add">动画模型加载</a>-->
+                                            <!--</div>-->
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <!-- <h4 style="text-align: center;font-size: 16px;color: red" id="room_info">教五一层分布图
+                                    </h4> -->
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="middle_box">
+                                        <ul class="map_control" id="mapTools">
+                                            <li>
+                                                <img
+                                                    style="transform: scale(0.5);width: 32px; height: 32px;background: url('/images/icons.png') -148px -62px;" />放大
+                                            </li>
+                                            <li>
+                                                <img
+                                                    style="transform: scale(0.5);width: 32px; height: 32px;background: url('/images/icons.png') -200px -10px;" />缩小
+                                            </li>
+                                            <li>
+                                                <img
+                                                    style="transform: scale(0.5);width: 32px; height: 32px;background: url('/images/icons.png') -200px -62px;" />全屏
+                                            </li>
+                                            <li>
+                                                <img
+                                                    style="transform: scale(0.5);width: 32px; height: 32px;background: url('/images/icons.png') -10px -130px;" />返回视点中心
+                                            </li>
+                                            <li>
+                                                <img
+                                                    style="transform: scale(0.5);width: 32px; height: 32px;background: url('/images/icons.png') -148px -10px;" />打印
+                                            </li>
+
+                                            <li style='display:none'>
+                                                <img
+                                                    style="transform: scale(0.5);width: 32px; height: 32px;background: url('/images/icons.png') -10px -130px; " />返回上一级
+                                            </li>
+                                        </ul>
+                                        <button id='scene_change' class='layui-btn layui-btn-xs'
+                                            style='margin-left: 30%'>切换三维</button>
+                                        <button id='back_before' class='layui-btn layui-btn-xs'
+                                            style='display:none'>返回</button>
+
+
+                                        <!-- <a
+                                            href='https://view.officeapps.live.com/op/view.aspx?src=uploads\file\1576833422573_11_19.docx'>
+                                            打开链接 </a> -->
+
+                                        <div id="map">
+                                        </div>
+                                        <div id='3D_models' style='display: none;width: 100%;height: 95%;;'>
+                                            <canvas id="example" style="width:100%;height:100%"></canvas>
+                                        </div>
+                                    </div>
+                                    <!--tip信息栏-->
+                                    <div id="modelTip" class="modelTip" style='display: none'>
+                                        <div class="close">
+                                            X
+                                        </div>
+                                        <label></label>
+                                        <!-- <a class="openToNext"><i class="glyphicon glyphicon-screenshot" title="转到这里"></i></a> -->
+                                        <table>
+                                        </table>
+                                        <!-- <div class="center">
+                                            xxx
+                                        </div> -->
+                                        <!-- style="float: right;margin-top: -10px;" -->
+                                        <a class="openToNext"><i class="layui-icon layui-icon-link" title='进入房间'></i>
+                                        </a>
+                                    </div>
+                                    <!--地图标记点-->
+                                    <div id='modelSimpleTip' style="display: none;">
+                                        <img id='info_tip' src="/images/矿加实验室.png">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="layui-col-md4">
+                            <div class="layui-card">
+                                <div class="layui-tab layui-tab-card">
+                                    <ul class="layui-tab-title" id="tab_info">
+                                        <li id="tab_1" class="layui-this">建筑</li>
+                                        <li id="tab_2">楼层</li>
+                                        <li id="tab_3">房间</li>
+                                    </ul>
+                                    <div class="layui-tab-content">
+                                        <div class="layui-tab-item layui-show" id="info_1">
+                                            <div class="layui-carousel layadmin-carousel layadmin-shortcut"
+                                                style="width: 100%;height:240px">
+                                                <div>
+                                                    <ul>
+                                                        <li class="layui-col-xs12 " style="float: left;">
+                                                            <table class=" layui-table ">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>建筑编号</td>
+                                                                        <td id="building_id"></td>
+                                                                        <td>建筑名称</td>
+                                                                        <td id="building_name"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>楼层总数</td>
+                                                                        <td id="floor_number"></td>
+                                                                        <td><span style="font-size: 13px">楼层总面积</span>
+                                                                        </td>
+                                                                        <td id="floor_area"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>房间总数</td>
+                                                                        <td id="room_number"></td>
+                                                                        <td><span style="font-size: 13px">房间总面积</span>
+                                                                        </td>
+                                                                        <td id="room_total_area"></td>
+                                                                    </tr>
+                                                                </tbody>
+
+                                                            </table>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-tab-item" id="info_2">
+                                            <div class="layui-carousel layadmin-carousel layadmin-shortcut"
+                                                style="width: 100%;height:260px">
+                                                <div>
+                                                    <ul>
+                                                        <li class="layui-col-xs12 " style="float: left;">
+                                                            <table class=" layui-table ">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>楼层位置</td>
+                                                                        <td id="floor_id"></td>
+                                                                        <td><span style="font-size: 13px">房间总面积</span>
+                                                                        </td>
+                                                                        <td id="floor_total_area"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>房间总数</td>
+                                                                        <td id="room_total_number"></td>
+                                                                        <td>门</td>
+                                                                        <td id="room_total_gate"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>出入口</td>
+                                                                        <td id="room_channel"></td>
+                                                                        <td>窗户</td>
+                                                                        <td id="floor_window"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                    </tr>
+
+                                                                </tbody>
+
+                                                            </table>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="layui-tab-item" id="info_3">
+                                            <div class="layui-carousel layadmin-carousel layadmin-shortcut"
+                                                style="width: 100%;height:280px">
+                                                <div>
+                                                    <ul>
+                                                        <li class="layui-col-xs12" style="float: left;">
+                                                            <table class=" layui-table ">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>房间编号</td>
+                                                                        <td id="room_id"></td>
+                                                                        <td>房间名称</td>
+                                                                        <td id="room_name"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>面积</td>
+                                                                        <td id="room_area"></td>
+                                                                        <td>窗户</td>
+                                                                        <td id="room_window"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>门</td>
+                                                                        <td id="room_gate"></td>
+                                                                        <td>负责人</td>
+                                                                        <td id="room_master"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <!-- <td>状态</td>
+                                                                        <td id="room_state"></td> -->
+                                                                    </tr>
+                                                                </tbody>
+
+                                                            </table>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    实验室——设备
+                                    <span style='float: right;' id='Fname'></span>
+                                </div>
+                                <div class="layui-card-body" style="overflow-y: scroll;height: 470px;" >
+                                    <table id="deviceView" lay-filter="test" ></table>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/html" id="toolbarDemo">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-event="view">查看详情</button>
+        </div>
+        </script>
+
+
+    <script>
+
+        //渲染场景
+        function render() {
+            var renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById('example')
+            });
+            // //通过requestAnimationFrame方法在特定时间间隔重新渲染场景
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera(45, 4 / 3, 1, 1000);
+            renderer.render(scene, camera);
+
+        }
+
+        // 二三维场景切换
+        $('#scene_change').on('click', function () {
+            let button_content = $('#scene_change').text()
+            let model_scene = $('#select_lab').val();
+            if (button_content === '切换三维') {
+                $('#map').css('display', 'none')
+                $('#3D_models').css('display', 'block')
+                load3DModels(model_scene)
+                // render()
+                $('#scene_change').text('切换二维')
+            } else {
+                $('#3D_models').css('display', 'none')
+                $('#map').css('display', 'block')
+                $('#scene_change').text('切换三维')
+            }
+        })
+
+        function load3DModels(model_scene) {
+            var OBJLoader2Example = (function () {
+                var Validator = THREE.LoaderSupport.Validator;
+                function OBJLoader2Example(elementToBindTo) {
+                    this.renderer = null;
+                    this.canvas = elementToBindTo;
+                    this.aspectRatio = 1;
+                    this.recalcAspectRatio();
+                    this.scene = null;
+                    this.cameraDefaults = {
+                        // posCamera: new THREE.Vector3(150.0, 300.0, 150.0),
+                        posCamera: new THREE.Vector3(150.0, 200.0, 150.0),
+                        posCameraTarget: new THREE.Vector3(0, 0, 0),
+                        near: 1.0,
+                        far: 10000,
+                        fov: 15
+                    };
+                    this.camera = null;
+                    this.cameraTarget = this.cameraDefaults.posCameraTarget;
+
+                    this.controls = null;
+                }
+                //相机控制器
+                // var controls = new THREE.OrbitControls(camera);
+                // console.log(controls)
+                // controls.addEventListener('change', render);
+                OBJLoader2Example.prototype.initGL = function () {
+                    this.renderer = new THREE.WebGLRenderer({
+                        canvas: this.canvas,
+                        antialias: true,
+                        autoClear: true
+                    });
+                    this.renderer.setClearColor(0x050505);
+
+                    this.scene = new THREE.Scene();
+
+                    this.camera = new THREE.PerspectiveCamera(this.cameraDefaults.fov, this.aspectRatio, this.cameraDefaults.near, this.cameraDefaults.far);
+                    this.resetCamera();
+                    this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
+
+                    var ambientLight = new THREE.AmbientLight(0x404040);
+                    var directionalLight1 = new THREE.DirectionalLight(0xC0C090);
+                    var directionalLight2 = new THREE.DirectionalLight(0xC0C090);
+
+                    directionalLight1.position.set(-100, -50, 100);
+                    directionalLight2.position.set(100, 50, -100);
+
+                    this.scene.add(directionalLight1);
+                    // this.scene.add( directionalLight2 );
+                    this.scene.add(ambientLight);
+                    this.scene.background = new THREE.Color(0xdedede);//改变背景颜色
+                    var helper = new THREE.GridHelper(1000, 80, 0xFF4444, 0x404040); //辅助的地坪网格线
+                    this.scene.add(helper);
+                };
+
+                OBJLoader2Example.prototype.initContent = function () {
+                    var modelName = model_scene;
+                    this._reportProgress({ detail: { text: 'Loading: ' + modelName } });
+
+                    var scope = this;
+                    var objLoader = new THREE.OBJLoader2();
+                    var callbackOnLoad = function (event) {
+                        // event.detail.loaderRootNode.rotation.x = -1.5;//模型旋转角度
+                        event.detail.loaderRootNode.rotateX(-Math.PI / 2);//模型旋转角度
+                        event.detail.loaderRootNode.rotateZ(-Math.PI / 1.5);//模型旋转角度
+
+
+                        // event.detail.loaderRootNode.translateY(58);//模型平移
+                        // event.detail.loaderRootNode.translateZ(10);
+                        event.detail.loaderRootNode.scale.set(1.2, 1.2, 1.2);//模型缩放比例
+                        var ambient = new THREE.AmbientLight(0x444444);
+                        scope.scene.add(ambient);
+
+                        scope.scene.add(event.detail.loaderRootNode);
+                        scope._reportProgress({ detail: { text: '' } });
+                    };
+
+
+                    var onLoadMtl = function (materials) {
+                        objLoader.setModelName(modelName);
+                        objLoader.setMaterials(materials);
+                        objLoader.setLogging(true, true);
+                        objLoader.load('/packages/models/obj/' + modelName + '/' + modelName + '.obj', callbackOnLoad, null, null, null, false);
+                    };
+                    objLoader.loadMtl('/packages/models/obj/' + modelName + '/' + modelName + '.mtl', null, onLoadMtl);
+                };
+
+                OBJLoader2Example.prototype._reportProgress = function (event) {
+                    var output = Validator.verifyInput(event.detail.text, '');
+                };
+
+                OBJLoader2Example.prototype.resizeDisplayGL = function () {
+                    this.controls.handleResize();
+
+                    this.recalcAspectRatio();
+                    this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight, false);
+                    this.updateCamera();
+                };
+
+                OBJLoader2Example.prototype.recalcAspectRatio = function () {
+                    this.aspectRatio = (this.canvas.offsetHeight === 0) ? 1 : this.canvas.offsetWidth / this.canvas.offsetHeight;
+                };
+
+                OBJLoader2Example.prototype.resetCamera = function () {
+                    this.camera.position.copy(this.cameraDefaults.posCamera);
+                    this.cameraTarget.copy(this.cameraDefaults.posCameraTarget);
+                    this.updateCamera();
+                };
+
+                OBJLoader2Example.prototype.updateCamera = function () {
+                    this.camera.aspect = this.aspectRatio;
+                    this.camera.lookAt(this.cameraTarget);
+                    this.camera.updateProjectionMatrix();
+                };
+
+                OBJLoader2Example.prototype.render = function () {
+                    if (!this.renderer.autoClear) this.renderer.clear();
+                    this.controls.update();
+                    this.renderer.render(this.scene, this.camera);
+                };
+
+                return OBJLoader2Example;
+
+            })();
+
+
+            var app = new OBJLoader2Example(document.getElementById('example'));
+
+            var resizeWindow = function () {
+                app.resizeDisplayGL();
+            };
+            var render = function () {
+                requestAnimationFrame(render);
+                app.render();
+            };
+            window.addEventListener('resize', resizeWindow, false);
+            app.initGL();
+            app.resizeDisplayGL();
+            app.initContent();
+            render();
+
+        }
+        // $('#user_name').html(username);
+        /*设置session*/
+        $(function () {
+            $.ajax({
+                type: 'post',
+                url: '/session',
+                success: function (data) {
+                    if (data.username != null) {
+                        $('#user_name').html(data.username)
+                    } else {
+                        // window.location.href = "/login";
+                    }
+                }
+            });
+        });
+        $('#model_add').on('click', function () {
+            //弹出即全屏
+            layer.open({
+                content: '/model_add',
+                type: 2,
+                shade: 0.5,
+                title: '模型加载',
+                maxmin: true,
+                area: ['100%', '100%'],
+            })
+        });
+        layui.use('table', function () {
+            var table = layui.table;
+            table.render({
+                //默认为get请求
+                elem: '#device_view'
+                , url: '/device_manage'
+                , page: true
+                , limits: [5, 10, 15]
+                , limit: 5
+                , cols: [[
+                    { field: 'device_name', title: '设备名称', sort: true }
+                    , { field: 'FID', title: '实验室编号', sort: true }
+                    , { field: 'danger_type', title: '危险类型' }
+                    , { field: 'danger_degree', title: '危险等级' }
+                    , { field: 'device_master', title: '负责人' }
+                ]]
+            });
+        });
+    </script>
+</body>
+
+</html>

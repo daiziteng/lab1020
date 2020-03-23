@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/packages/echarts.js"></script>
+    <title>实验室设备预约信息查询</title>
+    <style>
+    </style>
+</head>
+
+<body style='height:100%'>
+    <div class="layui-col-md6">
+        <div class="layui-card" style='height:480px'>
+            <div class="layui-card-header">
+                统计数据
+            </div>
+            <div class="layui-card-body layuiadmin-card-list">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">日期范围</label>
+                        <div class="layui-input-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="time" placeholder=" - " autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-btn layuiadmin-btn-list" data-type="reload" id="search">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                        </div>
+                    </div>
+
+                </div>
+                <table id="roomView" lay-filter="test"></table>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md6">
+        <div class="layui-card" style='height:480px'>
+            <div class="layui-card-header">
+                统计图形
+            </div>
+            <div class="layui-card-body layuiadmin-card-list">
+                <!-- <table id="deviceView" lay-filter="test"></table> -->
+                <div id="main" style="width:100%;height:400px;"></div>
+            </div>
+
+        </div>
+    </div>
+    <!-- 给表格添加序号栏 -->
+    <script type="text/html" id="zizeng">
+            {{d.LAY_INDEX}}
+        </script>
+    <script>
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            //日期范围
+            laydate.render({
+                elem: '#time'
+                , range: true
+            });
+        })
+        layui.use('table', function () {
+            var table = layui.table;
+            table.render({
+                //默认为get请求
+                elem: '#roomView'
+                , url: '/Room_order/number'
+                , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , page: true
+                , id: 'testReload'
+                , limits: [7, 10, 15, 20]
+                , limit: 7
+                , cols: [[
+                    { title: '序号', type: 'number', sort: true, toolbar: '#zizeng', minwidth: 160 }
+                    , { field: 'FID', title: '房间号' }
+                    , { field: 'Rname', title: '房间名称' }
+                    , { field: 'total_num', title: '预约总次数' }
+                ]]
+                , done: function () {
+                    let data = table.cache.testReload;//当前页面的表格数据
+                    loadDrugs(data)
+                }
+            });
+
+            // <!--查询功能-->
+            var active = {
+                reload: function () {
+                    var index = layer.msg('查询中，请稍候...', { icon: 16, time: false, shade: 0 });
+                    let timeValue = $('#time').val()
+                    let beginTime = timeValue.substring(0, 10)
+                    let endTime = timeValue.substring(13, 23)
+                    setTimeout(function () {
+                        table.reload('testReload', {
+                            page: {
+                                curr: 1
+                            }
+                            , where: {
+                                beginTime: beginTime,
+                                endTime: endTime,
+                            }
+                        }, 'data');
+                        layer.close(index);
+                    }, 800)
+                }
+            };
+            $('#search').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            })
+            var myChart1 = echarts.init(document.getElementById('main'));
+            function loadDrugs(data) {
+                myChart1.clear();
+                // myChart1.showLoading({ text: '正在努力的读取数据中...' });
+                var y_data = [];
+                var x_data = [];
+                // var labelOption = {
+                //     normal: {
+                //         show: true,
+                //         formatter: '{c}次',
+                //         fontSize: 16
+                //     }
+                // };
+                for (var i = 0; i < data.length; i++) {
+                    // console.log(data)
+                    y_data.push(data[i].total_num);
+                    x_data.push(data[i].Rname);
+
+                    // var row = {};
+                    // row.value = data[i].total_num;
+                    // row.name = data[i].Rname;
+                    // row.label = labelOption;
+
+                    // list.push(row);
+                    // title.push(data[i].Rname)
+                }
+
+                // var option = {
+                //     title: {
+                //         text: '实验室预约次数',
+                //         x: 'center'
+                //     },
+                //     tooltip: {
+                //         trigger: 'item',
+                //         formatter: "{a} <br/>{b} : {c} ({d}%)"//这个是固定写法，可以查看layui的API文档
+                //     },
+                //     legend: {
+                //         orient: 'vertical',
+                //         x: 'left',
+                //         data: title,
+                //     },
+                //     calculable: 'true',
+                //     series: [
+                //         {
+                //             name: '预约人次',
+                //             type: 'pie',
+                //             radius: '55%',
+                //             center: ['65%', 225],
+                //             data: list
+                //         }
+                //     ]
+                // }
+                option = {
+                    title: {
+                        text: '实验室预约人次统计（单位:人次）',
+                    },
+                    color: ['#3398DB'],
+                    tooltip: {
+                        trigger: 'axis',
+                        formatter: '{b0}<br/>{a0}:{c0}' + '人次', //格式后面加单位
+                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                            type: 'line'        // 默认为直线，可选为：'line' | 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            data: x_data,
+                            axisTick: {
+                                alignWithLabel: true
+                            },
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 40
+                            }    //解决x轴文字过多导致显示不全
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value} 人次'
+                            }
+                        },
+
+
+                    ],
+                    series: [
+                        {
+                            name: '直接访问',
+                            type: 'bar',
+                            barWidth: '60%',
+                            data: y_data,
+                        }
+                    ]
+                };
+
+
+                myChart1.setOption(option);
+            }
+        });
+    </script>
+</body>
+
+</html>

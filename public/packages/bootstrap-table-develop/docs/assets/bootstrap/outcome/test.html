@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消息处理中心</title>
+    <link type="text/css" rel="stylesheet" href="../css/bootstrap.css">
+    <link type="text/css" rel="stylesheet" href="bootstrap-table.css">
+
+    <script type="text/javascript" src="jquery.js"></script>
+    <!--<script src="FileSaver.js"></script>-->
+    <script src="bootstrap.min.js"></script>
+    <script src="bootstrap-table.js"></script>
+    <script src="bootstrap-table-export.min.js"></script>
+    <!--<script src="../../../../dist/locale/bootstrap-table-zh-CN.min.js"></script>-->
+</head>
+<body>
+
+<div class="container">
+    <div class="col-sm-2" style="padding-top: 10px">
+     <span id="exportToolbar" style="display: inline-block" class="btn-group">
+         <select id="sel_exportoption" class="form-control">
+             <option value="">导出当前页数据</option>
+             <option value="all">导出全部数据</option>
+             <option value="selected">导出选中数据</option>
+         </select>
+     </span>
+    </div>
+    <div class="row">
+        <div id="toolbar"></div>
+        <table id="bootstrapTable"  ></table>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript">
+    $("#sel_exportoption").change(function () {
+        //刷新参数设置
+        $('#DataQueryTable').bootstrapTable('refreshOptions', {
+            exportDataType: $(this).val()
+        });
+    });
+    $(function(){
+        initTable();
+    });
+    function initTable() {
+        //先销毁表格
+        $("#bootstrapTable").bootstrapTable({
+            // data:data.json,
+            //表格高度
+            height: getHeight(),
+            //服务器数据的请求方式 'get' 或 'post'。
+            method: 'get',
+            //设置为 true 会有隔行变色效果
+            striped: true,
+            //设置为 true 会在表格底部显示分页条。
+            pagination: true,
+            //请求后台的URL
+            // url: '/MsgDealCenterAction/listData',
+            url:'data.json',
+            //服务器返回的数据类型。
+            dataType: 'json',
+            //工具按钮用哪个容器
+            toolbar: '#toolbar',
+            //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性
+            cache: false,
+            //设置为 true 启用分页条无限循环的功能
+//         paginationLoop: true,
+            //设置在哪里进行分页，可选值为 'client' 或者 'server'。设置 'server'时，必须设置服务器数据地址（url）或者重写ajax方法
+            // sidePagination: 'server',
+            //初始化加载第一页，默认第一页
+            pageNumber: 1,
+            //每页的记录行数
+            pageSize: 10,
+            //可供选择的每页的行数
+            pageList: [5,10,15, 50],
+            //设置为false 将禁止所有列的排序。
+            sortable: true,
+            //设置默认排序为 name
+            sortName: 'insert_time',
+            //定义排序方式，'asc' 或者 'desc'。
+            sortOrder: "desc",
+            //是否显示刷新按钮
+            showRefresh: true,
+            //是否显示内容列下拉框。
+            showColumns: true,
+            //显示导出插件
+            showExport: true,
+            //是否显示右上角的搜索框
+            search: false,
+            //是否显示切换视图（table/card）按钮。
+            showToggle:false,
+            //是否启用点击选中行
+            clickToSelect: true,
+            //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder
+            //设置为limit可以获取limit, offset, search, sort, order
+            queryParamsType:'undefined',
+            //请求服务器数据
+            // queryParams: function queryParams(params){
+            //     var param = {
+            //         pageNumber: params.pageNumber,
+            //         pageSize: params.pageSize,
+            //         sortName: params.sortName,
+            //         sortOrder: params.sortOrder
+            //     };
+            //     return param;
+            // },
+            //加载成功时执行
+            // onLoadSuccess: function(data){
+            //     console.log("加载成功");
+            // },
+            //加载失败时执行
+            onLoadError: function(status){
+                console.log("加载数据失败"+status);
+            },
+            // columns: [
+            //     {
+            //         title: "全选",
+            //         field: "select",
+            //         checkbox: false,
+            //         width: 20,//宽度
+            //         align: "left",//水平
+            //         valign: "middle",
+            //         formatter: function (value, row, index) {
+            //             // return row._id;
+            //             return value;
+            //         }
+            //     },{
+            //         title: '编号',//标题  可不加
+            //         align: 'center',
+            //         valign: 'middle',
+            //         sortable: false,
+            //         formatter: function (value, row, index) {
+            //             return index+1;
+            //         }
+            //     },{
+            //         title: '产品线',
+            //         field: 'source',
+            //         align: 'center',
+            //         valign: 'middle',
+            //         sortable: false,
+            //         width:  '80px',
+            //         formatter: function (value, row, index) {
+            //             return index+11;
+            //         }
+            //     },{
+            //         field: 'msg_type',
+            //         title: '消息类型',
+            //         align: 'center',
+            //         valign: 'middle',
+            //         sortable: false,
+            //         formatter: function (value, row, index) {
+            //             return index+21;
+            //         }
+            //     },{
+            //         // field: 'account_name',
+            //         title: '账号类型',
+            //         align: 'center',
+            //         valign: 'middle',
+            //         sortable: false,
+            //         formatter: function (value, row, index) {
+            //             return index+31;
+            //         }
+            //     },{
+            //         // field: 'msg_name',
+            //         title: '消息名称',
+            //         align: 'left',
+            //         valign: 'middle',
+            //         sortable: false,
+            //         formatter: function (value, row, index) {
+            //             return index+41;
+            //         }
+            //     },{
+            //         // field: 'msg',
+            //         title: '消息内容',
+            //         align: 'left',
+            //         valign: 'middle',
+            //         sortable: false,
+            //         visible: false,
+            //         //value【字段值】row【row对应的整条记录】index【行索引】
+            //         formatter: function format(value,row,index){
+            //             console.log(typeof(value));
+            //             // 缩进一个2个空格
+            //             return JSON.stringify(value, null, 2);
+            //         }
+            //     },{
+            //         // field: 'msg_start_time',
+            //         title: '起始有效时间',
+            //         align: 'center',
+            //         valign: 'middle',
+            //         sortable: true,
+            //         formatter: function (value, row, index) {
+            //             return index+51;
+            //         }
+            //     },{
+            //         // field: 'msg_end_time',
+            //         title: '结束有效时间',
+            //         align: 'center',
+            //         valign: 'middle',
+            //         sortable: true,
+            //         formatter: function (value, row, index) {
+            //             return index+61;
+            //         }
+            //     },{
+            //         // field: 'insert_time',
+            //         title: '入库时间',
+            //         align: 'center',
+            //         valign: 'middle',
+            //         sortable: true,
+            //         formatter: function (value, row, index) {
+            //             return index+71;
+            //         }
+            //     },{
+            //         // field: 'update_time',
+            //         title: '更新时间',
+            //         align: 'center',
+            //         valign: 'middle',
+            //         sortable: true,
+            //         visible: false,
+            //         formatter: function (value, row, index) {
+            //             return index+81;
+            //         }
+            //     }]
+            columns: [{
+                fileid: 'state', checkbox: true, formatter: function (value, row, index) {   //加复选框
+                    //if (index === 2) {
+                    //    return {
+                    //        disabled: true,
+                    //        checked: true
+                    //    }
+                    //}
+                    // console.info(value);
+                    return value;
+                }
+            }, {
+                field: 'devicenumber',
+                align: 'center',
+                title: '仪器编号'
+                // formatter: function (value, row, index) {
+                //     return index;
+                // }
+            }, {
+                field: 'devicename',
+                align: 'center',
+                title: '仪器名称'
+                // formatter: function (value, row, index) {
+                //     return row._id;
+                // }
+            }, {
+                field: 'factor',
+                align: 'center',
+                title: '生产厂家'
+            }, {
+                field: 'model',
+                align: 'center',
+                title: '规格型号'
+            }, {
+                field: 'price',
+                align: 'center',
+                title: '购置价格'
+            }, {
+                field: 'state',
+                align: 'center',
+                title: '状态'
+            },
+                {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    valign: 'middle',
+                    formatter: function (value, row, index) {
+                        return "<a class='btn btn-xs green viewDetails' id="+row.MONTH+" style='color: #29a2ff' data-toggle='modal' data-target='#detialModal' onclick='show_detial($(this)[0].id);'>详情</a>";
+                    }
+                }],
+
+        });
+    }
+    //获取table的高度
+    function getHeight() {
+        return $(window).height() - 380;
+    }
+</script>
+</html>

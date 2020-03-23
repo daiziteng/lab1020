@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <!--<script type="text/javascript" src="/js/admin.js"></script>-->
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>应急预案</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: burlywood;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: burlywood;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                            <span id="user_name"></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item">
+                            <a href="user_index" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>个人主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a class="" href="javascript:;" name="安全准入" id="homepage">
+                                <i class="layui-icon layui-icon-form"></i>
+                                <cite>安全准入</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="lab_info">信息预知</a></dd>
+                                <dd><a href="lab_danger_element">危险预知</a></dd>
+                                <dd><a href="lab_urgent_schema" class="layui-this">应急预案</a></dd>
+                                <dd><a href="lab_exam">准入考试</a></dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item">
+                            <a href="lab_order" name="实验室分布" id="homepage">
+                                <i class="layui-icon layui-icon-location"></i>
+                                <cite>实验室分布</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item ">
+                            <a href="javascript:;" name="实验室详情" id="">
+                                <i class="layui-icon layui-icon-tabs"></i>
+                                <cite>实验室详情</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="room_order">房间预约</a></dd>
+                                <dd><a href="lab_submit" >实验记录</a></dd>
+                            </dl>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+
+            </div>
+            <!--页面主体-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <h3 style="font-size: 24px;text-align: center">实验室应急预案</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <span style="color: blue;font-size: 20px;">实验室自救逃生</span>
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="layui-collapse" lay-accordion>
+                                        <div class="layui-colla-item">
+                                            <h2 class="layui-colla-title">火灾事故处理</h2>
+                                            <div class="layui-colla-content layui-show">
+                                                <ul>
+                                                    <li>1、 进入实验室必须遵守实验室的各项规定，严格执行操作规程，做好各类记录，以免发生意外。</li>
+                                                    <li>2、 保证实验室观察窗的可视性，门口需张贴安全信息牌，并及时更新相关信息。 </li>
+                                                    <li>3、 保持实验室整洁和地面干燥，及时清理废旧物品，保持消防通道通畅。 </li>
+                                                    <li>4、 实验中人员不得脱岗，进行危险实验时需有2人同时在场，而且要严格遵守实验步骤。 </li>
+                                                    <li>5、 进入实验室应了解潜在的安全隐患和应急方式，掌握必要的安全防护措施，以便于在事故发生时能够自救逃生。
+                                                    </li>
+                                                    <li>6、 实验室应标有消防安全疏散图，在发生事故时，实验室内人员应按照路线图进行疏散自救逃生。 </li>
+                                                    <li>7、 掌握必要的自救逃生技能，在事故发生时能够及时采取相应的安全救援措施，自救逃生。 </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <span style="color: blue;font-size: 20px;">实验室事故应急预案</span>
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="layui-collapse" lay-accordion>
+                                        <div class="layui-colla-item">
+                                            <h2 class="layui-colla-title">现场处置方案</h2>
+                                            <div class="layui-colla-content layui-show">
+                                                <ul>
+                                                    <li>
+                                                        <span style="font-weight: bold;font-size: 16px">1、控制污染源</span>:
+                                                        根据发生事故的技术特点和事故类别，采取特定的水污染防治技术措施，及时有效地控制事故，消除水污染危害并防止发生次生灾害。
+                                                    </li>
+                                                    <li>
+                                                        <span style="font-weight: bold;font-size: 16px">2、抢救受伤人员</span>:
+                                                        　迅速、有序地开展受伤人员的现场抢救或安全转移。尽最大可能降低人员伤亡，减少事故所造成的财产损失。
+                                                    </li>
+                                                    <li>
+                                                        <span
+                                                            style="font-weight: bold;font-size: 16px">3、协助有关管理人员清理事故现场，消除危害后果</span>:
+                                                        针对事故对人体、空气、水体所造成的现实的和可能的危害，迅速采取技术措施进行事故后处理，防止污染危害的蔓延。
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <script>
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+        /*设置session*/
+        $(function () {
+            $.ajax({
+                type: 'post',
+                url: '/session',
+                success: function (data) {
+                    // $('#user_name').html(data.username);
+                    if (data.username != null) {
+                        $('#user_name').html(data.username)
+                    } else {
+                        window.location.href = "/login";
+                    }
+                }
+            });
+        });
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            //判断
+        });
+
+
+    </script>
+</body>
+
+</html>

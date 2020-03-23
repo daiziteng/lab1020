@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/packages/moment.js"></script>
+
+    <title>设备管理</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: #009688;
+
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: #009688;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+
+        .layui-table-view .layui-form-switch,
+        .layui-table-view .layui-form-checkbox,
+        .layui-table-view .layui-form-radio {
+            height: 30px;
+            top: -5px;
+        }
+
+        .layui-form-checked span,
+        .layui-form-checked:hover span {
+            background-color: #009688;
+        }
+
+        .layui-table-view .layui-form-checkbox i {
+            height: 30px;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                            <span id='username'></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item">
+                            <a class="" href="javascript:;" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="/admin_index">后台主页</a></dd>
+                            </dl>
+                        </li>
+
+                        <li class="layui-nav-item "><a href="#" name="云链接" id="link_others">
+                                <i class="layui-icon layui-icon-headset"></i>
+                                <cite>实验室程序管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="admin_lab_info">一般信息</a></dd>
+                                <dd><a href="admin_lab_danger">风险信息</a>
+                                </dd>
+                                <dd><a href="admin_lab_urgent">应急管理</a></dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed"><a href="#" name="云链接" id="background_manage">
+                                <i class="layui-icon layui-icon-headset"></i>
+                                <cite>实验室后台管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd class="layui-nav-itemed"><a href="javascript:;" class="layui-nav-itemed">仪器设备管理</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="admin_device_manage" class="layui-this">设备管理</a></dd>
+                                        <dd><a href="admin_cylinder_manage">气瓶管理</a></dd>
+                                        <dd><a href="/admin_reagent_manage">试剂管理</a></dd>
+                                    </dl>
+                                </dd>
+                                <dd><a href="javascript:;" class="layui-nav-itemed">预约管理</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="/admin_room_order#">实验室预约</a></dd>
+                                        <!-- <dd><a href="javascript:;">设备预约</a></dd>
+                                    <dd><a href="/admin_reagent_order">试剂预约</a></dd> -->
+                                    </dl>
+                                </dd>
+                                <dd><a href="/admin_user_manage" name="用户管理" id="user_manage">用户管理</a></dd>
+                                <dd class="layui-nav-itemed"><a href="/admin_info_manage" name="实验室录入清单管理">实验室录入清单管理</a>
+                                </dd>
+                                <dd><a href="javascript:;" class="layui-nav-itemed">检查表</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="admin_security_check">日常安全检查</a></dd>
+                                        <dd><a href="admin_security_check2"> 高校实验室安全检查</a></dd>
+                                        <dd><a href="admin_security_check3"> 安全自查情况登记表</a></dd>
+                                        <!-- <dd><a href="#">特殊安全检查</a></dd> -->
+                                    </dl>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a class="" href="admin_journal" name="主页" id="daily">
+                                <i class="layui-icon layui-icon-slider"></i>
+                                <cite>实验室管理日志</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+
+            </div>
+            <!--页面body部分-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-card">
+                        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                            <div class="layui-form-item">
+                                <h3 style="color:blue;font-size: 30px;text-align: center">实验室设备管理
+                                    <div id='teacher_btn' class="layui-input-block" style='float:right'>
+                                        <a class="layui-btn layui-btn-radius" lay-event="edit">备份文件</a>
+
+                                        <!-- <a class="layui-btn layui-btn-xs" href='https://cdn.shopify.com/s/files/1/1545/3617/files/SH01_User_Manaul.pdf' download="false"  >编辑</a> -->
+                                        <!-- <a class="layui-btn layui-btn-xs" href='upload\file\1577601630524_宗地文件.pdf'>编辑</a> -->
+
+
+
+                                    </div>
+                                </h3>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="layui-col-sm12">
+                        <div class="layui-card">
+                            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">设备名</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="device_name" name="id" placeholder="请输入"
+                                                autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">实验室</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="lab_number" name="lab" placeholder="请输入"
+                                                autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">危险等级</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="danger_degree" name="danger" placeholder="请输入"
+                                                autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" style="width: 200px;">
+                                        <label class="layui-form-label">设备状态</label>
+                                        <div class="layui-input-block">
+                                            <select name="city" lay-verify="required" id="device_state">
+                                                <option value=""></option>
+                                                <option value="normal">正常</option>
+                                                <option value="duration">逾期</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <div class="layui-btn layuiadmin-btn-list" data-type="reload" id="search">
+                                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-card-body">
+                                <div class="layui-card-body">
+                                    <table id="deviceView" lay-filter="test"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+        <button class="layui-btn layui-btn-sm" lay-event="delete">批量删除</button>
+        <button class="layui-btn layui-btn-sm" lay-event="backup">创建备份</button>
+        <!-- <button class="layui-btn layui-btn-sm" lay-event="recover">数据恢复</button> -->
+    </div>
+</script>
+    <script type="text/html" id="fileDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="submit">上传附件</a>
+</script>
+    <script type="text/html" id="fileView">
+    <a class="layui-btn layui-btn-xs" lay-event="preview">预览</a>
+</script>
+    <script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+    <!--数据模板//显示保修期状态信息-->
+    <script type="text/html" id="titleTpl">
+    <!--模板内不能出现注释内容-->
+    {{#  if(new Date(d.expiration_date) < new Date()){ }}
+    <button class="layui-btn layui-btn-danger layui-btn-xs">逾期</button>
+    {{#  } else { }}
+    <button class="layui-btn layui-btn-normal layui-btn-xs">正常</button>
+    {{#  } }}
+    </script>
+    <script>
+        function writeCurrentDate() {
+            var now = new Date();
+            var year = now.getFullYear(); //得到年份
+            var month = now.getMonth();//得到月份
+            var date = now.getDate();//得到日期
+            var day = now.getDay();//得到周几
+            var hour = now.getHours();//得到小时
+            var minu = now.getMinutes();//得到分钟
+            var sec = now.getSeconds();//得到秒
+            var week;
+            month = month + 1;
+            if (month < 10) month = "0" + month;
+            if (date < 10) date = "0" + date;
+            if (hour < 10) hour = "0" + hour;
+            if (minu < 10) minu = "0" + minu;
+            if (sec < 10) sec = "0" + sec;
+            var arr_week = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六");
+            week = arr_week[day];
+            var time = "";
+            time = year + "年" + month + "月" + date + "日" + " " + hour + ":" + minu + ":" + sec + " " + week;
+            return time
+        }
+
+
+        $('#username').html(username);
+        layui.use('element', function () {
+            var element = layui.element;
+        })
+        layui.use('form', function () {
+            var form = layui.form;
+            //全部全选
+            form.on('checkbox(checkall)', function (data) {
+                var child = $(data.elem).parents('.layui-form').find('input[type="checkbox"]');
+                // console.log(child)
+                child.each(function (index, item) {
+                    item.checked = data.elem.checked;
+                });
+                form.render('checkbox');
+            });
+        })
+        // 备份文件
+        $("#teacher_btn a:eq(0)").on('click', backup);
+
+        function backup() {
+            layer.open({
+                content: '/device_backup',
+                type: 2,
+                shade: 0.5,
+                title: '设备信息备份',
+                area: ['1016px', '606px'],
+                btn: ['确定'],    // 自定义设置多个按钮
+                success: function (layero, index) {
+
+
+                },
+            });
+        }
+
+
+
+
+        layui.use('table', function () {
+            var table = layui.table;
+            let nowDate = moment(new Date()).format('YYYY-MM-DD')
+            table.render({
+                //默认为get请求
+                elem: '#deviceView'
+                , url: '/device_manage'
+                , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , id: 'testReload'
+                , page: true
+                , limits: [5, 10, 15]
+                , limit: 5
+                , toolbar: '#toolbarDemo'
+                , cols: [[
+                    { type: 'checkbox' }
+                    , { field: 'device_ID', title: '设备编号', sort: true }
+                    , { field: 'device_name', title: '设备名称', sort: true }
+                    , { field: 'device_number', title: '数量' }
+                    // , { field: 'device_price', title: '总价' }
+                    , { field: 'device_singlePrice', title: '单价' }
+                    // , { field: 'education_name', title: '教育部分类名' }
+                    // , { field: 'education_number', title: '教育部分类号' }
+                    // , { field: 'purchase_date', title: '购置日期' }
+                    , { field: 'document_No', title: '单据号' }
+                    // , { field: 'manufactor', title: '厂家' }
+                    , { field: 'user', title: '使用者' }
+                    // , { field: 'userNo', title: '使用者编号' }
+                    // , { field: 'device_specs', title: '规格' }
+                    , { field: 'device_model', title: '型号/品牌' }
+                    , { field: 'FID', title: '存放地' }
+                    // , { field: 'Remarks', title: '备注' }
+                    , { field: 'batch_No', title: '批量编号' }
+                    // , { field: 'input_person', title: '输入人名称' }
+                    // , { field: 'input_personNo', title: '输入人编号' }
+                    , { field: 'device_type', title: '所属分类' }
+                    , { field: 'input_date', title: '录入日期' }
+                    , { field: 'use_unit', title: '使用单位' }
+                    , { field: 'use_unitNumber', title: '使用单位编号' }
+                    // , {field: 'device_purpose', title: '设备属性'}
+                    // , {field: 'experiment_item', title: '实验项目'}
+                    // , {field: 'danger_type', title: '危险类型'}
+                    // , {field: 'danger_degree', title: '危险等级'}
+                    // , {field: 'experiment_object', title: '对象'}
+                    // , {field: 'device_master', title: '负责人'}
+                    // , {field: 'product_date', title: '生产日期'}
+                    // , {field: 'warranty_duration', title: '保修期限'}
+                    // , {field: 'expiration_date', title: '到期时间'}
+                    // , { field: 'expiration_date', title: '状态', sort: true, templet: '#titleTpl', align: 'center' }
+                    , { fixed: 'right', title: '文件操作', toolbar: '#fileDemo', width: 150, align: 'center' }
+                    , { fixed: 'right', title: '查看文件', toolbar: '#fileView', width: 150, align: 'center' }
+                    , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150, align: 'center' }
+                ]]
+            });
+            //监听行工具事件
+            table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据（json格式的键值对）
+                    , layEvent = obj.event //获得 lay-event 对应的值（编辑、删除、添加）
+                    , editList = []; //存放获取到的那条json数据中的value值（不放key）
+                // console.log(data)
+                $.each(data, function (name, value) {
+                    // console.log(name, value)
+                    editList.push(value);//将json数据中的value放入数组中
+                })
+                if (layEvent === 'detail') {
+                    layer.msg('查看操作');
+                } else if (layEvent === 'del') {
+                    layer.confirm('确定删除改行信息？', function (index) {
+                        obj.del(); //删除对应行（tr）的DOM结构,仅仅是前端展示
+                        layer.close(index);
+                        layer.msg('已删除', { icon: 1 })
+                        //向服务端发送删除指令
+                    });
+                } else if (layEvent === 'edit') {
+                    layer.open({
+                        content: '/device_edit',
+                        type: 2,
+                        shade: 0.5,
+                        maxmin: true,
+                        title: '编辑设备信息',
+                        area: ['40%', '40%'],
+                        btn: ['确定', '取消'],    // 自定义设置多个按钮
+                        success: function (layero, index) {
+                            let body = layer.getChildFrame('body', index);
+                            var inputList = body.find("input");
+                            // console.log(editList)
+                            for (var i = 0; i < inputList.length; i++) {
+                                $(inputList[i]).val(editList[i]); //遍历子窗口的input标签，将之前数组中的值一次放入显示
+                            }
+                        },
+                        btn1: function (index, data) {
+                            layer.msg('修改成功');
+                            layer.close(index);
+
+                        },
+                        btn2: function (index, elem) {
+                            layer.msg('已取消');
+                            layer.close(index);
+                        },
+                        btnAlign: 'c',// 设置按钮位置
+                    });
+                } else if (layEvent === 'submit') {
+                    layer.open({
+                        content: '/device_illustration_file.html',
+                        type: 2,
+                        shade: 0.5,
+                        maxmin: true,
+                        title: '上传说明文件',
+                        area: ['800px', '400px'],
+                        btn: ['退出'],    // 自定义设置多个按钮
+                        success: function (layero, index) {
+                            let body = layer.getChildFrame('body', index);
+                            var iframe = window['layui-layer-iframe' + index];
+                            let device_ID = obj.data.device_ID
+                            iframe.sendDeviceNumber(device_ID)    //父页面向子页面传值 getRoomId()为全局函数
+                        },
+                        btn1: function (index, data) {
+                            // layer.msg('修改成功');
+                            layer.close(index);
+                        },
+                        btnAlign: 'c',// 设置按钮位置
+                    });
+                } else if (layEvent === 'preview') {
+                    // pdf 文件预览
+                    let device_ID = obj.data.device_ID
+                    $.ajax({
+                        type: 'get',
+                        url: '/device/info_files',
+                        data: {
+                            id: device_ID
+                        },
+                        success: function (res) {
+                            if (res.length > 0) {
+                                let path = res[0].path
+                                let format_path = path.substring(7, path.length);
+                                let href = format_path.replace(/\\/g,"/");
+                                var a = document.createElement('a');
+                                // a.setAttribute('href', 'upload/file/1577601630524_宗地文件.pdf');
+                                a.setAttribute('href', href);
+                                a.setAttribute('target', '_blank');
+                                document.body.appendChild(a);
+                                a.click();
+                            } else {
+                                layer.msg('该设备未上传使用说明文档')
+                            }
+
+
+
+                        }
+                    })
+
+
+
+
+
+
+
+
+
+                }
+            });
+
+            //监听头工具栏事件
+            table.on('toolbar(test)', function (obj) {
+                var data = obj.data;
+                var checkStatus = table.checkStatus(obj.config.id);
+                // console.log(obj.event)
+                switch (obj.event) {
+                    case 'add':
+                        // layer.msg('添加');
+                        layer.open({
+                            content: '/device_edit',
+                            type: 2,
+                            title: '添加设备',
+                            area: ['40%', '40%'],
+                            btn: ['确定', '取消'],    // 自定义设置多个按钮
+                            btn1: function (index, elem) {
+                                layer.msg('新增成功');
+                                layer.close(index);
+                            },
+                            btn2: function (index, elem) {
+                                layer.msg('已取消')
+                                layer.close(index);
+                            },
+                            btnAlign: 'c',// 设置按钮位置
+                        });
+                        break;
+                    case 'delete':
+                        layer.msg('删除');
+                        break;
+                    case 'backup':
+                        layer.confirm('将该表数据创建备份？', function (index) {
+                            var nowTime = writeCurrentDate()
+                            $.ajax({
+                                type: 'get',
+                                url: '/device/backup',
+                                data: {
+                                    name: username,
+                                    nowTime: nowTime,
+                                },
+                                success: function () {
+
+                                }
+                            })
+                            layer.close(index)
+                        })
+                        break
+
+                    case 'recover':
+                        layer.confirm('恢复该表数据？', function (index) {
+                            $.ajax({
+                                type: 'get',
+                                url: '/device/recover',
+                                data: {
+                                    name: 'admin'
+                                },
+                                success: function () {
+                                }
+                            })
+                            layer.close(index)
+                        })
+                        break
+
+                    case 'chooseAll':
+                        var childs = $('input[type=checkbox]')
+                        // ,checked = checkbox[0].checked
+                        // ,isAll = checkbox.attr('lay-filter') === 'layTableAllChoose';
+                        let status = $('input[lay-filter="layTableAllChoose"]').is(":checked");
+                        if (status == false) {
+                            childs.each(function (i, item) {
+                                console.log(i)
+                                console.log(item)
+                                $('input[type=checkbox]').prop('check', true)
+                            });
+                        }
+                        break;
+                }
+            });
+
+            // <!--查询功能-->
+            var active = {
+                reload: function () {
+                    var index = layer.msg('查询中，请稍候...', { icon: 16, time: false, shade: 0 });
+                    setTimeout(function () {
+                        table.reload('testReload', {
+                            page: {
+                                curr: 1
+                            }
+                            , where: {
+                                device_name: $('#device_name').val(),
+                                danger_degree: $('#danger_degree').val(),
+                                lab_number: $('#lab_number').val(),
+                                device_state: $('#device_state').val(),
+
+                            }
+                        }, 'data');
+                        layer.close(index);
+                    }, 800)
+                }
+            };
+            $('#search').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            })
+
+        });
+
+
+    </script>
+</body>
+
+</html>

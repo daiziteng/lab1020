@@ -1,0 +1,346 @@
+<html>
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet"
+        href="/packages/bootstrap-table-develop/docs/assets/bootstrap/css/bootstrap.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script src="/packages/bootstrap-table-develop/docs/assets/bootstrap/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            background: url(images/lab1.jpg)
+        }
+
+        .row-header {
+            margin-top: 10%;
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+
+        }
+
+        #canvas {
+            /* display: inline-block;    */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class='row-header'>
+                <img src='/images/logo.png'>
+                <h1 style='color:#ffffff;font-family: sans-serif;'>资源与环境工程学院</h1>
+            </div>
+            <div class="col-md-4 col-md-offset-4">
+                <div class="panel panel-default">
+                    <div style="background: #0d6aad" class="panel-heading">
+                        <h4 align="center" style="color: #ffffff;">
+                            实验室安全管理信息系统</h4>
+                    </div>
+                    <div style="background: #e0e1ea" class="panel-body">
+                        <div class="form-group">
+                            <div class="input-group"><span class="input-group-addon" >账号</span><input id="username"
+                                    type="text" placeholder="请输入工号/学号" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group"><span class="input-group-addon" >密码</span><input id="password"
+                                    type="password" placeholder="请输入密码" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group"><span class="input-group-addon">验证码</span><input id="valcode"
+                                    type="text" placeholder="请输入验证码" class="form-control" style='width:60%'>
+                                <canvas id="canvas" width="102" height="33"></canvas>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label><input name="Man" type="radio" value="student" />学生 / 老师 </label>
+                            <!-- <label><input name="Man" type="radio" value="student"/>教师 </label> -->
+                            <label><input name="Man" type="radio" value="manage" />管理员 </label>
+                            <!-- <div class="col-lg-offset-7">
+                                没有账号？<a href="/register">注册</a></div> -->
+                        </div>
+                        <div class="am-form-group tpl-login-remember-me">
+                            <input id="isRmbPwd" type="checkbox">
+                            <label for="remember-me">
+                                记住密码
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <button id="login" type="button" class="btn btn-success btn-block">登录</button>
+                        </div>
+                        <div id="popup" class="alert alert-warning" style="display: none;"><a id="close" href="#"
+                                class="close">×</a>
+                            <div align="center"><strong id="popup-content" style="color: #b12e30;"></strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // <!--session失效后,防止小窗口进入登陆界面-->
+        if (window != top) {
+            top.location.href = location.href;
+        }
+        /*记住密码功能*/
+        window.onload = function () {
+            //设置cookie的函数
+            function setCookie(name, value, expdays) {
+                var d = new Date();
+                d.setTime(d.getTime() + (expdays * 24 * 60 * 60 * 1000));//cookie过期时间
+                var expires = "expires=" + d.toUTCString();
+                document.cookie = name + "=" + value + "; " + expires + "; path=/";//path=/是根路径
+            }
+            //获取cookie
+            function getCookie(name) {
+                //获取name在Cookie中起止位置
+                var start = document.cookie.indexOf(name + "=");
+                //如果找到的话
+                if (start != -1) {
+                    start = start + name.length + 1;
+                    //获取value的终止位置
+                    var end = document.cookie.indexOf(";", start);
+                    if (end == -1) {
+                        end = document.cookie.length;
+                    }
+                    //截获cookie的value值，并返回
+                    return unescape(document.cookie.substring(start, end));
+                }
+                return "";
+            }
+            //删除cookie
+            function delCookie(name) {
+                setCookie(name, "", -1);
+            }
+            var form = document.getElementById("login");
+            form.onclick = function () {
+                //获取表单输入：用户名，密码，是否保存密码
+                var username = document.getElementById("username").value.trim();
+                var password = document.getElementById("password").value.trim();
+                var isRmbPwd = document.getElementById("isRmbPwd").checked;
+                // console.log(username);
+                // console.log(password);
+                // console.log(isRmbPwd);
+                //判断用户名，密码是否为空
+                if (username.length != 0 && password.length != 0) {
+                    //若复选框勾选，则添加cookie，记录密码
+                    if (isRmbPwd == true) {
+                        setCookie("this is username", username, 7);
+                        setCookie(username, password, 7);
+                    } else {
+                        //否则清除cookie
+                        delCookie("this is username");
+                        delCookie(username);
+                    }
+                } else {
+                    // alert("请输入必填字段");
+                }
+            }
+
+            //从cookie中获取用户名
+            var username = getCookie("this is username");
+            console.log(username)
+            //如果用户名为空，则给表单元素赋空值
+            if (username == "") {
+                document.getElementById("username").value = "";
+                document.getElementById("password").value = "";
+                document.getElementById("isRmbPwd").checked = false;
+            } else {
+                //获取对应的密码，将用户名，密码赋值给表单
+                var password = getCookie(username);
+                document.getElementById("username").value = username;
+                document.getElementById("password").value = password;
+                document.getElementById("isRmbPwd").checked = true;
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+
+        $("[name='Man']:eq(0)").prop("checked", true);
+
+        $(document).ready(function () {
+            var show_num = [];
+            draw(show_num);
+            $('#canvas').on('click', function () {
+                draw(show_num);
+            })
+
+            let username = $("#username");
+            let password = $("#password");
+            let login = $("#login");
+
+            let popup = $("#popup");
+            let popupContent = $("#popup-content");
+            let close = $("#close");
+            popup.hide();
+            close.click(function () {
+                popup.hide();
+            });
+            login.click(function () {
+                let peopleType = $("input[name='Man']:checked").val();
+                var val = $("#valcode").val().toLowerCase()
+                var num = show_num.join("");
+
+                if (username.val() == "" || password.val() == "" || val == '') {
+                    popup.show();
+                    popupContent.html("账号密码或验证码不能为空！");
+                } else if (peopleType == 'student') {
+                    if (val == num) {
+                        $.ajax({
+                            url: "/login",
+                            data: {
+                                username: $("#username").val(),
+                                password: $("#password").val(),
+                                peopleType: $("input[name='Man']:checked").val()
+                            },
+                            type: "POST",
+                            timeout: 36000,
+                            dataType: "text",
+                            success: function (data, textStatus) {
+                                //alert(data);
+                                let dataJson = eval("(" + data + ")");
+                                if (dataJson.code == 200) {
+                                    window.location.href = "/user_index";
+                                } else if (dataJson.code == 300) {
+                                    popup.show();
+                                    popupContent.html("账号不存在，请重新输入！");
+                                } else if (dataJson.code == 400) {
+                                    popup.show();
+                                    popupContent.html("密码有误，请重新输入！");
+                                } else {
+                                    popup.show();
+                                    popupContent.html("登录出错！");
+                                }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                alert("error:" + textStatus);
+                            }
+                        });
+
+                    } else {
+                        popup.show();
+                        popupContent.html('验证码错误！请重新输入。')
+                        draw(show_num);
+                    }
+                } else {
+                    if (val == num) {
+                        $.ajax({
+                            url: "/login",
+                            data: {
+                                username: $("#username").val(),
+                                password: $("#password").val(),
+                                peopleType: $("input[name='Man']:checked").val()
+                            },
+                            type: "POST",
+                            timeout: 36000,
+                            dataType: "text",
+                            success: function (data, textStatus) {
+                                //alert(data);
+                                let dataJson = eval("(" + data + ")");
+                                if (dataJson.code == 200) {
+                                    window.location.href = "/admin_index";
+                                } else if (dataJson.code == 300) {
+                                    popup.show();
+                                    popupContent.html("账号不存在，请重新输入！");
+                                } else if (dataJson.code == 400) {
+                                    popup.show();
+                                    popupContent.html("密码有误，请重新输入！");
+                                } else {
+                                    popup.show();
+                                    popupContent.html("登录出错！");
+                                }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                alert("error:" + textStatus);
+                            }
+                        });
+                    } else {
+                        popup.show();
+                        popupContent.html('验证码错误！请重新输入。')
+                        draw(show_num);
+                    }
+
+
+                }
+            })
+        })
+        // 绘制验证码
+        function draw(show_num) {
+            var canvas_width = $('#canvas').width();
+            var canvas_height = $('#canvas').height();
+            var canvas = document.getElementById("canvas");//获取到canvas的对象，演员
+            var context = canvas.getContext("2d");//获取到canvas画图的环境，演员表演的舞台
+            canvas.width = canvas_width;
+            canvas.height = canvas_height;
+            var sCode = "A,B,C,E,F,G,H,J,K,L,M,N,P,Q,R,S,T,W,X,Y,Z,1,2,3,4,5,6,7,8,9,0";
+            var aCode = sCode.split(",");
+            var aLength = aCode.length;//获取到数组的长度
+
+            for (var i = 0; i <= 3; i++) {
+                var j = Math.floor(Math.random() * aLength);//获取到随机的索引值
+                var deg = Math.random() * 30 * Math.PI / 180;//产生0~30之间的随机弧度
+                var txt = aCode[j];//得到随机的一个内容
+                show_num[i] = txt.toLowerCase();
+                var x = 10 + i * 20;//文字在canvas上的x坐标
+                var y = 20 + Math.random() * 8;//文字在canvas上的y坐标
+                context.font = "bold 23px 微软雅黑";
+
+                context.translate(x, y);
+                context.rotate(deg);
+
+                context.fillStyle = randomColor();
+                context.fillText(txt, 0, 0);
+
+                context.rotate(-deg);
+                context.translate(-x, -y);
+            }
+            for (var i = 0; i <= 5; i++) { //验证码上显示线条
+                context.strokeStyle = randomColor();
+                context.beginPath();
+                context.moveTo(Math.random() * canvas_width, Math.random() * canvas_height);
+                context.lineTo(Math.random() * canvas_width, Math.random() * canvas_height);
+                context.stroke();
+            }
+            for (var i = 0; i <= 30; i++) { //验证码上显示小点
+                context.strokeStyle = randomColor();
+                context.beginPath();
+                var x = Math.random() * canvas_width;
+                var y = Math.random() * canvas_height;
+                context.moveTo(x, y);
+                context.lineTo(x + 1, y + 1);
+                context.stroke();
+            }
+        }
+
+        function randomColor() {//得到随机的颜色值
+            var r = Math.floor(Math.random() * 256);
+            var g = Math.floor(Math.random() * 256);
+            var b = Math.floor(Math.random() * 256);
+            return "rgb(" + r + "," + g + "," + b + ")";
+        }
+
+
+
+
+        $("input").keydown(function (e) {
+            let curKey = e.which;
+            if (curKey == 13) {
+                $("input").blur();
+                $("#login").click();
+            }
+        });
+
+    </script>
+</body>
+
+</html>

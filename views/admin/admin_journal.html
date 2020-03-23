@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/packages/echarts.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>实验室管理日志</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: #009688;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: #009688;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="LAY_app">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <!--导航栏左侧区域-->
+            <ul class="layui-nav layui-layout-left">
+                <li class="layui-nav-item layadmin-flexible">
+                    <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                        <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                    </a>
+                </li>
+
+            </ul>
+            <!--导航栏右侧区域-->
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                         <span id='username'></span>
+                    </a>
+                </li>
+                <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+            </ul>
+        </div>
+
+        <div class="layui-side layui-side-menu">
+            <div class="layui-side-scroll">
+                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                <div class="layui-logo" lay-href="">
+                    <span>实验室安全信息管理系统</span>
+                </div>
+
+                <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                    lay-filter="layadmin-system-side-menu">
+                    <li class="layui-nav-item ">
+                        <a class="" href="javascript:;" name="主页" id="homepage">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <cite>主页</cite>
+                            <span class="layui-bav-more"></span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="admin_index" >后台主页</a></dd>
+                        </dl>
+                    </li>
+
+                    <li class="layui-nav-item "><a href="#" name="云链接" id="link_others">
+                        <i class="layui-icon layui-icon-headset"></i>
+                        <cite>实验室程序管理</cite>
+                    </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="admin_lab_info">一般信息</a></dd>
+                            <dd><a href="admin_lab_danger"  >风险信息</a>
+                            </dd>
+                            <dd><a href="admin_lab_urgent">应急管理</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item"><a href="#" name="云链接" id="background_manage">
+                        <i class="layui-icon layui-icon-headset"></i>
+                        <cite>实验室后台管理</cite>
+                    </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;" class="layui-nav-itemed">仪器设备管理</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="admin_device_manage">设备管理</a></dd>
+                                    <dd><a href="admin_cylinder_manage">气瓶管理</a></dd>
+                                    <dd><a href="/admin_reagent_manage">试剂管理</a></dd>
+                                </dl>
+                            </dd>
+                            <dd><a href="javascript:;" class="layui-nav-itemed">预约管理</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="/admin_room_order#">实验室预约</a></dd>
+                                    <!-- <dd><a href="javascript:;">设备预约</a></dd>
+                                    <dd><a href="/admin_reagent_order">试剂预约</a></dd> -->
+                                </dl>
+                            </dd>
+                            <dd><a href="/admin_user_manage" name="用户管理" id="user_manage">用户管理</a></dd>
+                            <dd><a href="/admin_info_manage" name="实验室录入清单管理">实验室录入清单管理</a></dd>
+
+                            <dd><a href="javascript:;" class="layui-nav-itemed">检查表</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="admin_security_check">日常安全检查</a></dd>
+                                    <dd><a href="admin_security_check2"> 高校实验室安全检查</a></dd>
+                                    <dd><a href="admin_security_check3"> 安全自查情况登记表</a></dd>
+                                    <!-- <dd><a href="#">特殊安全检查</a></dd> -->
+                                </dl>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a class="layui-this" href="admin_journal" name="主页" id="daily">
+                            <i class="layui-icon layui-icon-slider"></i>
+                            <cite>实验室管理日志</cite>
+                            <span class="layui-bav-more"></span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <!--页面标签-->
+        <div class="layadmin-pagetabs" id="LAY_app_tabs">
+
+        </div>
+        <!--页面主体-->
+        <div  class="layui-body">
+            <div class="layui-fluid">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-sm12">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <h3 style="font-size: 24px;text-align: center">实验室日志管理</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-col-sm12">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                实验室系统日志信息
+                            </div>
+                            <div class="layui-card-body" style="overflow-y: scroll;height: 320px;">
+                                <table id="historyView"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#username').html(username);
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+    layui.use('table', function () {
+        var table = layui.table;
+        table.render({
+            //默认为get请求
+            elem: '#historyView'
+            , url: '/history/logs'
+            // , url: '/device_manage'
+            , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , page: true
+            , toolbar: '#toolbarDemo'
+            , limits: [5, 10, 15]
+            , limit: 5
+            , cols: [[
+                {field: 'id', title: '序号', sort: true}
+                , {field: 'user', title: '操作用户'}
+                , {field: 'date', title: '日期'}
+                , {field: 'type', title: '类型'}
+                , {field: 'table_name', title: '表名'}
+                // , {field: 'device_master', title: '负责人'}
+
+            ]]
+        });
+    })
+
+</script>
+</body>
+</html>

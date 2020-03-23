@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>前台主页</title>
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/packages/echarts.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: burlywood;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: burlywood;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+
+        .layadmin-note {
+            cursor: pointer;
+        }
+
+        .layadmin-shortcut li .layui-icon {
+            height: 120px;
+            line-height: 130px;
+        }
+
+        /*日历的高度设置*/
+        .layui-laydate,
+        .layui-laydate-hint {
+            line-height: 8px;
+            font-size: 6px;
+        }
+
+        .new_class img {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="/images/touxiang.jpg" class="layui-nav-img">
+                            <span id="user_name"></span>
+                        </a>
+
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item">
+                            <a class="layui-this" href="javascript:;" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>个人主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a href="javascript:;" name="实验室预约" id="">
+                                <i class="layui-icon layui-icon-edit"></i>
+                                <cite>实验室预约</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="lab_order">实验室分布</a></dd>
+                                <dd class="layui-nav-itemed"><a href="#">实验室详情</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="lab_info">信息预知</a></dd>
+                                        <dd><a href="lab_danger_element">危险预知</a></dd>
+                                        <dd><a href="lab_urgent_schema">应急预案</a></dd>
+                                        <dd><a href="lab_exam">安全准入</a></dd>
+                                        <dd><a href="room_order">房间预约</a></dd>
+                                        <dd><a href="lab_submit">实验记录</a></dd>
+                                    </dl>
+                                </dd>
+                            </dl>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            </div>
+            <!--页面主体-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <h3 style="font-size: 30px;text-align: center;color: #ee4411">
+                                        <a style="float: left;margin-top: 2px;" class="layui-btn layui-btn-normal"
+                                            id="back_first" lay-event="edit">返回上一级</a>
+                                        <span> 个人资料</span>
+                                    </h3>
+                                </div>
+                                <div class="layui-card-body">
+                                    <form class="layui-form layui-form-pane" action="" style="padding:10px;width:100%">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">学号/工号</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="lab_name" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">姓名</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="lab_Number" class="layui-input" required
+                                                    readonly lay-verify="required">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">专业</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="emergency_type" class="layui-input" required
+                                                    readonly lay-verify="required">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item ">
+                                            <label class="layui-form-label">角色</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="emergency_type" class="layui-input" required
+                                                    readonly lay-verify="required">
+                                            </div>
+                                        </div>
+
+                                        <div class="layui-form-item ">
+                                            <label class="layui-form-label">所属学院</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="emergency_type" class="layui-input" required
+                                                    readonly lay-verify="required">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item ">
+                                            <label class="layui-form-label">学校</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="emergency_type" class="layui-input" required
+                                                    lay-verify="required" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item layui-form-text">
+                                            <label class="layui-form-label">备注</label>
+                                            <div class="layui-input-block">
+                                                <textarea name="danger_content" placeholder="备注信息"
+                                                    class="layui-textarea" readonly></textarea>
+                                            </div>
+                                        </div>
+
+
+                                    </form>
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-inline" style='padding-left: 10px;'>
+                                            <button class="layui-btn" id='changePass'>修改密码</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script type="text/javascript">
+        // 返回上级按钮
+        $('#back_first').on('click', function () {
+            window.history.back(-1);
+        })
+        setInterval(function () {
+            $.ajax({
+                type: 'post',
+                url: '/consolidate',
+                success: function (data) {
+                    if (data.ret_code === undefined) {
+                        window.location.href = "/login";
+                    }
+                    console.log(data.ret_code)
+                }
+            })
+        }, 31 * 60 * 1000)
+        /*设置session*/
+        $(function () {
+            $.ajax({
+                type: 'post',
+                url: '/session',
+                success: function (data) {
+                    $('#user_name').html(data.username);//用户名
+                    let ID = data.username;
+                    $.ajax({
+                        type: 'get',
+                        url: '/user/info',
+                        data: {
+                            username: ID
+                        },
+                        success: function (json) {
+                            var inputs = $("input");
+                            for (var i = 0; i < inputs.length; i++) {
+                                $(inputs[0]).val(json[0].user_id)
+                                $(inputs[1]).val(json[0].username)
+                                $(inputs[2]).val(json[0].major_in)
+                                $(inputs[3]).val(json[0].type)
+                                $(inputs[4]).val(json[0].college)
+                                $(inputs[5]).val(json[0].school)
+                            }
+
+                        }
+
+                    })
+                }
+            });
+
+        });
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+        layui.use('layer', function () {
+            var layer = layui.layer;
+
+            $('#changePass').on('click', function () {
+                layer.open({
+                    type: 2,
+                    btn: ['取消', '确定'],
+                    title: "修改密码",
+                    area: ["660px", "320px"],
+                    content: '/modify_password',
+                    btn: [],    // 自定义设置多个按钮
+
+                })
+            })
+        });
+
+    </script>
+
+</body>
+
+</html>

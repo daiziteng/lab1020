@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/css/codehim-clock.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/js/jquery.codehim.clock.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>安全准入</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: burlywood;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: burlywood;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+
+        .kaosheng-item {
+            padding-left: 10px;
+            margin: 10px 0;
+            width: 150px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .author-img {
+            margin: 10px auto;
+            border: 1px solid #b8babb;
+            display: block;
+            width: 140px;
+            height: 140px;
+            overflow: hidden;
+        }
+
+        /*题目内容style*/
+        .slide {
+            margin-right: 25px;
+            top: 3.5em;
+            left: 2.5em;
+            position: absolute;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.01s;
+        }
+
+        .active-slide {
+            opacity: 1;
+            z-index: 2;
+        }
+
+        .question {
+            line-height: 1.7;
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .answers {
+            font-size: 18px;
+            margin-top: 5px;
+            margin-left: 2em;
+            padding: 0.5em;
+            display: inline-block;
+        }
+
+        .answers label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .quiz-content {
+            padding: 0px;
+            margin-left: 50px;
+
+        }
+
+        /*按钮样式*/
+        .btn-bar {
+            /*cursor: pointer;*/
+            float: right;
+            margin-right: 1.6em;
+            padding-top: 16em;
+        }
+
+        .btn-bar #pre {
+            background-color: #208BE6;
+            cursor: pointer;
+
+        }
+
+        .btn-bar>button {
+            border: none;
+            width: 90px;
+            margin-top: 15px;
+            line-height: 36px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .btn-bar #next {
+            cursor: pointer;
+
+            background-color: #1DACF9;
+        }
+
+        .btn-bar>button+button {
+            margin-left: 15px;
+        }
+
+        .btn-bar #submit {
+            cursor: pointer;
+
+            background-color: #32B16C;
+
+        }
+
+        /*input美化*/
+        input[type=radio] {
+            width: 15px;
+            height: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                            <span id="user_name"></span>
+                            <span id="user_type" style="display: none"></span>
+                            <span id="user_id" style="display: none"></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item">
+                            <a href="user_index" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>个人主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a class="" href="javascript:;" name="安全准入" id="homepage">
+                                <i class="layui-icon layui-icon-form"></i>
+                                <cite>安全准入</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="lab_info">信息预知</a></dd>
+                                <dd><a href="lab_danger_element" >危险预知</a></dd>
+                                <dd><a href="lab_urgent_schema">应急预案</a></dd>
+                                <dd><a href="lab_exam" class="layui-this">准入考试</a></dd>
+                            </dl>
+
+
+                        </li>
+                        <li class="layui-nav-item">
+                            <a class="" href="lab_order" name="实验室分布" id="homepage">
+                                <i class="layui-icon layui-icon-location"></i>
+                                <cite>实验室分布</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+
+                        <li class="layui-nav-item ">
+                            <a href="javascript:;" name="实验室详情" id="">
+                                <i class="layui-icon layui-icon-tabs"></i>
+                                <cite>实验室详情</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="room_order">房间预约</a></dd>
+                                <dd><a href="lab_submit">实验记录</a></dd>
+                            </dl>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            </div>
+            <!--页面主体-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <h3 style="font-size: 30px;text-align: center">实验室安全准入考试</h3>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="layui-col-sm3">
+                            <div class="layui-card">
+                                <div class="layui-card-body">
+                                    <fieldset class="layui-elem-field" style="text-align: center">
+                                        <legend>实验室安全考试</legend>
+                                        <div class="layui-field-box">
+                                            资环学院
+                                        </div>
+                                    </fieldset>
+                                    <fieldset class="layui-elem-field" style="height: 350px">
+                                        <legend>考生信息</legend>
+                                        <!-- <div class="author-img">
+                                        <img src="/images/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                    </div> -->
+                                        <div class="kaosheng-item name">考生姓名：<span id="student_name"></span></div>
+                                        <div class="kaosheng-item">考试题数：100</div>
+                                        <div class="kaosheng-item">考试时间：45分钟</div>
+                                        <div class="kaosheng-item">满分100分，90分及格</div>
+                                    </fieldset>
+                                    <fieldset class="layui-elem-field" style="text-align: center;padding:10px">
+                                        <legend>剩余时间</legend>
+                                        <span id="timer" style="font-size: 20px;color:red;"></span>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6">
+                            <div class="layui-card" style="height: 512px">
+                                <div class="layui-card-body">
+                                    <fieldset class="layui-elem-field" style="height: 470px">
+                                        <legend>考试题目</legend>
+                                        <div class="quiz-content">
+                                            <div id="text"></div>
+                                        </div>
+                                        <div class="kaoti-bar clearfix">
+                                            <!-- <div class="btn-bar">
+                                            <button onmouseover="this.style.backgroundColor='#761c19';"
+                                                    onmouseout="this.style.backgroundColor='';" id="pre">上一题
+                                            </button>
+                                            <button onmouseover="this.style.backgroundColor='#761c19';"
+                                                    onmouseout="this.style.backgroundColor='';" id="next">下一题
+                                            </button>
+                                            <button onmouseover="this.style.backgroundColor='#761c19';"
+                                                    onmouseout="this.style.backgroundColor='';" id="submit">交卷
+                                            </button>
+                                        </div> -->
+                                            <div class="layui-input-block"
+                                                style="float:right;margin-top: 47%;padding: 10px;">
+                                                <button onmouseover="this.style.backgroundColor='#761c19';"
+                                                    onmouseout="this.style.backgroundColor='';" id='pre'
+                                                    class="layui-btn layui-btn-normal">上一题
+                                                </button>
+                                                <button onmouseover="this.style.backgroundColor='#761c19';"
+                                                    onmouseout="this.style.backgroundColor='';" id='next'
+                                                    class="layui-btn layui-btn-normal">下一题
+                                                </button>
+                                                <button onmouseover="this.style.backgroundColor='#761c19';"
+                                                    onmouseout="this.style.backgroundColor='';" id='submit'
+                                                    class="layui-btn layui-btn-normal">交卷
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm3">
+                            <div class="layui-card">
+                                <div class="layui-card-body">
+                                    <div class="clock-place"> </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm3">
+                            <div class="layui-card" style="height: 210px">
+                                <div class="layui-card-body">
+                                    <fieldset class="layui-elem-field">
+                                        <legend>考试结果</legend>
+                                        <div class="kaosheng-item name">考生成绩：<span id="score"
+                                                style="font-size: 16px;color: red;"></span>
+                                        </div>
+                                        <div class="kaosheng-item">考试用时：<span id="spend_time"
+                                                style="font-size: 16px;color: red;"></span>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <script>
+        // 页面的时钟
+        $(document).ready(function () {
+            $(".clock-place").CodehimClock({
+            });
+        });
+        layui.use(['element'], function () {
+            var element = layui.element;
+        });
+        layui.use('layer', function () {
+            // var layer = layui.layer;
+            $(document).ready(function () {
+                // let name = $('#user_name').html();
+                // let user_type = $('#user_type').html();
+                /*设置session*/
+                $(function () {
+                    $.ajax({
+                        type: 'post',
+                        url: '/session',
+                        success: function (json) {
+                            if (json.username != null) {
+                                $('#user_name').html(json.username);
+                                $('#user_type').html(json.type);
+                                $('#user_id').html(json.user_id);
+                                $.ajax({
+                                    type: 'get',
+                                    url: '/exam_result',
+                                    data: {
+                                        name: json.username,
+                                    },
+                                    success: function (data) {
+                                        if (data.length > 0 || json.type === '老师') {
+                                            layer.msg('欢迎进入实验室安全准入界面');
+                                        } else {
+                                            layer.open({
+                                                content: '/labroom_promise',
+                                                type: 2,
+                                                shade: 0.5,
+                                                maxmin: true,
+                                                title: '安全承诺书   ',
+                                                // area: ['1280px', '736px'],
+                                                area: ['50%', '50%'],
+                                                closeBtn: 0,//使右上角X不显示
+                                                btn: ['提交', '取消'],    // 自定义设置多个按钮
+                                                btn1: function (index) {
+                                                    var body = layer.getChildFrame('body', index);
+                                                    var state = body.find('input').is(':checked');
+                                                    if (state === true) {
+                                                        layer.close(index);
+                                                        layer.alert('按照资环学院实验室规定，进入安全系统需要先通过实验室安全考试，及格标准为90分。', { move: false })
+                                                    } else {
+                                                        layer.msg('请先同意上述协议')
+                                                    }
+
+                                                },
+                                                btn2: function (index) {
+                                                    window.history.back(-1);
+                                                },
+                                                btnAlign: 'c',// 设置按钮位置
+                                            })
+
+                                        }
+                                    }
+                                });
+                            } else {
+                                window.location.href = "/login";
+                            }
+
+
+                        }
+                    });
+                });
+
+
+
+            });
+        });
+
+        //设置考试时间
+        let maxtime = 40 * 60; //一个小时，按秒计算，自己调整!
+        function CountDown() {
+            if (maxtime >= 0) {
+                minutes = Math.floor(maxtime / 60);
+                seconds = Math.floor(maxtime % 60);
+                msg = "" + minutes + "分" + seconds + "秒";
+                msg1 = (40 - minutes - 1) + '分' + (60 - seconds) + '秒';
+                document.getElementById("timer").innerHTML = msg;
+                if (maxtime == 5 * 60) {
+                    layer.msg('距离考试结束还有5分钟')
+                }
+                --maxtime;
+            } else {
+                clearInterval(timer);
+                alert("时间到")
+            }
+        }
+
+        timer = setInterval("CountDown()", 1000);
+
+        (function () {
+            $.ajax({
+                type: "post",
+                url: '/exam',
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                json: 'callback',
+                success: function (data) {
+                    /*设置一个空数组用于存放数据*/
+                    let myQuestions = [];
+                    for (let i = 0; i < data.length; i++) {
+                        let answer = {
+                            A: '',
+                            B: '',
+                            C: '',
+                            D: ''
+                        };
+                        answer.A = data[i].Qst_OP1;
+                        answer.B = data[i].Qst_OP2;
+                        answer.C = data[i].Qst_OP3;
+                        answer.D = data[i].Qst_OP4;
+                        let x = {
+                            "question": '',
+                            "answers": answer,
+                            "correctAnswer": '',
+                        };
+                        x.question = data[i].Qst_Info;
+                        x.correctAnswer = data[i].Qst_answ;
+                        myQuestions.push(x);
+                    }
+
+                    // console.log(data);
+
+                    function buildQuiz() {
+                        // we'll need a place to store the HTML output
+                        const output = [];
+
+                        // for each question...
+                        myQuestions.forEach((currentQuestion, questionNumber) => {
+                            // we'll want to store the list of answer choices
+                            const answers = [];
+                            // console.log(currentQuestion.correctAnswer);
+
+                            // and for each available answer...//生成中间题目一栏
+                            for (letter in currentQuestion.answers) {
+                                // console.log(letter);
+
+                                // ...add an HTML radio button
+                                answers.push(`
+                                    <label  style="cursor: pointer">
+                                    <input type="radio" name="question${questionNumber}" value="${letter}" >
+
+                                         ${letter} :                                         ${currentQuestion.answers[letter]}
+                   </label>
+`
+                                );
+                            }
+                            // add this question and its answers to the output
+                            output.push(
+                                `
+                  <div class="slide">
+                    <div class="active-slide"></div>
+                   <div class=" question">${questionNumber + 1}、${currentQuestion.question}</div>
+                   <div class=" answers">${answers.join("")} </div>
+                 </div>`
+                            );
+                        });
+
+                        // finally combine our output list into one string of HTML and put it on the page
+                        quizContainer.innerHTML = output.join("");
+                    }
+
+                    function showResults() {
+                        // gather answer containers from our quiz
+                        const answerContainers = quizContainer.querySelectorAll(".answers");
+                        // keep track of user's answers 不用let定义，就可以使这个变量成为全局变量了
+                        numCorrect = 0;
+                        // for each question...
+                        myQuestions.forEach((currentQuestion, questionNumber) => {
+                            // find selected answer
+                            const answerContainer = answerContainers[questionNumber];
+                            const selector = `input[name=question${questionNumber}]:checked`;
+                            const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+                            //如果if后面只有一个条件的话，可以不加花括号
+                            /*                if (userAnswer === currentQuestion.correctAnswer)
+                                                numCorrect++;
+                                        });*/
+                            if (userAnswer === currentQuestion.correctAnswer) {
+                                // add to the number of correct answers
+                                numCorrect++;
+
+                                // color the answers green
+                                answerContainers[questionNumber].style.color = "lightgreen";
+                            } else {
+                                // if answer is wrong or blank
+                                // color the answers red
+                                answerContainers[questionNumber].style.color = "red";
+                            }
+
+                            // console.log(userAnswer)
+                            // console.log( answerContainers[questionNumber])
+                        });
+                        // resultsContainer.innerHTML = `${numCorrect}`;
+                        Score.innerHTML = numCorrect * 10 + `分`;
+
+                    }
+
+                    //提交按钮
+                    $(function () {
+                        $('#submit').click(function () {
+                            layer.alert('确定提交试卷吗？', {
+                                btn: ['确定', '取消']
+                                , btn1: function (index, layero) {
+                                    clearInterval(timer);//停止计时
+                                    showResults();
+                                    layer.close(index);
+                                    spend_time.innerHTML = msg1;
+                                    $("#submit").attr("disabled", true);
+                                    if (numCorrect < 9) {
+                                        layer.msg('很遗憾，您未能通过本次考试', { icon: 2 })
+                                    } else {
+                                        let name = $('#user_name').html();
+                                        let user_id = $('#user_id').html();
+                                        let score = $('#score').html();
+                                        let spend_time = $('#spend_time').html();
+                                        $.ajax({
+                                            type: 'get',
+                                            url: '/exam/result',
+                                            data: {
+                                                name: name,
+                                                score: score,
+                                                spend_time: spend_time,
+                                                user_id: user_id,
+                                            },
+                                            success: function () {
+                                                layer.msg('恭喜您，完美通过本次测试', { icon: 1 })
+                                            }
+                                        });
+
+                                    }
+                                }
+                            })
+                        })
+                    });
+
+
+                    //控制按钮出现的逻辑
+
+                    function showSlide(n) {
+                        slides[currentSlide].classList.remove("active-slide");
+                        slides[n].classList.add("active-slide");
+                        currentSlide = n;
+
+                        if (currentSlide === 0) {
+                            previousButton.style.display = "none";
+                        } else {
+                            previousButton.style.display = "inline-block";
+                        }
+
+                        if (currentSlide === slides.length - 1) {
+                            nextButton.style.display = "none";
+                            submitButton.style.display = "inline-block";
+                        } else {
+                            nextButton.style.display = "inline-block";
+                            submitButton.style.display = "none";
+                        }
+                    }
+
+                    function showNextSlide() {
+                        showSlide(currentSlide + 1);
+                    }
+
+                    function showPreviousSlide() {
+                        showSlide(currentSlide - 1);
+                    }
+
+                    const quizContainer = document.getElementById("text");
+                    // const resultsContainer = document.getElementById("results");
+                    const spend_time = document.getElementById("spend_time");/*用时栏*/
+                    const Score = document.getElementById("score");/*分数栏*/
+                    const submitButton = document.getElementById("submit");
+
+                    // display quiz right away
+                    buildQuiz();
+
+                    const previousButton = document.getElementById("pre");
+                    const nextButton = document.getElementById("next");
+                    const slides = document.querySelectorAll(".slide");
+                    let currentSlide = 0;
+
+                    showSlide(0);
+
+                    // on submit, show results/给按钮注册点击事件
+                    // submitButton.addEventListener("click", showResults);
+                    previousButton.addEventListener("click", showPreviousSlide);
+                    nextButton.addEventListener("click", showNextSlide);
+
+                }
+            });
+
+        })();
+    </script>
+</body>
+
+</html>

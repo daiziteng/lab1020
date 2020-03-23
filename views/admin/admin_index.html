@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>后台主页</title>
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/js/admin/setcookie.js"></script>
+    <script type="text/javascript" src="/packages/echarts.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: #009688;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: #009688;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+
+        .layadmin-note {
+            cursor: pointer;
+        }
+
+        .layadmin-shortcut li .layui-icon {
+            height: 140px;
+            line-height: 160px;
+        }
+
+        /*.user_img {*/
+        /*width: 100px;*/
+        /*height: 150px;*/
+        /*margin: 8%;*/
+        /*}*/
+    </style>
+</head>
+
+<body class="layui-layout-body">
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="/user_index">前台主页
+                        </a>
+                    </li>
+
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item" lay-unselect="">
+                        <a id="undo_info" lay-href="admin_security_check" layadmin-event="message">
+                            <i class="layui-icon layui-icon-notice"></i>
+                            <!-- 如果有新消息，则显示小圆点 -->
+                            <span class="layui-badge-dot"></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                            <span id='username'></span>
+                        </a>
+                    </li>
+
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a class="" href="javascript:;" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="javascript:;" class="layui-this">后台主页</a></dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item"><a href="#" name="云链接" id="link_others">
+                                <i class="layui-icon layui-icon-headset"></i>
+                                <cite>实验室程序管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="admin_lab_info">一般信息</a></dd>
+                                <dd><a href="admin_lab_danger" class="layui-nav-itemed">风险信息</a>
+                                </dd>
+                                <dd><a href="admin_lab_urgent">应急管理</a></dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item"><a href="#" name="云链接" id="background_manage">
+                                <i class="layui-icon layui-icon-camera"></i>
+                                <cite>实验室后台管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="javascript:;" class="layui-nav-itemed">仪器设备管理</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="admin_device_manage">设备管理</a></dd>
+                                        <dd><a href="admin_cylinder_manage">气瓶管理</a></dd>
+                                        <dd><a href="/admin_reagent_manage">试剂管理</a></dd>
+                                    </dl>
+                                </dd>
+                                <dd><a href="javascript:;" class="layui-nav-itemed">预约管理</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="/admin_room_order#">实验室预约</a></dd>
+                                        <!-- <dd><a href="javascript:;">设备预约</a></dd>
+                                    <dd><a href="/admin_reagent_order">试剂预约</a></dd> -->
+                                    </dl>
+                                </dd>
+                                <dd><a href="/admin_user_manage" name="用户管理" id="user_manage">用户管理</a></dd>
+                                <dd><a href="/admin_info_manage" name="实验室录入清单管理">实验室录入清单管理</a></dd>
+                                <dd><a href="javascript:;" class="layui-nav-itemed">检查表</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="admin_security_check">日常安全检查</a></dd>
+                                        <dd><a href="admin_security_check2"> 高校实验室安全检查</a></dd>
+                                        <dd><a href="admin_security_check3"> 安全自查情况登记表</a></dd>
+                                        <!-- <dd><a href="#">特殊安全检查</a></dd> -->
+                                    </dl>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a class="" href="admin_journal" name="主页" id="daily">
+                                <i class="layui-icon layui-icon-slider"></i>
+                                <cite>实验室管理日志</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+
+            </div>
+
+            <!--页面主体-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md8">
+                            <div class="layui-card">
+                                <div class="layui-card-header">预警信息</div>
+                                <div class="layui-card-body">
+                                    <div class="layui-carousel layadmin-carousel layadmin-shortcut"
+                                        style="width: 100%;">
+                                        <div>
+                                            <ul class="layui-row layui-col-space10 layui-this">
+                                                <li class="layui-col-xs3"><a href="admin_device_manage"><i
+                                                            class="layui-icon "></i>
+                                                        <p style="margin-top: -45%;font-size: 50px;color: red">4</p>
+                                                        <cite style="margin-top: 35%">逾期设备</cite>
+                                                    </a>
+                                                </li>
+
+                                                <li class="layui-col-xs3"><a href="admin_reagent_manage"><i
+                                                            class="layui-icon"></i>
+                                                        <!--<img src="/images/成绩单.png" style="margin-top: -98%">-->
+                                                        <!--<cite style="margin-top: -10%">超额试剂</cite>-->
+                                                        <p style="margin-top: -45%;font-size: 50px;color:red">1</p>
+                                                        <cite style="margin-top: 35%">超额试剂</cite>
+                                                    </a>
+                                                </li>
+                                                <li class="layui-col-xs3"><a href="admin_reagent_manage"><i
+                                                            class="layui-icon"></i>
+                                                        <!--<img src="/images/资料.png" style="margin-top: -100%">-->
+                                                        <p style="margin-top: -45%;font-size: 50px; color:red">2</p>
+                                                        <cite style="margin-top: 35%">不足试剂</cite>
+                                                    </a>
+                                                </li>
+                                                <li class="layui-col-xs3"><a href="#"><i class="layui-icon "></i>
+                                                        <!--<img src="/images/实验.png" style="margin-top: -98%">-->
+                                                        <!--<cite style="margin-top: -10%">实验记录</cite>-->
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md4">
+                            <div class="layui-card">
+                                <div class="layui-card-header">个人信息</div>
+                                <div class="layui-card-body">
+                                    <div class="layui-carousel layadmin-carousel layadmin-shortcut"
+                                        style="width: 100%;height:260px">
+                                        <div>
+                                            <ul>
+                                                <!--<li class="layui-col-xs3 ">-->
+                                                <!--<img class="user_img">-->
+                                                <!--</li>-->
+                                                <li class="layui-col-xs12 " style="float: right;">
+                                                    <table class=" layui-table ">
+                                                        <colgroup>
+                                                            <col width="100">
+                                                            <col>
+                                                        </colgroup>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>用户名</td>
+                                                                <td id="role_name"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>用户类型</td>
+                                                                <td id="role_type"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>所属学院</td>
+                                                                <td id="college"></td>
+                                                            </tr>
+
+                                                            <tr>
+                                                                <td>状态</td>
+                                                                <td id="status"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <!--头-->
+                                <div class="layui-card-header">
+                                    设备预约人次
+                                    <span class="layui-badge layui-bg-blue layuiadmin-badge">周</span>
+                                </div>
+                                <!--中部-->
+                                <div class="layui-card-body layuiadmin-card-list" style='height:76px'>
+                                    <p class="layuiadmin-big-font" id="fang_wen">0 次</p>
+                                    <p>
+                                        <!-- 新增量 -->
+                                        <span class="layuiadmin-span-color">详情 <i
+                                                class="layui-inline layui-icon layui-icon-flag" style="cursor:pointer;"
+                                                id="device_order"></i></span>
+                                    </p>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    试剂种类
+                                    <span class="layui-badge layui-bg-cyan layuiadmin-badge">年</span>
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list" style='height:76px'>
+                                    <p class="layuiadmin-big-font" id="reagent_number">0 种</p>
+                                    <p>
+                                        <!-- 新增量 -->
+                                        <span class="layuiadmin-span-color">详情<i name="详情"
+                                                class="layui-inline layui-icon layui-icon-face-smile-b"
+                                                style="cursor:pointer;" id="reagent_add"></i></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    实验记录填写人次
+                                    <span class="layui-badge layui-bg-green layuiadmin-badge">周</span>
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list" style='height:76px'>
+
+                                    <p class="layuiadmin-big-font" id="device">0 次</p>
+                                    <p>
+
+                                        <span class="layuiadmin-span-color"> 详情<i
+                                                class="layui-inline layui-icon layui-icon-set-fill"
+                                                style="cursor: pointer;" id="expirement_info"></i></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    实验室预约次数
+                                    <span class="layui-badge layui-bg-orange layuiadmin-badge">周</span>
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list" style='height:76px'>
+
+                                    <p class="layuiadmin-big-font" id="lab_order">0 次</p>
+                                    <p>
+
+                                        <span class="layuiadmin-span-color"> 详情<i
+                                                class="layui-inline layui-icon layui-icon-user" style="cursor:pointer;"
+                                                id="room_order"></i></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm12" style='height:500px'>
+                            <div class="layui-card">
+                                <div class="layui-card-header">设备预约信息
+                                    <div class="layui-btn-group layuiadmin-btn-group">
+                                        <!-- <button class="layui-btn layui-btn-primary layui-btn-xs">上周</button>
+                                        <button class="layui-btn layui-btn-primary layui-btn-xs">本周</button> -->
+                                    </div>
+                                </div>
+                                <div class="layui-card-body">
+                                    <div class="layui-row">
+                                        <div class="layui-col-sm6">
+                                            <table id="deviceView" lay-filter="test"></table>
+                                        </div>
+                                        <div class="layui-col-sm6">
+                                            <div id="main" style="width:100%;height:400px;"></div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-footer ">
+                    <div class="layui-main">
+                        <p>
+                            Copyright @2019 6745工作室 如有问题请发送信息至邮箱 <a href='https://mail.qq.com/'>916485463@qq.com</a>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <!-- 给表格添加序号栏 -->
+    <script type="text/html" id="zizeng">
+    {{d.LAY_INDEX}}
+</script>
+    <script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">查看详情</a>
+</script>
+    <script type="text/javascript">
+
+
+        //         var time_range = function (beginTime, endTime, nowTime) {
+        //             var strb = beginTime.split(":");
+        //             if (strb.length != 2) {
+        //                 return false;
+        //             }
+
+        //             var stre = endTime.split(":");
+        //             if (stre.length != 2) {
+        //                 return false;
+        //             }
+
+        //             var strn = nowTime.split(":");
+        //             if (stre.length != 2) {
+        //                 return false;
+        //             }
+        //             var b = new Date();
+        //             var e = new Date();
+        //             var n = new Date();
+
+        //             b.setHours(strb[0]);
+        //             b.setMinutes(strb[1]);
+        //             e.setHours(stre[0]);
+        //             e.setMinutes(stre[1]);
+        //             n.setHours(strn[0]);
+        //             n.setMinutes(strn[1]);
+
+        // // 判断开始时间和结束时间的大小关系
+
+        //             // if(b.getTime()-e.getTime()>0){
+        //             //     alert('错误')
+        //             //     return false
+        //             // }
+        //             if (n.getTime() - b.getTime() > 0 && n.getTime() - e.getTime() < 0) {
+        //                 // return true;
+        //                 alert('第一课时')
+        //                 return '第一课时'
+        //             } else {
+        //                 alert("当前时间是：" + n.getHours() + ":" + n.getMinutes() + "，不在该时间范围内！");
+        //                 return false;
+        //             }
+        //         }   
+        //         var keshi=time_range("21:30", "23:30", "23:22");
+
+        //         console.log(keshi)
+
+
+
+        $('#user_name').html(username);
+
+        /*代办事项*/
+        $('#undo_info').on('click', function () {
+            $('.layui-badge-dot').removeClass()
+            layer.open({
+                content: '填写安全检查表'
+                , btn: ['进入']
+                , title: '代办事项'
+                , yes: function (index, layero) {
+                    window.location.href = 'admin_security_check'
+                }
+                , cancel: function () {
+                    //右上角关闭回调
+                    //return false 开启该代码可禁止点击该按钮关闭
+                }
+            });
+        });
+
+        /*页面统计信息*/
+        $(function () {
+            $.ajax({
+                type: 'get',
+                url: '/Device_order',
+                data: {
+                    weekNumber: 'Thisweek'
+                },
+                success: function (res) {
+                    $('#fang_wen').text(res.count + '次');
+                }
+            })
+
+
+
+            $.ajax({
+                type: 'get',
+                url: '/Order_room',
+                data: {
+                    weekNumber: 'Thisweek'
+                },
+                success: function (res) {
+                    $('#lab_order').text(res.count + '次')
+                }
+            });
+
+            $.ajax({
+                type: 'get',
+                url: '/expirement_info/number',
+                success: function (res) {
+                    console.log(res)
+                    $('#device').text(res[0].total + '次')
+                }
+            });
+
+
+            $.ajax({
+                type: 'get',
+                url: '/manage_reagent',
+                success: function (res) {
+                    $('#reagent_number').text(res.count + '种')
+                }
+            })
+        });
+
+
+        $('#expirement_info').click(function () {
+            layer.open({
+                content: '/device_number',
+                type: 2,
+                maxmin: true,
+                title: '实验记录填写情况',
+                area: ["1200px", "600px"],
+                btn: ['退出'],    // 自定义设置多个按钮
+                btn1: function (index, elem) {
+                    // window.location.href = '/admin_device_manage'
+                    layer.close(index);
+                },
+                btnAlign: 'c',// 设置按钮位置
+            });
+        });
+
+        $('#reagent_add').click(function () {
+            layer.open({
+                content: '/reagent_number',
+                type: 2,
+                maxmin: true,
+                title: '试剂种类',
+                area: ["800px", "500px"],
+                // area: ["45%", "70%"],
+                btn: ['查看详情', '退出'],    // 自定义设置多个按钮
+                btn1: function (index, elem) {
+                    window.location.href = '/admin_reagent_manage'
+                    layer.close(index);
+                },
+                btn2: function (index, elem) {
+                    layer.close(index);
+                },
+                btnAlign: 'c',// 设置按钮位置
+            });
+        });
+
+
+        $('#device_order').click(function () {
+            layer.open({
+                content: '/device_order_number',
+                type: 2,
+                maxmin: true,
+                title: '设备预约统计',
+                area: ["1200px", "560px"],
+                // area: ["45%", "70%"],
+                btn: ['退出'],    // 自定义设置多个按钮
+                btn1: function (index, elem) {
+                    // window.location.href = '/admin_reagent_manage'
+                    layer.close(index);
+                },
+                btnAlign: 'c',// 设置按钮位置
+            });
+        });
+        $('#room_order').click(function () {
+            layer.open({
+                content: '/room_order_number',
+                type: 2,
+                maxmin: true,
+                title: '实验室预约统计',
+                area: ["1200px", "560px"],
+                // area: ["45%", "70%"],
+                btn: ['退出'],    // 自定义设置多个按钮
+                btn1: function (index, elem) {
+                    // window.location.href = '/admin_reagent_manage'
+                    layer.close(index);
+                },
+                // btn2: function (index, elem) {
+                //     layer.close(index);
+                // },
+                btnAlign: 'c',// 设置按钮位置
+            });
+        });
+
+
+        /*设置session*/
+        $(function () {
+            $.ajax({
+                type: 'post',
+                url: '/session',
+                success: function (data) {
+                    // console.log(data)
+
+                    $('#username').html(data.username);
+                    $('#role_name').html(data.username)
+                    $('#role_type').html('管理员')
+                    $('#college').html('资环学院')
+                    $('#status').html('在线')
+                }
+            });
+        });
+
+
+
+
+
+
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+        layui.use('layer', function () {
+            var layer = layui.layer;
+
+            $('.layuiadmin-reply').on('click', function () {
+
+                layer.prompt({
+                    formType: 2,//把输入框变成文本域的形式
+                    title: '输入回复内容',
+                    value: '',
+                    area: ['300px', '220px']
+                },
+                    function (val, index) {
+                        layer.msg('已回复');
+                        layer.close(index);
+                    });
+            })
+        });
+        layui.use('table', function () {
+            var table = layui.table;
+            table.render({
+                //默认为get请求
+                elem: '#deviceView'
+                , url: '/device_place/number'
+                , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , page: true
+                , id: 'testReload'
+                , limits: [7, 10, 15, 20]
+                , limit: 7
+                , cols: [[
+                    { title: '序号', type: 'number', sort: true, toolbar: '#zizeng', minwidth: 160 }
+                    , { field: 'device_ID', title: '设备编号' }
+                    , { field: 'device_name', title: '设备名' }
+                    , { field: 'total_num', title: '预约次数' }
+                    // , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
+                ]]
+                , done: function () {
+                    let data = table.cache.testReload;//当前页面的表格数据
+                    // console.log(data)
+                    loadDrugs(data)
+                }
+            });
+
+            var myChart1 = echarts.init(document.getElementById('main'));
+
+            function loadDrugs(data) {
+                myChart1.clear();
+                // myChart1.showLoading({ text: '正在努力的读取数据中...' });
+                // var list = [];
+                // var title = [];
+
+                var y_data = [];
+                var x_data = [];
+
+
+                // var labelOption = {
+                //     normal: {
+                //         show: true,
+                //         formatter: '{c}次',
+                //         fontSize: 16
+                //     }
+                // };
+
+                for (var i = 0; i < data.length; i++) {
+                    x_data.push(data[i].device_name)
+                    y_data.push(data[i].total_num)
+
+
+                    // var row = {};
+                    // row.value = data[i].total_num;
+                    // row.name = data[i].device_name;
+                    // row.label = labelOption;
+                    // list.push(row);
+                    // title.push(data[i].device_name)
+                }
+
+                // var option = {
+                //     title: {
+                //         text: '实验室设备信息',
+                //         x: 'center'
+                //     },
+                //     tooltip: {
+                //         trigger: 'item',
+                //         formatter: "{a} <br/>{b} : {c} ({d})"//这个是固定写法，可以查看layui的API文档
+                //     },
+                //     legend: {
+                //         orient: 'vertical',
+                //         x: 'left',
+                //         data: title,
+                //     },
+                //     calculable: 'true',
+                //     series: [
+                //         {
+                //             name: '设备数量',
+                //             type: 'pie',
+                //             radius: '55%',
+                //             center: ['65%', 225],
+                //             data: list
+                //         }
+                //     ]
+                // }
+                option = {
+                    title: {
+                        text: '实验室设备预约人次统计（单位:人次）',
+                    },
+                    color: ['#3398DB'],
+                    tooltip: {
+                        trigger: 'axis',
+                        formatter: '{b0}<br/>{a0}:{c0}' + '人次', //格式后面加单位
+                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                            type: 'line'        // 默认为直线，可选为：'line' | 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            data: x_data,
+                            axisTick: {
+                                alignWithLabel: true
+                            },
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 40
+                            }    //解决x轴文字过多导致显示不全
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value} 人次'
+                            }
+                        },
+
+
+                    ],
+                    series: [
+                        {
+                            name: '直接访问',
+                            type: 'bar',
+                            barWidth: '60%',
+                            data: y_data,
+                        }
+                    ]
+                };
+
+
+                myChart1.setOption(option);
+            }
+        });
+
+    </script>
+</body>
+
+</html>

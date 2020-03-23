@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/packages/echarts.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>风险信息</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: #009688;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: #009688;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                            <span id='username'></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item ">
+                            <a class="" href="javascript:;" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="admin_index">后台主页</a></dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed"><a href="#" name="云链接" id="link_others">
+                                <i class="layui-icon layui-icon-headset"></i>
+                                <cite>实验室程序管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="admin_lab_info">一般信息</a></dd>
+                                <dd><a href="javascript:;" class="layui-this">风险信息</a>
+                                </dd>
+                                <dd><a href="admin_lab_urgent">应急管理</a></dd>
+
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item"><a href="#" name="云链接" id="background_manage">
+                                <i class="layui-icon layui-icon-headset"></i>
+                                <cite>实验室后台管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="javascript:;" class="layui-nav-itemed">仪器设备管理</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="admin_device_manage">设备管理</a></dd>
+                                        <dd><a href="admin_cylinder_manage">气瓶管理</a></dd>
+                                        <dd><a href="/admin_reagent_manage">试剂管理</a></dd>
+                                    </dl>
+                                </dd>
+                                <dd><a href="javascript:;" class="layui-nav-itemed">预约管理</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="/admin_room_order#">实验室预约</a></dd>
+                                        <!-- <dd><a href="javascript:;">设备预约</a></dd>
+                                        <dd><a href="/admin_reagent_order">试剂预约</a></dd> -->
+                                    </dl>
+                                </dd>
+                                <dd><a href="/admin_user_manage" name="用户管理" id="user_manage">用户管理</a></dd>
+                                <dd><a href="/admin_info_manage" name="实验室录入清单管理">实验室录入清单管理</a></dd>
+
+                                <dd><a href="javascript:;" class="layui-nav-itemed">检查表</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="admin_security_check">日常安全检查</a></dd>
+                                        <dd><a href="admin_security_check2"> 高校实验室安全检查</a></dd>
+                                        <dd><a href="admin_security_check3"> 安全自查情况登记表</a></dd>
+                                        <!-- <dd><a href="#">特殊安全检查</a></dd> -->
+                                    </dl>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a class="" href="admin_journal" name="主页" id="daily">
+                                <i class="layui-icon layui-icon-slider"></i>
+                                <cite>实验室管理日志</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+
+            </div>
+
+            <!--页面主体-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <h3 style="font-size: 24px;text-align: center">实验室风险信息发布</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    实验室危险因素
+                                </div>
+                                <div class="layui-card-body">
+                                    <form class="layui-form" action="" id="div-0" lay-filter="example">
+                                        <div class="layui-form">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">实验室名称</label>
+                                                <div class="layui-input-inline">
+                                                    <select id='select_room' name="lab_Number" lay-verify="required"
+                                                        lay-search="">
+                                                        <option value="">请选择实验室</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">危险因素类型</label>
+                                                <div class="layui-input-inline">
+                                                    <input type="text" name="danger_type" class="layui-input"
+                                                        placeholder="请填写危险因素类型" required lay-verify="required">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item layui-form-text">
+                                                <label class="layui-form-label">危险因素内容</label>
+                                                <div class="layui-input-block">
+                                                    <textarea name="danger_content" placeholder="请输入内容"
+                                                        class="layui-textarea" required
+                                                        lay-verify="required"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <div class="layui-input-block">
+                                                    <button class="layui-btn" lay-submit=""
+                                                        lay-filter="setmyinfo">发布信息</button>
+                                                    <button type="reset"
+                                                        class="layui-btn layui-btn-primary">重新填写</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        $('#username').html(username);
+        (function getRoomInfo() {
+            $.ajax({
+                type: 'get',
+                url: '/getRoom',
+                success: function (data) {
+                    $.each(data, function (key, val) {
+                        var option1 = $("<option>").val(val.FID + val.Rname).text(val.FID += '(' + val.Rname + ')');
+                        $("#select_room").append(option1);
+                    });
+                },
+            });
+        })()
+
+        layui.use(['form', 'element'], function () {
+            var form = layui.form;
+            var element = layui.element;
+            //监听提交
+            form.on('submit(setmyinfo)', function (data) {
+                json = eval('(' + JSON.stringify(data.field) + ')');//转换成json对象 
+                let FID = json.lab_Number.substring(0, 4)
+                let Fname = json.lab_Number.slice(4)
+                $.ajax({
+                    type: 'post',
+                    url: '/danger_info',
+                    data: {
+                        FID: FID,
+                        Fname: Fname,
+                        Type: json.danger_type,
+                        Content: json.danger_content,
+                    },
+                    success: function (data) {
+                        layer.load(0, {
+                            shade: false,
+                            time: 1000
+                        })
+                        setTimeout(() => {
+                            layer.msg('信息已提交', {
+                                icon: 1,
+                                time: 1000
+                            });
+                        }, 1500);
+                    }
+
+                })
+                return false;
+            });
+        });
+    </script>
+</body>
+
+</html>

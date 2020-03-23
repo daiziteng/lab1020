@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>实验室详情</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: burlywood;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: burlywood;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                            <span id="user_name"></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item">
+                            <a href="user_index" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>个人主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a class="" href="javascript:;" name="安全准入" id="homepage">
+                                <i class="layui-icon layui-icon-form"></i>
+                                <cite>安全准入</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="lab_info" class="layui-this">信息预知</a></dd>
+                                <dd><a href="lab_danger_element" >危险预知</a></dd>
+                                <dd><a href="lab_urgent_schema">应急预案</a></dd>
+                                <dd><a href="lab_exam" >准入考试</a></dd>
+                            </dl>
+
+
+                        </li>
+                        <li class="layui-nav-item">
+                            <a class="" href="lab_order" name="实验室分布" id="homepage">
+                                <i class="layui-icon layui-icon-location"></i>
+                                <cite>实验室分布</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+
+                        <li class="layui-nav-item ">
+                            <a href="javascript:;" name="实验室详情" id="">
+                                <i class="layui-icon layui-icon-tabs"></i>
+                                <cite>实验室详情</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="room_order">房间预约</a></dd>
+                                <dd><a href="lab_submit">实验记录</a></dd>
+                            </dl>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+                <!--<div class="layui-tab">-->
+                <!--<ul class="layui-tab-title" id="LAY_app_tabsheader">-->
+                <!--<li>-->
+                <!--<i class="layui-icon layui-icon-home"></i>-->
+                <!--</li>-->
+                <!--</ul>-->
+                <!--</div>-->
+            </div>
+            <!--页面主体-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <h3 style="font-size: 24px;text-align: center">实验室信息预知</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--<div class="layui-col-sm6">-->
+                        <!--<div class="layui-card">-->
+                        <!--<div class="layui-card-header">-->
+                        <!--实验室——设备-->
+                        <!--</div>-->
+                        <!--<div class="layui-card-body" style="overflow-y: scroll;height: 280px;">-->
+                        <!--<table id="deviceView"></table>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="layui-col-sm6">-->
+                        <!--<div class="layui-card">-->
+                        <!--<div class="layui-card-header">-->
+                        <!--实验室——试剂-->
+                        <!--</div>-->
+                        <!--<div class="layui-card-body">-->
+                        <!--<table id="reagentView"></table>-->
+
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!---->
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <p style="color:blue;text-align: left;font-size: 20px">学生实验守则
+                                    </p>
+                                </div>
+                                <div class="layui-card-body">
+                                    <ul class="layadmin-note">
+                                        <li>
+                                            <a>实验室是进行实验教学和科学研究的重要基地，是培养学生实验动手能力、掌握科学实验方法的重要场所，为保证实验工作的正常进行，特制定本守则。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>1、学生应按时上实验课，不得无故迟到、早退。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>2、学生进行实验前要认真预习实验内容，了解实验原理，明确实验目的、要求和步骤，写出预习报告，并接受指导教师的提问和检查。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>3、学生进入实验室，必须遵守实验室各项规章制度，对不遵守操作规程，又不听劝告者，指导教师有权停止其实验。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>4、讲究文明礼貌，保持实验室安静、整洁，不得高声喧哗、戏闹，不准穿背心拖鞋进入实验室。爱护公共财物，未经允许严禁将实验室的任何物品带出实验室。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>5、实验过程中，应严格按照指导教师的要求和操作规程操作，不得盲目蛮干。特别是在使用电器、机械设备时，严防造成人身事故和设备事故。未经同意，不得动用与本组无关的其他仪器设备。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>6、实验过程中，若仪器设备发生故障，应及时报告指导教师处理。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>7、实验过程中，出现意外事故时，应保持镇静，并迅速采取有效措施（切断电源、水源、气源），保护现场并及时报告指导教师处理。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>8、实验完成后，应将填有实验数据的实验报告（或记录本）交指导教师审查、签字。实验数据不得伪造抄袭，否则该实验成绩以不合格处理。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>9、实验完成后，必须按指导教师的要求整理好实验所用仪器设备，打扫实验台面及室内卫生，经指导教师检查后，方可离开实验室。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <p style="color:blue;text-align: left;font-size: 20px">实验室安全制度
+                                    </p>
+                                </div>
+                                <div class="layui-card-body">
+                                    <ul class="layadmin-note">
+                                        <li>
+                                            <a>1、为保证实验室教学、科研、技术开发等工作展开的顺利进行，避免财产损失和人身伤害，实验人员必须高度重视安全工作。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>2、实验室人员应严格遵守《武汉科技大学实验室技术安全管理办法》和《武汉科技大学实验室各类人员行为规范》等实验室安全规章制度，坚持“安全第一，预防为主”和“谁主管，谁负责”的原则，做好实验室安全防范工作。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>3、实验室必须配备符合本室安全要求的消防器材，消防器材要摆在明显、易于取用的位置，并定期检查，确保有效。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>4、贵重药品、贵重金属等要存放在保险柜或其他安全的地方，剧毒、细菌病毒和放射源等要稳妥地存放在固定的库房内。上述物品的购置、运输、存放和领用要严格按有关规定执行，对其品种、性质、数量等要严格登记入账，专人负责，专人保管。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>5、实验室的仪器设备、材料、药品等要存放整齐，并符合安全要求，严禁乱堆、乱放。实验室的钥匙要有专人保管，借用要登记，任何人不得私自配备或转借他人。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>6、实验用过的废酸、废有机溶剂、放射品废液、有毒物质、化学品等要按安全和环保要求妥善处理。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>7、实验室工作人员在实验前，必须认真检查所有仪器设备及其他电路，确认是否正常；实验结束后，除整理好仪器外，必须拉闸断电，关好水龙头、窗户，并锁好门。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>8、在实验中，要求学生严格按照操作规程操作，不得盲目蛮干，特别是在使用电器、机械设备时，严防造成人身和设备事故。未经同意，学生不得动用与本组无关的其它设备。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+                                        <li>
+                                            <a>9、实验室工作人员要指定兼职安全员一名，具体负责安全工作，认真做好安全记录。一旦发现安全隐患，应及时向实验室（中心）主任及有关部门报告，并督促有关部门尽快解决。</a>
+                                        </li>
+                                        <hr class="layui-bg-blue">
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /*设置session*/
+        $(function () {
+            $.ajax({
+                type: 'post',
+                url: '/session',
+                success: function (data) {
+                    if (data.username != null) {
+                        $('#user_name').html(data.username)
+                    } else {
+                        window.location.href = "/login";
+                    }
+                    // $('#user_name').html(data.username);
+                }
+            });
+        });
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+
+        layui.use('table', function () {
+            var table = layui.table;
+            table.render({
+                //默认为get请求
+                elem: '#deviceView'
+                , url: '/device_manage'
+                , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , page: true
+                , limits: [5, 10, 15]
+                , limit: 5
+                , cols: [[
+                    { field: 'device_name', title: '设备名称', sort: true }
+                    , { field: 'device_number', title: '数量' }
+                    , { field: 'device_purpose', title: '主要用途' }
+                    , { field: 'experiment_item', title: '实验项目' }
+                    , { field: 'experiment_object', title: '对象' }
+                    , { field: 'device_master', title: '负责人' }
+                ]]
+            });
+        })
+
+        layui.use('table', function () {
+            var table = layui.table;
+            table.render({
+                //默认为get请求
+                elem: '#reagentView'
+                , url: '/room_reagent'
+                , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                , limits: [5, 10, 15]
+                , limit: 5
+                , page: true
+                , cols: [[
+                    { field: 'reagent_name', title: '试剂名称', sort: true }
+                    , { field: 'reagent_spec', title: '剂量' }
+                    , { field: 'reagent_product', title: '产地' }
+                    , { field: 'reagent_stock', title: '库存' }
+                    , { field: 'FID', title: '存放位置' }
+                ]],
+            });
+        })
+    </script>
+</body>
+
+</html>

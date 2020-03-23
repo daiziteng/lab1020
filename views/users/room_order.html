@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <link rel="stylesheet" type="text/css" href="/packages/fullcalendar/dist/fullcalendar.min.css">
+    <link rel="stylesheet" type="text/css" href="/packages/fullcalendar/dist/scheduler.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/js/cookie.js"></script>
+    <script type="text/javascript" src="/packages/moment.js"></script>
+    <script type="text/javascript" src="/packages/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
+    <script type="text/javascript" src="/js/jquery.jqprint-0.3.js"></script>
+    <script type="text/javascript" src="/js/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <script type="text/javascript" src="/packages/fullcalendar/dist/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="/packages/fullcalendar/dist/scheduler.js"></script>
+    <script type="text/javascript" src="/packages/fullcalendar/dist/locale/zh-cn.js"></script>
+    <title>实验室预定界面</title>
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: burlywood;
+        }
+
+        .layui-layout-admin .layui-logo {
+            background-color: burlywood;
+        }
+
+        .layadmin-shortcut ul li {
+            cursor: pointer;
+        }
+
+        .fc-bg {
+            cursor: pointer;
+        }
+
+        .fc-content {
+            cursor: pointer;
+        }
+
+        body .demo-class .layui-layer-btn .layui-layer-btn0 {
+            border-color: red;
+            background-color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!--导航栏左侧区域-->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="layui-nav-item layadmin-flexible">
+                        <a href="#" layadmin-event="flexible" title="侧边伸缩">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+
+                </ul>
+                <!--导航栏右侧区域-->
+                <ul class="layui-nav layui-layout-right">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <img src="/images/touxiang.jpg" class="layui-nav-img">
+                            <span id="user_name"></span>
+                            <span id="user_type" style="display: none"></span>
+                            <span id="supervisor" style="display: none"></span>
+                            <span id="major_in" style="display: none"></span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item"><a onclick="zx()" style="cursor: pointer;">注销</a></li>
+                </ul>
+            </div>
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                    <div class="layui-logo" lay-href="">
+                        <span>实验室安全信息管理系统</span>
+                    </div>
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li class="layui-nav-item">
+                            <a href="user_index" name="主页" id="homepage">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>个人主页</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item ">
+                            <a class="" href="javascript:;" name="安全准入" id="homepage">
+                                <i class="layui-icon layui-icon-form"></i>
+                                <cite>安全准入</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="lab_info">信息预知</a></dd>
+                                <dd><a href="lab_danger_element">危险预知</a></dd>
+                                <dd><a href="lab_urgent_schema">应急预案</a></dd>
+                                <dd><a href="lab_exam">准入考试</a></dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item">
+                            <a href="lab_order" name="实验室分布" id="homepage">
+                                <i class="layui-icon layui-icon-location"></i>
+                                <cite>实验室分布</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item layui-nav-itemed ">
+                            <a href="javascript:;" name="实验室详情" id="">
+                                <i class="layui-icon layui-icon-tabs"></i>
+                                <cite>实验室详情</cite>
+                                <span class="layui-bav-more"></span>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a href="room_order" class="layui-this">房间预约</a></dd>
+                                <dd><a href="lab_submit">实验记录</a></dd>
+                            </dl>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--页面标签-->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+            </div>
+            <!--页面主体-->
+            <div class="layui-body">
+                <div class="layui-fluid">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md4">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <h3 style="color:blue;font-size: 24px;text-align: center;float: left;">我的预约</h3>
+                                </div>
+                                <div class="layui-card-body" style="height: 70px">
+                                    <div class="layui-carousel layadmin-carousel layadmin-news" data-anim="fade"
+                                        lay-filter="news" lay-anim="fade" lay-indicator="inside" lay-arrow="none"
+                                        style="width: 100%; height: 280px;">
+                                        <div carousel-item="">
+                                            <div class="layui-this">
+                                                <a href="room_self_order" target="_self"
+                                                    class="layui-bg-blue">查看我的预约</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <h3 style="color:blue;font-size: 24px;text-align: center;float: left;">房间类型选择</h3>
+                                    <button id="changeView" class="layui-btn layui-btn-normal layui-btn-sm"
+                                        style="float: right;margin-top:5px" name="time">按日期选择
+                                    </button>
+                                </div>
+                                <div class="layui-card-body" style="height: 125px">
+                                    <form class="layui-form" action="">
+                                        <div class="layui-form-item" style='margin-left: -60px;'>
+                                            <div class="layui-input-block">
+                                                <input type="radio" name="room" value="实验室" title="实验室" checked
+                                                    lay-filter="choose_lab">
+                                                <input type="radio" name="room" value="会议室" title="会议室"
+                                                    lay-filter="choose_meeting">
+                                                <input type="radio" name="room" value="工作室" title="工作室"
+                                                    lay-filter="choose_room">
+                                            </div>
+                                        </div>
+                                        <div class="layui-inline select">
+                                            <label class="layui-form-label">选中房间</label>
+                                            <div class="layui-input-block">
+                                                <select id="room_type">
+                                                </select>
+                                            </div>
+                                    </form>
+                                    <div>
+                                        <div id="demo20"></div>
+                                        <ul id="biuuu_city_list"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-card">
+                            <div class="layui-card-header">日历</div>
+                            <div class="layui-card-body" pad15>
+                                <div id="test2" style="margin-left:15%"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <ccc>
+                        <div class="layui-col-md8" id='print'>
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    <h3 style="color:blue;font-size: 24px;text-align: center" id="lab_name">4103/光测力学实验室
+                                        <!-- <input type="button" onclick=" a()" value="打印" /> -->
+
+                                    </h3>
+                                </div>
+                                <div class="layui-card-body">
+                                    <div id="calendar"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </ccc>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <script>
+
+        layui.use(['element', 'form', 'laydate', 'layer', 'laypage'], function () {
+            var element = layui.element;
+            var form = layui.form;
+            var laydate = layui.laydate;
+            var layer = layui.layer;
+            var laypage = layui.laypage;
+            //准入判断
+            // $('#user_name').html(username);//用户名
+            $(document).ready(function () {
+                /*设置session*/
+                $(function () {
+                    $.ajax({
+                        type: 'post',
+                        url: '/session',
+                        success: function (json) {
+                            if (json.username != null) {
+                                $('#user_name').html(json.username);
+                                $('#user_type').html(json.type);
+                                $('#supervisor').html(json.supervisor)
+                                $('#major_in').html(json.major_in);
+                                $.ajax({
+                                    type: 'get',
+                                    url: '/exam_result',
+                                    data: {
+                                        name: json.username,
+                                    },
+                                    success: function (data) {
+                                        if (data.length > 0 || json.type === '老师') {
+                                            layer.msg('欢迎进入实验室预约界面');
+                                            //嵌套在指定容器中_日历
+                                            laydate.render({
+                                                elem: '#test2'
+                                                , position: 'static'
+                                                , btns: ['now']
+                                                , change: function (value) {
+                                                    /*日历与预约界面在时间上进行联动*/
+                                                    $('#calendar').fullCalendar('gotoDate', value);//value--得到日期生成的值，如：2017-08-18
+                                                }
+                                                , done: function (value) {
+                                                    $('#calendar').fullCalendar('gotoDate', value);//value--得到日期生成的值，如：2017-08-18
+                                                }
+                                            });
+                                            // 预约界面初始化
+                                            $(document).ready(function () {
+                                                getRoomId(4103);
+                                                $('#changeView').on('click', function () {
+                                                    let text = $(this).attr('name');
+                                                    if (text === 'time') {
+                                                        $(this).html('按实验室选择');
+                                                        $('.layui-form').hide()
+                                                        $('#lab_name').hide()
+                                                        $(this).attr('name', 'room')
+                                                        getRoomId_2()
+                                                    } else {
+                                                        $(this).html('按日期选择');
+                                                        $('.layui-form').show()
+                                                        $('#lab_name').show()
+                                                        $(this).attr('name', 'time')
+                                                        let room_id = $('#lab_name').text().substring(0, 4);
+                                                        getRoomId(room_id)
+                                                    }
+                                                });
+                                            });
+
+                                            function getRoomId(value) {
+                                                $.ajax({
+                                                    dataType: 'json',
+                                                    type: 'post',
+                                                    url: '/Check',
+                                                    data: {
+                                                        lab_number: value,
+                                                    },
+                                                    success: function (json) {
+                                                        var events = [];
+                                                        for (var i = 0; i < json.length; i++) {
+                                                            if (json[i].Status_id == 1) {
+                                                                var event = {
+                                                                    title: json[i].Applicant,
+                                                                    start: new Date(json[i].Start_time),
+                                                                    end: new Date(json[i].End_time),
+                                                                    backgroundColor: '#00c0ef',
+                                                                    borderColor: '#00c0ef'
+                                                                };
+                                                                events.push(event);
+                                                            } else if (json[i].Status_id == 0) {
+                                                                var event = {
+                                                                    title: json[i].Applicant,
+                                                                    start: new Date(json[i].Start_time),
+                                                                    end: new Date(json[i].End_time),
+                                                                    backgroundColor: 'grey',
+                                                                    borderColor: 'grey'
+                                                                };
+                                                                events.push(event);
+                                                            }
+                                                        }
+                                                        // let defaultView = 'agendaWeek';
+                                                        let defaultView = 'month';
+                                                        let header = {
+                                                            left: 'prev,next today  myCustomButton',
+                                                            center: 'title',
+                                                            right: 'month,agendaWeek,listMonth,',
+                                                        };
+                                                        renderCalendar('calendar', events, defaultView, header)
+                                                    }
+                                                });
+                                            }
+
+
+                                            function getRoomId_2() {
+                                                $.ajax({
+                                                    dataType: 'json',
+                                                    type: 'post',
+                                                    url: '/Check',
+                                                    success: function (json) {
+                                                        var events = [];
+                                                        for (var i = 0; i < json.length; i++) {
+                                                            if (json[i].Status_id == 1) {
+                                                                var event = {
+                                                                    title: json[i].Applicant,
+                                                                    resourceId: json[i].FID,
+                                                                    start: new Date(json[i].Start_time),
+                                                                    end: new Date(json[i].End_time),
+                                                                    backgroundColor: '#00c0ef',
+                                                                    borderColor: '#00c0ef',
+                                                                };
+                                                                events.push(event);
+                                                            } else if (json[i].Status_id == 0) {
+                                                                var event = {
+                                                                    title: json[i].Applicant,
+                                                                    resourceId: json[i].FID,
+                                                                    start: new Date(json[i].Start_time),
+                                                                    end: new Date(json[i].End_time),
+                                                                    backgroundColor: 'grey',
+                                                                    borderColor: 'grey',
+                                                                    // timeFormat: 'H(:mm)'
+
+                                                                };
+                                                                events.push(event);
+                                                            }
+                                                        }
+                                                        let defaultView = 'agendaDay';
+                                                        let header = {
+                                                            left: 'prev,next today ',
+                                                            center: 'title',
+                                                            right: 'agendaDay,',
+                                                        };
+                                                        let resources = [
+                                                            { id: '4103', title: '4103/光测力学实验室', },
+                                                            { id: '4229', title: '4229/数字矿山实验室', },
+                                                            { id: '5112', title: '5112/粉碎实验室', },
+                                                            { id: '5113', title: '5113/萃取实验室', },
+                                                            { id: '5115', title: '5115/会议室', }
+                                                        ];
+
+                                                        renderCalendar('calendar', events, defaultView, header, resources)
+                                                    }
+                                                });
+                                            }
+                                            function getOrderRoomType(room_type) {
+                                                $.ajax({
+                                                    type: 'get',
+                                                    url: '/order/room',
+                                                    data: { room_type: room_type },
+                                                    success: function (data) {
+                                                        $.each(data, function (key, val) {
+                                                            var option1 = $("<option>").val(val.FID).text(val.FID + '/' + val.Rname);
+                                                            $("#room_type").append(option1);
+                                                            form.render('select');
+                                                        });
+                                                    }
+                                                })
+
+                                            }
+                                            let init_type = '实验室'
+                                            getOrderRoomType(init_type)
+                                            form.on('radio()', function (data) {
+                                                $("#room_type").html("");
+                                                getOrderRoomType(data.value)
+                                                let room = ['4103/光测力学实验室', '4203/认证办公室', '4101/科技创新作品陈列室']
+                                                if (data.value === '实验室') {
+                                                    $('#lab_name').html(room[0])
+                                                    let room_format = room[0].substring(0, 4);
+                                                    getRoomId(room_format)
+                                                } else if (data.value === '会议室') {
+                                                    $('#lab_name').html(room[1])
+                                                    let room_format = room[1].substring(0, 4);
+                                                    getRoomId(room_format)
+                                                } else {
+                                                    $('#lab_name').html(room[2])
+                                                    let room_format = room[2].substring(0, 4);
+                                                    getRoomId(room_format)
+                                                }
+
+                                            });
+                                            form.on('select()', function (data) {
+                                                let room_attr = data.elem[data.elem.selectedIndex].text  //获取select框选中文本值
+                                                $('#lab_name').html(room_attr);
+                                                getRoomId(data.value)
+                                            })
+                                            /*预约编号生成*/
+                                            const tradeNo = function () {
+                                                const now = new Date()
+                                                const year = now.getFullYear();
+                                                let month = now.getMonth() + 1;
+                                                let day = now.getDate();
+                                                let hour = now.getHours();
+                                                String(month).length > 12 ? (month = Number("0" + month)) : (month = Number("0" + month));
+                                                String(day).length < 10 ? (day = Number("0" + day)) : day;
+                                                String(hour).length < 3 ? (hour = Number("0" + hour)) : hour;
+                                                const yyyyMMddHHmmss = `${year}${month}${day}${hour}`;
+                                                return yyyyMMddHHmmss + '_' + Math.random().toString(9).substr(4, 6);
+                                            };
+                                            /**
+                                                 * 渲染fullCalendar
+                                                 * @param $el  div的id
+                                                 * @param event fullCalendar要显示的数据
+                                                 * @param defaultView fullCalendar要显示的视图
+                                                 * @param defaultView fullCalendar要显示的头部栏
+                                                 */
+
+                                            function renderCalendar($el, event, defaultView, header, resources) {
+                                                $('#' + $el).fullCalendar('destroy');//重新加载前销毁日历
+                                                $('#' + $el).fullCalendar('removeEvents');//重新加载前移除事件
+                                                $('#' + $el).fullCalendar('changeView', defaultView);//切换视图
+                                                $('#' + $el).fullCalendar({
+                                                    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                                                    // defaultView:'timelineDay', // or 'agenda' or 'basic'
+                                                    defaultView: defaultView, // or 'agenda' or 'basic'
+                                                    firstDay: 1,
+                                                    contentHeight: 685,//div的高度
+                                                    // timeFormat: 'H:mm',
+                                                    // height: 825,
+                                                    // height: 825,
+                                                    eventLimit: true, // 事件太多时, 折叠展示
+                                                    slotEventOverlap: true, //相同时间段的多个日程视觉上是否允许重叠，默认true允许
+                                                    slotDuration: "00:30:00",      //一格时间槽代表多长时间，默认00:30:00（30分钟）
+                                                    // eventLimitText: "更多",
+
+                                                    timeFormat: 'H:mm',//改变时间为24时小时制
+                                                    locale: 'zh-cn',
+                                                    customButtons: {
+                                                        myCustomButton: {
+                                                            text: '打印',
+                                                            click: function () {
+                                                                $("#print").jqprint();
+                                                            }
+
+                                                        },
+                                                    },
+
+                                                    // monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], //月份自定义命名
+                                                    monthNames: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], //月份自定义命名
+                                                    // monthNamesShort: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], //月份缩略命名（英语比较实用：全称January可设置缩略为Jan）
+                                                    monthNamesShort: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], //月份缩略命名（英语比较实用：全称January可设置缩略为Jan）
+                                                    // 标题格式化
+                                                    // ColumnFormat: { month: 'ddd', week: 'ddd d/M', day: 'dddd d/M' },
+                                                    // titleformat:[{month: 'MMMM yyyy', week: "MMM d[ yyyy]{ '&#8212;'[ MMM] d yyyy}",  day: 'dddd, MMM d, yyyy' }],
+
+                                                    header: header,
+                                                    resources: resources,
+                                                    allDaySlot: false,
+                                                    minTime: "8:00",
+                                                    maxTime: "22:00",
+                                                    displayEventEnd: true,
+                                                    displayEventTime: true,
+                                                    // navLinks: true,
+                                                    editable: false,
+                                                    eventStartEditable: false,      //Event日程开始时间可以改变，默认true，如果是false其实就是指日程块不能随意拖动，只能上下拉伸改变他的endTime
+                                                    eventAllow: false,
+                                                    // selectAllow: false,
+                                                    // events: eventsData,//日历上显示的事件
+                                                    eventOverlap: true,//拖动和缩放时禁止重叠
+                                                    selectable: true,
+                                                    selectHelper: true,         //接selectable，周/日视图在选择时是否预先画出“日程区块”的样式出来
+                                                    // selectOverlap: function (type) {
+                                                    //     let lab = $('#lab_name').text();
+                                                    //     let lab_type = lab.substr(lab.length - 3);
+                                                    //     // alert(lab_type)
+                                                    //     if (lab_type === '实验室') {
+                                                    //         return true
+                                                    //     } else if (lab_type !== '实验室') {
+                                                    //         return false
+                                                    //     }
+                                                    // },        //选择时间时禁止重叠
+                                                    resourceRender: '',
+                                                    dayClick: function (date, jsEvent, view) {//空白的日期区，单击时触发
+                                                    },
+                                                    select: function (start, end, jsEvent, view, resource) {
+                                                        let start_time = moment(start).format('YYYY-MM-DD H:mm:ss');//日期时间格式化处理
+                                                        let end_time = moment(end).format('YYYY-MM-DD H:mm:ss');
+                                                        let tradeNumber = tradeNo()
+                                                        // console.log(tradeNumber)
+
+                                                        var lab
+                                                        if (view.type == 'agendaWeek' || view.type == 'month') {
+                                                            lab = $.trim($('#lab_name').text());
+                                                        } else if (view.type == 'agendaDay') {
+                                                            lab = resource.title;
+                                                        }
+                                                        var room_id = lab.substring(0, 4); //获取所选房间ID
+                                                        var room_name = lab.substring(5); //获取所选房间ID
+                                                        var user_type = $('#user_type').html();
+                                                        var user_name = $('#user_name').html();
+                                                        var supervisor = $('#supervisor').html();
+
+                                                        // console.log(user_type,user_name,supervisor)
+
+                                                        let lab_type = lab.substr(lab.length - 3);
+                                                        //do something here...
+                                                        if (lab_type === '实验室') {
+                                                            layer.open({
+                                                                content: '/device_order_add',
+                                                                type: 2,
+                                                                shade: 0.5,
+                                                                title: '设备预约',
+                                                                area: ['850px', '500px'],
+                                                                btn: ['提交', '取消'],    // 自定义设置多个按钮
+                                                                success: function (layero, index) {
+                                                                    var iframe = window['layui-layer-iframe' + index];
+                                                                    iframe.getRoomId(room_id, start_time, end_time, user_type, user_name, supervisor)   //父页面向子页面传值 getRoomId()为全局函数
+                                                                },
+                                                                // btn1: function (index, layero) {
+                                                                // },
+                                                                btn1: function (index, layero) {
+                                                                    var iframeWin = window[layero.find('iframe')[0]['name']];
+                                                                    var value = iframeWin.getChoseId();
+                                                                    var formatValue = JSON.parse(value); //json字符串转化成json对象（原生方法） object
+                                                                    var Lists = [];
+                                                                    var formatLists = [];
+                                                                    //json对象转化成json数组对象
+                                                                    for (let i in formatValue) {
+                                                                        Lists.push(formatValue[i]);
+                                                                    }
+                                                                    // console.log(formatValue)
+                                                                    for (var i = 0; i < Lists.length; i++) {
+                                                                        let formatList = {
+                                                                            device_ID: Lists[i].value,
+                                                                            device_name: Lists[i].title,
+                                                                            start_time: start_time,
+                                                                            end_time: end_time,
+                                                                            room_id: room_id,
+                                                                            applicant: username,
+                                                                            tradeNo: tradeNumber
+                                                                        };
+                                                                        formatLists.push(formatList)
+                                                                    }
+                                                                    let jsonArray = JSON.stringify(formatLists);//array to json 用于向后台传值
+                                                                    if (formatLists.length != 0) {
+                                                                        $.ajax({
+                                                                            type: 'post',
+                                                                            traditional: true,//这里设置为true
+                                                                            data: {
+                                                                                device_value: jsonArray,
+                                                                            },
+                                                                            url: '/device/add',
+                                                                            success: function (data) {
+
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                    layer.open({
+                                                                        content: '/labroom_add',
+                                                                        type: 2,
+                                                                        shade: 0.5,
+                                                                        maxmin: true,
+                                                                        title: '实验室预约',
+                                                                        // area: ['25%', '58%'],
+                                                                        area: ['480px', '550px'],
+                                                                        btn: ['提交', '取消'],    // 自定义设置多个按钮
+                                                                        success: function (layero, index) {
+                                                                            var iframe = window['layui-layer-iframe' + index];
+                                                                            // iframe.child('我是父布局传到子布局的值')
+                                                                            let name = $('#user_name').html();
+                                                                            let user_type = $('#user_type').html();
+                                                                            let major_in = $('#major_in').html();
+                                                                            let body = layer.getChildFrame('body', index);
+                                                                            var inputList = body.find("input")
+                                                                            if (major_in === '环境工程') {
+                                                                                for (var i = 0; i < inputList.length; i++) {
+                                                                                    // $(inputList[1]).val(start_time); //将开始时间放入其中
+                                                                                    // $(inputList[2]).val(end_time);
+                                                                                    $(inputList[3]).val(room_id);
+                                                                                    $(inputList[4]).val(room_name);
+                                                                                    $(inputList[5]).val(name);
+                                                                                    $(inputList[7]).val(tradeNumber);
+                                                                                    $(inputList[8]).val(1);
+                                                                                    $(inputList[10]).val(user_type);
+                                                                                }
+                                                                            } else {
+                                                                                for (var i = 0; i < inputList.length; i++) {
+                                                                                    // $(inputList[1]).val(start_time); //将开始时间放入其中
+                                                                                    // $(inputList[2]).val(end_time);
+                                                                                    $(inputList[3]).val(room_id);
+                                                                                    $(inputList[4]).val(room_name);
+                                                                                    $(inputList[5]).val(name);
+                                                                                    $(inputList[7]).val(tradeNumber);
+                                                                                    $(inputList[10]).val(user_type);
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        btn1: function (index, elem) {
+                                                                            var body = layer.getChildFrame('body', index);
+                                                                            var purpose = body.find('#purpose').val();
+                                                                            var start_time = body.find('#start_time').val();
+                                                                            var end_time = body.find('#end_time').val();
+                                                                            var lab_number = body.find('#lab_number').val();
+                                                                            var lab_name = body.find('#lab_name').val();
+                                                                            var applicant = body.find('#applicant').val();
+                                                                            var status_id = body.find('#status_id').val();
+                                                                            var tradeNo = body.find('#tradeNo').val();
+                                                                            var supervisor = body.find('#supervisor').val();
+                                                                            var user_type = body.find('#user_type').val();
+                                                                            if (purpose == "" || applicant == "" || supervisor == '') {
+                                                                                layer.msg('请把页面内容填写完整')
+                                                                            } else {
+                                                                                $.ajax({
+                                                                                    type: 'get',
+                                                                                    url: '/room/add',
+                                                                                    data: {
+                                                                                        purpose: purpose,
+                                                                                        start_time: start_time,
+                                                                                        end_time: end_time,
+                                                                                        lab_number: lab_number,
+                                                                                        lab_name: lab_name,
+                                                                                        applicant: applicant,
+                                                                                        status_id: status_id,
+                                                                                        tradeNo: tradeNo,
+                                                                                        supervisor: supervisor,
+                                                                                        user_type: user_type,
+
+                                                                                    },
+                                                                                    success: function (result) {
+                                                                                        if (result.code == '200') {
+                                                                                            layer.msg(result.msg, { icon: 1, time: 1000 }, function () {
+                                                                                                if (view.type == 'agendaWeek' || view.type == 'month') {
+                                                                                                    getRoomId(room_id)
+                                                                                                } else {
+                                                                                                    getRoomId_2()
+                                                                                                }
+                                                                                            });
+                                                                                            layer.close(index);
+                                                                                        } else if (result.code == '400') {
+                                                                                            layer.close(index);
+                                                                                            layer.alert(result.msg, { icon: 2 }, function () {
+                                                                                                layer.close(index);
+                                                                                                window.location.reload()
+                                                                                            })
+                                                                                        }
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        },
+                                                                        btn2: function (index, elem) {
+                                                                            layer.msg('已取消');
+                                                                            layer.close(index);
+                                                                            $('#' + $el).fullCalendar('removeEvent');
+                                                                        },
+                                                                    });
+                                                                    layer.close(index, { time: 1000 });
+
+                                                                }
+                                                            });
+                                                        } else if (lab_type !== '实验室') {
+                                                            let name = $('#user_name').html();
+                                                            layer.open({
+                                                                content: '/meeting_room_add',
+                                                                type: 2,
+                                                                shade: 0.5,
+                                                                maxmin: true,
+                                                                title: '新增预约',
+                                                                // area: ['25%', '58%'],
+                                                                area: ['800px', '660px'],
+                                                                btn: ['提交', '取消'],    // 自定义设置多个按钮
+                                                                success: function (layero, index) {
+                                                                    let body = layer.getChildFrame('body', index);
+                                                                    let user_type = $('#user_type').html();
+                                                                    var inputList = body.find("input");
+                                                                    for (var i = 0; i < inputList.length; i++) {
+                                                                        // $(inputList[1]).val(start_time); //将开始时间放入其中
+                                                                        // $(inputList[2]).val(end_time);
+                                                                        $(inputList[2]).val(room_id);
+                                                                        $(inputList[3]).val(room_name);
+                                                                        $(inputList[4]).val(name);
+                                                                        $(inputList[6]).val(tradeNumber);
+                                                                        $(inputList[9]).val(user_type);
+                                                                    }
+                                                                },
+                                                                btn1: function (index, elem) {
+                                                                    var body = layer.getChildFrame('body', index);
+                                                                    var purpose = body.find('#purpose').val();
+                                                                    var start_time = body.find('#start_time').val();
+                                                                    var end_time = body.find('#end_time').val();
+                                                                    var lab_number = body.find('#lab_number').val();
+                                                                    var lab_name = body.find('#lab_name').val();
+                                                                    var applicant = body.find('#applicant').val();
+                                                                    var status_id = body.find('#status_id').val();
+                                                                    var tradeNo = body.find('#tradeNo').val();
+                                                                    var supervisor = body.find('#supervisor').val();
+                                                                    var user_type = body.find('#user_type').val();
+                                                                    var time_area = body.find('#time_area').val();
+                                                                    if (purpose == "" || applicant == "" || supervisor == '' || end_time == '') {
+                                                                        layer.msg('请把信息填写完整')
+                                                                    } else {
+                                                                        $.ajax({
+                                                                            type: 'get',
+                                                                            url: '/meeting_room/add',
+                                                                            data: {
+                                                                                purpose: purpose,
+                                                                                start_time: start_time,
+                                                                                end_time: end_time,
+                                                                                lab_number: lab_number,
+                                                                                lab_name: lab_name,
+                                                                                applicant: applicant,
+                                                                                status_id: status_id,
+                                                                                tradeNo: tradeNo,
+                                                                                supervisor: supervisor,
+                                                                                user_type: user_type,
+                                                                                time_area: time_area,
+                                                                            },
+                                                                            success: function (result) {
+                                                                                if (result.code == '200') {
+                                                                                    layer.msg(result.msg, { icon: 1, time: 1000 }, function () {
+                                                                                        let room_id = $('#lab_name').text().substring(0, 4);
+                                                                                        if (view.type == 'agendaWeek' || view.type == 'month') {
+                                                                                            getRoomId(room_id)
+                                                                                        } else {
+                                                                                            getRoomId_2()
+                                                                                        }
+                                                                                    });
+                                                                                    layer.close(index);
+                                                                                } else if (result.code == '400') {
+                                                                                    layer.close(index);
+                                                                                    layer.alert(result.msg, { icon: 2 }, function () {
+                                                                                        layer.close(index);
+                                                                                        window.location.reload()
+                                                                                    })
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                },
+                                                                btn2: function (index, elem) {
+                                                                    layer.msg('已取消');
+                                                                    layer.close(index);
+                                                                    $('#' + $el).fullCalendar('removeEvent');
+                                                                },
+                                                            });
+                                                        }
+                                                    },
+                                                    eventClick: function (event, jsEvent, view) {
+                                                        let start_time = moment(event.start._d).format('YYYY-MM-DD H:mm:ss');//日期时间格式化处理
+                                                        let FID = $('#lab_name').text().substring(0, 4);
+                                                        layer.open({
+                                                            skin: 'demo-class',
+                                                            content: '/labroom_read',
+                                                            type: 2,
+                                                            title: '信息详情',
+                                                            maxmin: true,
+                                                            shadeClose: true,   //点击遮罩层弹层消失
+                                                            // shade: false,   //遮罩层
+                                                            // area: ['25%', '55%'],
+                                                            area: ['480px', '310px'],
+                                                            // btn: ['取消预约'],    // 自定义设置多个按钮
+                                                            success: function (layero, index) {
+                                                                var body = layer.getChildFrame('body', index);
+                                                                $.ajax({
+                                                                    type: 'get',
+                                                                    url: '/room_read',
+                                                                    data: {
+                                                                        start_time: start_time,
+                                                                        FID: FID,
+                                                                    },
+                                                                    success: function (data) {
+                                                                        let start = moment(data[0].Start_time).format('YYYY-MM-DD H:mm:ss');
+                                                                        let end = moment(data[0].End_time).format('YYYY-MM-DD H:mm:ss');
+                                                                        body.find('#lab_number').text(data[0].FID + data[0].Rname);
+                                                                        body.find('#start_time').text(start);
+                                                                        body.find('#end_time').text(end);
+                                                                        body.find('#purpose').text(data[0].Purpose);
+                                                                        body.find('#applicant').text(data[0].Applicant);
+                                                                    }
+                                                                })
+                                                            },
+                                                            btn1: function (index, elem) {
+                                                                var body = layer.getChildFrame('body', index);
+                                                                $.ajax({
+                                                                    type: 'get',
+                                                                    url: '/room_read',
+                                                                    data: {
+                                                                        start_time: start_time,
+                                                                        FID: FID,
+                                                                    },
+                                                                    success: function (data) {
+                                                                        if (username === data[0].Applicant) {
+                                                                            //房间预约取消
+                                                                            $.ajax({
+                                                                                type: 'get',
+                                                                                url: '/room_delete',
+                                                                                data: {
+                                                                                    start_time: start_time,
+                                                                                    FID: FID,
+                                                                                },
+                                                                                success: function (res) {
+                                                                                    layer.msg('取消预定成功');
+                                                                                    $('#' + $el).fullCalendar('renderEvents', event, 'true');
+                                                                                    //设备预约取消
+                                                                                    $.ajax({
+                                                                                        type: 'get',
+                                                                                        url: '/device_delete',
+                                                                                        data: {
+                                                                                            FID: FID,
+                                                                                            applicant: username,
+                                                                                            State_id: 0,
+                                                                                        },
+                                                                                        success: function (res) {
+                                                                                        }
+                                                                                    })
+
+                                                                                },
+                                                                                fail: function () {
+                                                                                    layer.msg('取消预定失败');
+                                                                                }
+                                                                            });
+
+                                                                        } else {
+                                                                            layer.msg('非本人，无法取消')
+                                                                        }
+                                                                    }
+                                                                });
+                                                                layer.close(index);
+                                                            },
+                                                        });
+                                                    },
+                                                });
+                                                $('#' + $el).fullCalendar('renderEvents', event, 'true');
+                                            }
+                                        } else {
+                                            layer.alert('您未能通过实验室准入考试，无法进入实验室预约界面', {
+                                                btn: ['确定',]
+                                                , btn1: function (index, layero) {
+                                                    layer.close(index);
+                                                    window.history.back(-1);
+
+                                                },
+                                                closeBtn: 0//使右上角X不显示
+                                            });
+                                        }
+                                    }
+                                });
+                            } else {
+                                window.location.href = "/login";
+                            }
+
+                        }
+                    });
+                });
+
+            });
+
+
+
+
+        })
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <!--<link rel="stylesheet" type="text/css" href="/css/user/link.css">-->
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>实验信息录入清单</title>
+</head>
+
+<body>
+    <div class="layui-card">
+        <div class="layui-card-body">
+
+            <div class="layui-input-block" style="float:right;margin-top:15px">
+                <button id='save_info' class="layui-btn layui-btn-normal" lay-submit="">添加试剂
+                </button>
+                <button id='save_info_device' class="layui-btn layui-btn-normal" lay-submit=""
+                    lay-filter="set_system_email">添加设备
+                </button>
+            </div>
+
+            <form class="layui-form" action="" id="div-0" lay-filter="example">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;color:red;">
+                    <legend>试剂登记</legend>
+                </fieldset>
+                <div style='display: none;'>
+                    <label class="layui-form-label">预约编号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id='order_number' name="order_number" class="layui-input">
+                    </div>
+                </div>
+                <div id="reagent">
+                    <div class=" layui-form-item">
+                        <label class="layui-form-label">试剂名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="reagent_name" class="layui-input">
+                        </div>
+                        <label class="layui-form-label">试剂使用量</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="reagent_dose" class="layui-input">
+                        </div>
+                        <label class="layui-form-label">试剂来源</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="reagent_from" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;color:red;">
+                    <legend>设备登记</legend>
+                </fieldset>
+                <div id="device">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">设备名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="device_name" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;color: red">
+                    <legend>附件上传</legend>
+                </fieldset>
+
+                <div id='fileUpload'>
+                    <!-- <button type="button" class="layui-btn" id="image" name='image'>
+                        <i class="layui-icon">&#xe67c;</i>上传图片
+                    </button> -->
+                    <button type="button" class="layui-btn" id="file">
+                        <i class="layui-icon">&#xe67c;</i>上传文件
+                    </button>
+                    <button type="button" class="layui-btn" id="testListAction" style='display: none;'>开始上传</button>
+
+                    <div class="layui-upload-list">
+                        <table class="layui-table">
+                            <thead>
+                                <tr>
+                                    <th>文件名</th>
+                                    <th>大小</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="demoList"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 80px;color: red">
+                    <legend>实验登记</legend>
+                </fieldset>
+                <div id="experiment">
+                    <div class=" layui-form-item">
+                        <label class="layui-form-label">实验室名称</label>
+                        <div class="layui-input-inline">
+                            <input placeholder="请输入实验室编号，如4101" type="text" name="room_name" class="layui-input">
+                        </div>
+                    </div>
+                    <div class=" layui-form-item">
+                        <label class="layui-form-label">实验名称</label>
+                        <div class="layui-input-inline">
+                            <input placeholder="请输入内容" type="text" name="experiment_content" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">实验结果（选填）</label>
+                        <div class="layui-input-block">
+                            <textarea name="experiment_result" placeholder="请输入实验结果" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit lay-filter="formDemo" id='info_submit'>立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <script type="text/javascript">
+
+
+            function sendOrderNumber(Order_number, user_type) {
+                layui.use(['upload', 'element', 'layer'], function () {
+                    var upload = layui.upload;
+                    var element = layui.element;
+                    var layer = layui.layer
+
+                    var demoListView = $('#demoList');
+                    var uploadfile = upload.render({
+                        elem: '#file' //绑定元素
+                        , method: 'post'
+                        , auto: false
+                        , multiple: true
+                        , number: 6
+                        , data: { id: Order_number }   //还可以传参，参数id=123
+                        , bindAction: '#testListAction' //指向一个按钮触发上传
+                        , accept: 'file'
+                        , url: '/upload/file' //上传接口
+                        , choose: function (obj) {
+                            $('#testListAction').show()
+                            var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                            //读取本地文件
+                            obj.preview(function (index, file, result) {
+                                var tr = $(['<tr id="upload-' + index + '">'
+                                    , '<td>' + file.name + '</td>'
+                                    , '<td>' + (file.size / 1014).toFixed(1) + 'kb</td>'
+                                    , '<td>等待上传</td>'
+                                    , '<td>'
+                                    , '<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+                                    , '<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+                                    , '</td>'
+                                    , '</tr>'].join(''));
+                                //单个重传
+                                tr.find('.demo-reload').on('click', function () {
+                                    obj.upload(index, file);
+                                });
+                                //删除
+                                tr.find('.demo-delete').on('click', function () {
+                                    delete files[index]; //删除对应的文件
+                                    tr.remove();
+                                    uploadfile.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                                });
+                                demoListView.append(tr);
+                            })
+                        }
+                        , done: function (res, index, upload) {
+                            console.log(res)
+                            if (res.code == 0) {//表示上传成功
+                                var tr = demoListView.find('tr#upload-' + index)
+                                    , tds = tr.children();
+                                tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+                                tds.eq(3).html(''); //清空操作
+                                return delete this.files[index]; //删除文件队列已经上传成功的文件,防止已经上传的文件重复上传。
+                            }
+                        }
+                        , error: function (index, upload) {
+                            var tr = demoListView.find('tr#upload-' + index)
+                                , tds = tr.children();
+                            tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+                            tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+                        }
+                    })
+                });
+
+                layui.use('form', function () {
+                    var form = layui.form;
+                    //监听提交
+                    form.on('submit(formDemo)', function (data) {
+                        json = eval('(' + JSON.stringify(data.field) + ')');//转换成json对象 
+                        let user_name = $('#user_name').html()
+                        let today = new Date()
+                        today.setTime(today.getTime());
+                        let format_today = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+                        let reagent_info_1 = [];
+                        let reagent_info_2 = [];
+                        let reagent_info_3 = [];
+                        let device_info = [];
+                        let experiment_result = [json.experiment_result];
+                        let room_name = [json.room_name]
+                        let experiment_content = [json.experiment_content]
+                        // let expirement_record=josn.expirement_record;
+                        // console.log(experiment_result)
+
+                        //    从json对象筛选出所需的数据
+                        for (key in json) {
+                            let reagent_content = {};
+                            let device_content = {};
+                            // 试剂
+                            // console.log(key.indexOf("reagent_dose"))
+                            if (key.indexOf("reagent_dose") === 0) {
+                                reagent_content.reagent_dose = json[key]
+                                reagent_info_1.push(reagent_content)
+                            }
+                            if (key.indexOf("reagent_name") === 0) {
+                                reagent_content.reagent_name = json[key]
+                                reagent_info_2.push(reagent_content)
+                            }
+                            if (key.indexOf("reagent_from") === 0) {
+                                reagent_content.reagent_from = json[key]
+                                reagent_info_3.push(reagent_content)
+                            }
+                            if (key.indexOf("device_name") === 0) {
+                                device_content.device_name = json[key]
+                                device_info.push(device_content)
+                            }
+                        }
+                        var reagent_info = [];
+                        for (i = 0; i < reagent_info_1.length; i++) {
+                            var newobj = Object.assign({}, reagent_info_1[i], reagent_info_2[i], reagent_info_3[i]);//加{}不改变原对象（info1）
+                            reagent_info.push(newobj);
+                        }
+                        var reagent_infoList = [];
+                        var device_infoList = [];
+                        for (var i = 0; i < reagent_info.length; i++) {
+                            let data = {
+                                reagent_dose: reagent_info[i].reagent_dose,
+                                reagent_from: reagent_info[i].reagent_from,
+                                reagent_name: reagent_info[i].reagent_name,
+                                order_number: json.order_number
+                            }
+                            reagent_infoList.push(data)
+                        }
+                        for (var i = 0; i < device_info.length; i++) {
+                            let data = {
+                                device_name: device_info[i].device_name,
+                                order_number: json.order_number
+                            }
+                            device_infoList.push(data)
+                        }
+                        $.ajax({
+                            type: 'get',
+                            url: '/expri_info',
+                            data: {
+                                order_number: json.order_number,
+                                experiment_result: json.experiment_result,
+                                experiment_content: json.experiment_content,
+                                room_name: room_name,
+                            },
+                            success: function (data) {
+                            }
+                        })
+                        $.ajax({
+                            type: 'get',
+                            url: '/expri_info_1',
+                            data: {
+                                reagent_info: reagent_infoList,
+                            },
+                            success: function (data) {
+
+                            }
+                        })
+
+                        $.ajax({
+                            type: 'get',
+                            url: '/expri_info_2',
+                            data: {
+                                device_info: device_infoList,
+                            },
+                            success: function (data) {
+                            }
+                        })
+                        $.ajax({
+                            type: 'get',
+                            url: '/expri_info_3',
+                            data: {
+                                order_number: json.order_number,
+                                entry_status: 1,
+                            },
+                            success: function (data) {
+
+                            }
+                        })
+
+                        
+                        layer.load(0, {
+                            shade: false,
+                            time: 1000
+                        })
+                        setInterval(() => {
+                            layer.msg('信息已提交', {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                var index = parent.layer.getFrameIndex(window.name);
+                                parent.layer.close(index);//关闭当前页
+                                if (user_type == '学生') {
+                                    parent.layui.table.reload('studentReload');
+                                } else {
+                                    parent.layui.table.reload('teacherReload');
+                                }
+
+                            });
+                        }, 1500)
+                        return false;
+                    });
+                });
+                var times = 0;
+                $('#save_info').on('click', function () {
+                    times++;
+                    // alert(times)
+                    $('#reagent').append('             <div class=" layui-form-item">\n' +
+                        '                                            <label class="layui-form-label">试剂名称</label>\n' +
+                        '                                            <div class="layui-input-inline">\n' +
+                        '                                                <input type="text" name="reagent_name_' + times + '" class="layui-input">\n' +
+                        '                                            </div>\n' +
+                        '\n' +
+                        '                                            <label class="layui-form-label">试剂使用量</label>\n' +
+                        '                                            <div class="layui-input-inline">\n' +
+                        '                                                <input type="text" name="reagent_dose_' + times + '" class="layui-input">\n' +
+                        '                                            </div>\n' +
+                        '                                            <label class="layui-form-label">试剂来源</label>\n' +
+                        '                                            <div class="layui-input-inline">\n' +
+                        '                                                <input type="text" name="reagent_from_' + times + '" class="layui-input">\n' +
+                        '                                            </div>\n' +
+                        '                                        </div>')
+                })
+
+                $('#save_info_device').on('click', function () {
+                    times++;
+                    $('#device').append('                                 <div class="layui-form-item">\n' +
+                        '                                            <label class="layui-form-label">设备名称</label>\n' +
+                        '                                            <div class="layui-input-inline">\n' +
+                        '                                                <input type="text" name="device_name_' + times + '" class="layui-input">\n' +
+                        '                                            </div>\n' +
+                        '                                        </div>')
+
+
+                })
+
+            }
+
+
+
+
+
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="/packages/layui-master/src/css/admin.css">
+    <!--<link rel="stylesheet" type="text/css" href="/css/user/link.css">-->
+    <script type="text/javascript" src="/packages/jquery.js"></script>
+    <script type="text/javascript" src="/packages/layui-master/src/layui.js"></script>
+    <title>实验室预约确认单</title>
+</head>
+
+<body>
+    <div class="layui-card">
+        <!--<div class="layui-form layui-card-header layuiadmin-card-header-auto">-->
+        <!--<div class="layui-form-item">-->
+        <!--<h3 style="font-size: 30px;text-align: center">实验室平面分布图</h3>-->
+        <!--</div>-->
+        <!--</div>-->
+        <div class="layui-card-body" style="height: 100%">
+            <button class="print-btn" onclick="doPrint()">打印</button>
+            <ccc>
+                <fieldset class="layui-elem-field" style="width: 85%;margin-left: 8%;height:99%;">
+                    <legend>预约确认单</legend>
+                    <div class="layui-field-box">
+                        <!--内容区域-->
+                        <div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+                            <p class="h4">预约人:<span id='Applicant' style="color: blue"></span></p>
+                        </div>
+
+                        <div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+                            <p class="h4">预约编号:<span id='Order_Number' style="color: blue">20199161_210182</span></p>
+                        </div>
+                        <div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+                            <p class="h4">预约实验室:<span id='FID' style="color: blue"></span></p>
+                        </div>
+                        <div class="layui-col-md3 layui-col-sm3 layui-col-xs3">
+                            <p class="h4">预约用途:<span id='purpose' style="color: blue"></span></p>
+                        </div>
+
+                        <div class="layui-col-md3 layui-col-sm3 layui-col-xs3" style='margin-top: 15px'>
+                            <p class="h4">开始时间:<span id='Start_time' style="color: blue"></span></p>
+                        </div>
+                        <div class="layui-col-md3 layui-col-sm3 layui-col-xs3" style='margin-top: 15px'>
+                            <p class="h4">结束时间:<span id='End_time' style="color: blue"></span></p>
+                        </div>
+                        <div class="layui-col-md3 layui-col-sm3 layui-col-xs3" style='margin-top: 15px'>
+                            <p class="h4">负责人:<span id='master' style="color: blue"></span></p>
+                        </div>
+                        <hr class="layui-bg-black" style="margin-top: 6%">
+
+                        <div class="layui-col-md12">
+                            <p style="text-align: center;color: red">预约设备</p>
+                            <!-- <table id="device" class="layui-table" style="width: 100%">
+                                <colgroup>
+                                    <col width="150">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th>设备名</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table> -->
+                            <table id="deviceView" lay-filter="test"></table>
+                        </div>
+                        <div class="layui-col-md12">
+                            <p style="text-align: center;color: red">预约试剂</p>
+                            <table id="alone" class="layui-table" style="width: 100%">
+                                <colgroup>
+                                    <col width="150">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <td class="tdClass">序号</td>
+                                        <td class="tdClass">试剂名</td>
+                                        <td class="tdClass">试剂量</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </fieldset>
+
+            </ccc>
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        layui.use('element', function () {
+            var element = layui.element;
+        });
+        //打印功能测试（局部打印）
+        function doPrint() {
+            bdhtml = window.document.body.innerHTML;
+            sprnstr = "<ccc>";
+            eprnstr = "<ccc>";
+            prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 5);
+            prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr));
+            window.document.body.innerHTML = prnhtml;
+            window.print();
+            window.document.body.innerHTML = bdhtml;
+        }
+        function getOrderId(Purpose, Applicant, Rname, Start_time, End_time, FID, Order_number) {
+            $('#FID').text(FID)
+            $('#Applicant').text(Applicant)
+            $('#Rname').text(Rname)
+            $('#Start_time').text(Start_time)
+            $('#End_time').text(End_time)
+            $('#purpose').text(Purpose)
+            $('#master').text('黄诗冰')
+            layui.use('table', function () {
+                var table = layui.table;
+                tableIns = table.render({
+                    //默认为get请求
+                    elem: '#deviceView'
+                    , url: '/Device_order'
+                    , cellMinWidth: 120 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                    , limits: [5, 10, 15]
+                    , limit: 5 //每页默认显示的数量
+                    , page: true
+                    , cols: [[
+                        { field: 'device_ID', title: '设备编号', sort: true, width: 100, align: 'center' }
+                        , { field: 'device_name', title: '设备名', minwidth: 120, align: 'center' }
+                        , { field: 'tradeNo', title: '预约编号', width: 120, sort: true, align: 'center' }
+                    ]],
+                    where: {
+                        applicant: Order_number
+                    },
+                });
+            })
+        }
+
+        
+        // var device = [{ name: '马弗炉' }, { name: '实验电炉' }, { name: '固定式柳化床' }, { name: '电热鼓风干燥箱' },
+        // ]
+        // var deviceTable = $('#device')
+        // for (var i = 1; i <= device.length; i++) {
+        //     var json = device[i - 1]
+        //     deviceTable.append('<tr> ' +
+        //         '<td class="tdClass">' + i + '</td>' +
+        //         '<td class="tdClass">' + json.name + '</td>' +
+        //         '</tr>')
+        // }
+
+        // var group = [{ name: "氯化钠", num: '2支' },
+        // { name: "磷酸盐", num: '4瓶' },
+        // { name: "日落黄", num: '5支' },
+        // { name: "草酸钠", num: '4瓶' }
+        // ]
+
+        // var groupTable = $('#alone');
+        // for (var i = 1; i <= group.length; i++) {
+        //     var item = group[i - 1]
+        //     groupTable.append('<tr> ' +
+        //         '<td class="tdClass">' + i + '</td>' +
+        //         '<td class="tdClass">' + item.name + '</td>' +
+        //         '<td class="tdClass">' + item.num + '</td>' +
+        //         '</tr>')
+        // }
+    </script>
+</body>
+
+</html>

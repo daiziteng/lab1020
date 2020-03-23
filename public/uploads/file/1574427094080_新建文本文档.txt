@@ -1,0 +1,8 @@
+C:\Users\lenovo\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0
+
+vgg16下载地址：http://download.tensorflow.org/models/vgg_16_2016_08_28.tar.gz
+
+步骤：
+1、先将layui与nodejs结合,实现图片和文件的上传功能，（文件和图片的同步命名）
+2、对上传的文件放入指定的文件夹中（按照指定规则命名）
+3、后台存储文件存放地址，然后后台在管理的时候可以根据指定地址查看或者下载用户上传的文件或者图片。
