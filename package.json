@@ -14,7 +14,7 @@
     "debug": "~2.6.9",
     "ecmascript6": "^0.1.2",
     "ejs": "^2.6.1",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-serve-static-core": "^0.1.1",
     "express-session": "^1.15.6",
     "http-errors": "~1.6.2",
